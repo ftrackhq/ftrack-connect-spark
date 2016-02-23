@@ -1,0 +1,7 @@
+{
+  "generator-react-webpack": {
+    "appName": "ftrackConnectSpark",
+    "style": "scss",
+    "postcss": true
+  }
+}
