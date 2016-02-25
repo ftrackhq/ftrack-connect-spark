@@ -1,7 +1,7 @@
 'use strict';
 
 let path = require('path');
-let srcPath = path.join(__dirname, '/../src/');
+let srcPath = path.join(__dirname, '/../source/');
 
 let baseConfig = require('./base');
 
@@ -16,7 +16,7 @@ module.exports = {
         test: /\.(js|jsx)$/,
         loader: 'isparta-instrumenter-loader',
         include: [
-          path.join(__dirname, '/../src')
+          path.join(__dirname, '/../source')
         ]
       }
     ],
@@ -31,7 +31,7 @@ module.exports = {
         include: [].concat(
           baseConfig.additionalPaths,
           [
-            path.join(__dirname, '/../src'),
+            path.join(__dirname, '/../source'),
             path.join(__dirname, '/../test')
           ]
         )
@@ -39,16 +39,13 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: [ '', '.js', '.jsx' ],
+    extensions: ['', '.js', '.jsx', '.scss'],
     alias: {
-      actions: srcPath + 'actions/',
-      helpers: path.join(__dirname, '/../test/helpers'),
-      components: srcPath + 'components/',
-      sources: srcPath + 'sources/',
-      stores: srcPath + 'stores/',
-      styles: srcPath + 'styles/',
-      config: srcPath + 'config/' + process.env.REACT_WEBPACK_ENV
-    }
+      action: srcPath + 'action/',
+      helper: path.join(__dirname, '/../test/helper'),
+      component: srcPath + 'component/',
+      style: srcPath + 'style/',
+    },
   },
   plugins: [
     new BowerWebpackPlugin({

@@ -6,9 +6,9 @@
   "main": "",
   "scripts": {
     "clean": "rimraf dist/*",
-    "copy": "copyfiles -f ./src/index.html ./src/favicon.ico ./dist",
+    "copy": "copyfiles -f ./source/index.html ./source/favicon.ico ./dist",
     "dist": "npm run copy & webpack --env=dist",
-    "lint": "eslint ./src",
+    "lint": "eslint ./source",
     "posttest": "npm run lint",
     "release:major": "npm version major && npm publish && git push --follow-tags",
     "release:minor": "npm version minor && npm publish && git push --follow-tags",
