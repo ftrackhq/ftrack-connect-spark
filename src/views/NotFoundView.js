@@ -1,13 +1,13 @@
 import React from 'react';
-import {IndexLink} from 'react-router';
+import { IndexLink } from 'react-router';
 
-const NotFoundView = () => {
-    return (
-        <div>
-        <h2>Oops, could not find that page.</h2>
-        <p><IndexLink to="/">Back to home</IndexLink></p>
-        </div>
-    );
-};
+function NotFoundView() {
+  return (
+    <div>
+      <h2>Oops, could not find that page.</h2>
+      <p><IndexLink to="/">Back to home</IndexLink></p>
+    </div>
+  );
+}
 
 export default NotFoundView;

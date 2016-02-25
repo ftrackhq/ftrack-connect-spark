@@ -6,10 +6,10 @@ import NotFoundView from 'views/NotFoundView';
 import Main from 'components/Main';
 
 export default () => (
-    <Route path="/" component={RootLayout}>
-        <IndexRoute component={Main} />
+  <Route path="/" component={RootLayout}>
+    <IndexRoute component={Main} />
 
-        <Route path='/404' component={NotFoundView} />
-        <Redirect from='*' to='/404' />
-    </Route>
+    <Route path="/404" component={NotFoundView} />
+    <Redirect from="*" to="/404" />
+  </Route>
 );
