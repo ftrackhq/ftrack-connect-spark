@@ -1,14 +1,22 @@
 import React from 'react';
-import { render } from 'react-dom';
-import { Provider } from 'react-redux';
-import configureStore from './stores';
-import App from './containers/App';
+import ReactDOM from 'react-dom';
+import { browserHistory } from 'react-router';
+import { syncHistoryWithStore } from 'react-router-redux'
 
+import configureStore from './redux/configureStore';
+import makeRoutes from './routes';
+import Root from 'containers/Root';
+
+// Create redux store and sync with react-router-redux.
 const store = configureStore();
+const history = syncHistoryWithStore(browserHistory, store);
 
-render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
+// Create our routes. We provide the store to the route definitions
+// so that routes have access to it for hooks such as `onEnter`.
+const routes = makeRoutes(store);
+
+// Render the React application to the DOM
+ReactDOM.render(
+  <Root history={history} routes={routes} store={store} />,
   document.getElementById('app')
 );
