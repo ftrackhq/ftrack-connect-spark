@@ -6,9 +6,9 @@
 // Uncomment the following lines to use the react test utilities
 // import React from 'react/addons';
 // const TestUtils = React.addons.TestUtils;
-import createComponent from 'helpers/shallowRenderHelper';
+import createComponent from 'helper/shallowRenderHelper';
 
-import Main from 'components/Main';
+import Main from 'component/Main';
 
 describe('MainComponent', () => {
   let MainComponent;
