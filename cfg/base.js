@@ -23,13 +23,12 @@ module.exports = {
   resolve: {
     extensions: ['', '.js', '.jsx', '.scss'],
     alias: {
-      actions: `${ defaultSettings.srcPath }/actions/`,
-      components: `${ defaultSettings.srcPath }/components/`,
-      containers: `${ defaultSettings.srcPath }/containers/`,
-      views: `${ defaultSettings.srcPath }/views/`,
-      layouts: `${ defaultSettings.srcPath }/layouts/`,
-      styles: `${ defaultSettings.srcPath }/styles/`,
-      config: `${ defaultSettings.srcPath }/config/` + process.env.REACT_WEBPACK_ENV
+      action: `${ defaultSettings.srcPath }/action/`,
+      component: `${ defaultSettings.srcPath }/component/`,
+      container: `${ defaultSettings.srcPath }/container/`,
+      view: `${ defaultSettings.srcPath }/view/`,
+      layout: `${ defaultSettings.srcPath }/layout/`,
+      style: `${ defaultSettings.srcPath }/style/`,
     }
   },
   module: {},

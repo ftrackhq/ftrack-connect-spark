@@ -1,5 +1,5 @@
 require('normalize.css');
-require('styles/App.css');
+require('style/App.css');
 
 import React from 'react';
 import Button from 'react-toolbox/lib/button';

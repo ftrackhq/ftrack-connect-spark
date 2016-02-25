@@ -4,8 +4,8 @@ import { browserHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 
 import configureStore from './redux/configureStore';
-import makeRoutes from './routes';
-import Root from 'containers/Root';
+import makeRoutes from './route';
+import Root from 'container/Root';
 
 // Create redux store and sync with react-router-redux.
 const store = configureStore();

@@ -5,7 +5,7 @@ import React, {
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import Main from '../components/Main';
+import Main from 'component/Main';
 
 class App extends Component {
   render() {
