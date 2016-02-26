@@ -29,6 +29,7 @@ module.exports = {
       view: `${ defaultSettings.srcPath }/view/`,
       layout: `${ defaultSettings.srcPath }/layout/`,
       style: `${ defaultSettings.srcPath }/style/`,
+      reducer: `${ defaultSettings.srcPath }/reducer/`,
     }
   },
   module: {},

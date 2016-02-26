@@ -41,10 +41,14 @@ module.exports = {
   resolve: {
     extensions: ['', '.js', '.jsx', '.scss'],
     alias: {
-      action: srcPath + 'action/',
+      action: `${srcPath}/action/`,
+      component: `${srcPath}/component/`,
+      container: `${srcPath}/container/`,
+      view: `${srcPath}/view/`,
+      layout: `${srcPath}/layout/`,
+      style: `${srcPath}/style/`,
+      reducer: `${srcPath}/reducer/`,
       helper: path.join(__dirname, '/../test/helper'),
-      component: srcPath + 'component/',
-      style: srcPath + 'style/',
     },
   },
   plugins: [
