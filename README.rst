@@ -6,6 +6,129 @@ ftrack-connect-spark provides a base to build ftrack integrations using web
 technologies and a shared interface which is used across integrations
 in supported applications.
 
+Setting up node environment
+===========================
+
+You will need a recent version of node (5+) with npm installed. It is highly
+recommended that you also install a version manager for node, such as
+`n (Mac OS) <https://github.com/tj/n>`_ or
+`nodist (windows) <https://github.com/marcelklehr/nodist>`_. It enables you
+can use different node versions in different projects.
+
+Mac OS
+------
+
+1. Install `homebrew <http://brew.sh/>`_, unless already installed.
+2. Ensure homebrew is installed correctly::
+
+  brew doctor
+
+3. Install latest node and npm versions::
+
+  brew install node
+
+4. Install n globally::
+
+  npm install -g n
+
+5. Install latest stable version::
+
+  n stable
+
+Windows
+-------
+
+TODO
+
+Setting up development environment
+==================================
+
+1. Checkout this repository
+2. Install dependencies (will run for a few minutes for the first setup)::
+
+  npm install
+
+3. Start development server
+
+  npm start
+
+Technology used
+===============
+
+* `Webpack <https://webpack.github.io/>`_ module loader with development server
+  with loader for `CSS Modules <https://github.com/css-modules/css-modules>`_.
+* `Babel <babeljs.io>`_ JavaScript compilter with
+  `es2015 <https://babeljs.io/docs/learn-es2015/>`_ and
+  `react <https://babeljs.io/docs/plugins/preset-react/>`_ presets.
+* `React <https://facebook.github.io/react/>`_, library for building user
+  interfaces.
+* `Redux <redux.js.org>`_, a predictable state container.
+* `React router <https://github.com/reactjs/react-router>`_ with
+  `react router redux <https://github.com/reactjs/react-router-redux>`_
+  provides a routing solution.
+* `React toolbox <react-toolbox.com>`_, component library implementing
+  `material design <https://design.google.com/>`_ as react components.
+* `ESLint <eslint.org>`_ linter for JS and JSX with
+  `Airbnb JavaScript Style Guide <https://github.com/airbnb/javascript>`_
+  configuration.
+* Testing using `karma <https://github.com/karma-runner/karma>`_,
+  `Mocha <https://mochajs.org/>`_ and `Chai <chaijs.com/>`_.
+
+Project structure
+=================
+
+  .
+  ├── .babelrc               # Babel configuration file
+  ├── .editorconfig          # Editor configuration to follow style guide.
+  ├── .eslintrc              # Linter configuration, based on AirBnb's config.
+  ├── config                 # Webpack configuration files
+  ├── coverage               # Code coverage reports
+  ├── dist                   # Built application for distribution.
+  ├── karma.conf.js          # Karma test runner configuration.
+  ├── npm-shrinkwrap.json    # Locked package dependencies.
+  ├── package.json           # Package configuration and dependencies.
+  ├── server.js              # Webpack dev server entry point
+  ├── source                 # Application source code
+  │   ├── action             # Redux actions
+  │   ├── component          # Presentational, "dumb", react components
+  │   ├── container          # Components that provide context (e.g. Redux Provider)
+  │   ├── layout             # Components that dictate major page structure
+  │   ├── reducer            # Redux reducers
+  │   ├── route              # Application route definitions
+  │   ├── store              # Redux store
+  │   ├── static             # Static assets (images, etc..)
+  │   ├── style              # Application-wide styles
+  │   ├── view               # Components that live at a route
+  │   └── index.js           # Application bootstrap and rendering
+  ├── test                   # Unit tests
+  └── webpack.config.js      # Loads webpack configuration based on environment.
+
+
+Layouts, views and components
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A Layout is something that describes an entire page structure, such as a fixed
+navigation, viewport, sidebar, and footer. Most applications will probably only
+have one layout, but keeping these components separate makes their intent clear.
+Views are components that live at routes, and are generally rendered within a
+Layout. What this ends up meaning is that, with this structure, nearly
+everything inside of Components ends up being a dumb component.
+
+Webpack
+=======
+
+TODO
+
+Styles
+======
+
+TODO
+
+Testing
+=======
+
+TODO
+
 
 Updating dependencies
 =====================
