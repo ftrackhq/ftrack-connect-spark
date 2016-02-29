@@ -3,11 +3,11 @@ import { Route, Redirect, IndexRoute } from 'react-router';
 
 import RootLayout from 'layout/RootLayout';
 import NotFoundView from 'view/NotFoundView';
-import Main from 'component/Main';
+import ExampleView from 'view/ExampleView';
 
 export default () => (
   <Route path="/" component={RootLayout}>
-    <IndexRoute component={Main} />
+    <IndexRoute component={ExampleView} />
 
     <Route path="/404" component={NotFoundView} />
     <Redirect from="*" to="/404" />

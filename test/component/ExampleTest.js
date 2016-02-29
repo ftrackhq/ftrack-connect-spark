@@ -8,16 +8,16 @@
 // const TestUtils = React.addons.TestUtils;
 import createComponent from 'helper/shallowRenderHelper';
 
-import Main from 'component/Main';
+import Example from 'component/Example';
 
-describe('MainComponent', () => {
-  let MainComponent;
+describe('ExampleComponent', () => {
+  let ExampleComponent;
 
   beforeEach(() => {
-    MainComponent = createComponent(Main);
+    ExampleComponent = createComponent(Example);
   });
 
-  it('should have its component name as default className', () => {
-    expect(MainComponent.props.className).to.equal('index');
+  it('should be an object.', () => {
+    expect(typeof ExampleComponent).to.equal('object');
   });
 });
