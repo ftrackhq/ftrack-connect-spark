@@ -52,6 +52,42 @@ Setting up development environment
 
   npm start
 
+Commands
+--------
+
+Start for development::
+
+  npm start # or
+  npm run serve
+
+Start the dev-server with the dist version::
+
+  npm run serve:dist
+
+Just build the dist version and copy static files::
+
+  npm run dist
+
+Run unit tests::
+
+  npm test
+
+Run the unit tests continuously (repeat the test when code changes are saved)::
+
+  npm run test:watch
+
+Lint all files in src (also automatically done AFTER tests are run)::
+
+  npm run lint
+
+Clean up the dist directory::
+
+  npm run clean
+
+Just copy the static assets::
+
+  npm run copy
+
 Technology used
 ===============
 
@@ -76,6 +112,8 @@ Technology used
 
 Project structure
 =================
+
+The project directory structure looks like the following::
 
   .
   ├── .babelrc               # Babel configuration file
@@ -105,7 +143,7 @@ Project structure
 
 
 Layouts, views and components
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------
 
 A Layout is something that describes an entire page structure, such as a fixed
 navigation, viewport, sidebar, and footer. Most applications will probably only
@@ -117,18 +155,31 @@ everything inside of Components ends up being a dumb component.
 Webpack
 =======
 
-TODO
+The webpack configuration file, `webpack.config.js` will build a configuration
+for one of three environments: dev, dist or test. The actual configuration
+resides within the `config` directory.
+
+In the configuration, we make use of
+`resolve alias <http://webpack.github.io/docs/configuration.html#resolve-alias>`_
+to enable you to import modules relative to source root.
+
 
 Styles
 ======
 
-TODO
+Both .scss and .css file extensions are supported out of the box and are
+configured to use CSS Modules. After being imported, styles will be processed
+with PostCSS for minification and autoprefixing, and will be extracted to a .css
+file during production builds.
 
 Testing
 =======
 
-TODO
+Any file ending with `Test.js` in `test/` will be treated as a unit test and
+be run by Karma.
 
+When running tests, coverage information (provided via Istanbul) will also
+be written into the coverage/ directory.
 
 Updating dependencies
 =====================
