@@ -1,5 +1,5 @@
 {
-  "name": "ftrackConnectSpark",
+  "name": "ftrack-connect-spark",
   "version": "0.0.1",
   "dependencies": {
     "abbrev": {

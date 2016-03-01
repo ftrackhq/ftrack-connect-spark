@@ -1,5 +1,5 @@
 {
-  "name": "ftrackConnectSpark",
+  "name": "ftrack-connect-spark",
   "private": true,
   "version": "0.0.1",
   "description": "ftrack-connect-spark provides a base to build ftrack integrations using web technologies.",
