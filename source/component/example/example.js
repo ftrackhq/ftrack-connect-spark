@@ -1,6 +1,4 @@
 // :copyright: Copyright (c) 2016 ftrack
-require('normalize.css');
-require('style/App.css');
 
 import React from 'react';
 import Button from 'react-toolbox/lib/button';

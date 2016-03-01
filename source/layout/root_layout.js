@@ -1,5 +1,9 @@
 // :copyright: Copyright (c) 2016 ftrack
+
 import React, { PropTypes } from 'react';
+
+import 'normalize.css';
+import 'style/App.css';
 
 function RootLayout({ children }) {
     return (
