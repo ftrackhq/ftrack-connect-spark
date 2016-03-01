@@ -3,18 +3,20 @@
 // Uncomment the following lines to use the react test utilities
 // import React from 'react/addons';
 // const TestUtils = React.addons.TestUtils;
+import { assert } from 'chai';
+
 import createComponent from 'helper/shallow_render_helper';
 
-import Example from 'component/Example';
+import Example from 'component/example';
 
-describe('ExampleComponent', function () {
+suite('ExampleComponent', function () {
   let ExampleComponent;
 
-  beforeEach(function () {
+  setup(function () {
     ExampleComponent = createComponent(Example);
   });
 
-  it('should be an object.', function () {
-    expect(typeof ExampleComponent).to.equal('object');
+  test('should be an object.', function () {
+    assert.equal(typeof ExampleComponent, 'object');
   });
 });

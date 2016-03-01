@@ -11,7 +11,9 @@ module.exports = function(config) {
     captureTimeout: 60000,
     frameworks: [ 'mocha', 'chai' ],
     client: {
-      mocha: {}
+      mocha: {
+        ui: 'tdd'
+      }
     },
     singleRun: true,
     reporters: [ 'mocha', 'coverage' ],
