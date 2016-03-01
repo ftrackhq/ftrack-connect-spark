@@ -5,7 +5,7 @@ require('style/App.css');
 import React from 'react';
 import Button from 'react-toolbox/lib/button';
 
-import style from './Example.scss';
+import style from './example.scss';
 
 class Example extends React.Component {
   render() {

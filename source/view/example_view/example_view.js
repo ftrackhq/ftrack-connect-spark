@@ -1,9 +1,9 @@
 // :copyright: Copyright (c) 2016 ftrack
 import React from 'react';
 
-import Example from 'component/Example';
+import Example from 'component/example';
 
-import style from './ExampleView.scss';
+import style from './example_view.scss';
 
 function ExampleView() {
   return (
