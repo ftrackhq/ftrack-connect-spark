@@ -88,6 +88,28 @@ Just copy the static assets::
 
   npm run copy
 
+
+Configuring your editor
+======================
+
+If your editor supports `EditorConfig <http://editorconfig.org/>`_, the
+configuration should be picked up automatically. Plugins for several editors
+such as Sublime Text, Visual Studio Code and Atom exists.
+
+Syntax highlighting for JavaScript extensions should be extended to add support
+for ES2015 and JSX language extensions through Babel.
+
+For sublime text, install the `Babel` package and change the default syntax
+used for .js files, by navigating to
+`View -> Syntax -> Open all with current extension as -> Babel -> JavaScript (Babel)`.
+
+Next up, you should make sure your editor supplies you with linting information.
+For Sublime Text, install the following packages:
+
+* Sublime-Linter
+* SublimeLinter-contrib-eslint
+
+
 Technology used
 ===============
 
