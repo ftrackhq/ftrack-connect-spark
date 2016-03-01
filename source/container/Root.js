@@ -5,8 +5,8 @@ import { Router } from 'react-router';
 
 
 class Root extends React.Component {
-  render() {
-    return (
+    render() {
+      return (
       <Provider store={this.props.store}>
         <Router history={this.props.history}>
           {this.props.routes}
@@ -17,9 +17,9 @@ class Root extends React.Component {
 }
 
 Root.propTypes = {
-  history: PropTypes.object.isRequired,
-  routes: PropTypes.element.isRequired,
-  store: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
+    routes: PropTypes.element.isRequired,
+    store: PropTypes.object.isRequired,
 };
 
 export default Root;

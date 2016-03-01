@@ -10,13 +10,13 @@ import createComponent from 'helper/shallow_render_helper';
 import Example from 'component/example';
 
 suite('ExampleComponent', function () {
-  let ExampleComponent;
+    let ExampleComponent;
 
-  setup(function () {
-    ExampleComponent = createComponent(Example);
-  });
+    setup(function () {
+        ExampleComponent = createComponent(Example);
+    });
 
-  test('should be an object.', function () {
-    assert.equal(typeof ExampleComponent, 'object');
-  });
+    test('should be an object.', function () {
+        assert.equal(typeof ExampleComponent, 'object');
+    });
 });

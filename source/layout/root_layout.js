@@ -2,7 +2,7 @@
 import React, { PropTypes } from 'react';
 
 function RootLayout({ children }) {
-  return (
+    return (
       <div className="view-container">
         {children}
       </div>
@@ -10,7 +10,7 @@ function RootLayout({ children }) {
 }
 
 RootLayout.propTypes = {
-  children: PropTypes.element,
+    children: PropTypes.element,
 };
 
 export default RootLayout;
