@@ -1,8 +1,3 @@
-/*eslint-env node, mocha */
-/*global expect */
-/*eslint no-console: 0*/
-'use strict';
-
 // Uncomment the following lines to use the react test utilities
 // import React from 'react/addons';
 // const TestUtils = React.addons.TestUtils;
@@ -10,14 +5,14 @@ import createComponent from 'helper/shallowRenderHelper';
 
 import Example from 'component/Example';
 
-describe('ExampleComponent', () => {
+describe('ExampleComponent', function () {
   let ExampleComponent;
 
-  beforeEach(() => {
+  beforeEach(function () {
     ExampleComponent = createComponent(Example);
   });
 
-  it('should be an object.', () => {
+  it('should be an object.', function () {
     expect(typeof ExampleComponent).to.equal('object');
   });
 });
