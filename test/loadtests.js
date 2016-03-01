@@ -1,4 +1,4 @@
-'use strict';
+// :copyright: Copyright (c) 2016 ftrack
 
 require('core-js/fn/object/assign');
 

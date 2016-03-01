@@ -1,3 +1,5 @@
+// :copyright: Copyright (c) 2016 ftrack
+
 /**
  * Function to get the shallow output for a given component
  * As we are using phantom.js, we also need to include the fn.proto.bind shim!

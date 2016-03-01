@@ -1,3 +1,5 @@
+// :copyright: Copyright (c) 2016 ftrack
+
 // Uncomment the following lines to use the react test utilities
 // import React from 'react/addons';
 // const TestUtils = React.addons.TestUtils;
