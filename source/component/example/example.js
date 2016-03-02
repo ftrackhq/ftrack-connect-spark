@@ -8,11 +8,11 @@ import style from './example.scss';
 class Example extends React.Component {
     render() {
         return (
-      <div className={style.example}>
-        <p>This is the example component</p>
-        <Button label="Hello world" raised accent />
-      </div>
-    );
+          <div className={style.example}>
+            <p>This is the example component</p>
+            <Button label="Hello world" raised accent />
+          </div>
+        );
     }
 }
 
