@@ -18,6 +18,6 @@ const routes = makeRoutes(store);
 
 // Render the React application to the DOM
 ReactDOM.render(
-  <Root history={history} routes={routes} store={store} />,
-  document.getElementById('app')
+    <Root history={history} routes={routes} store={store} />,
+    document.getElementById('app')
 );

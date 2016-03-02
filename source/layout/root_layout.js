@@ -7,10 +7,10 @@ import 'style/App.css';
 
 function RootLayout({ children }) {
     return (
-      <div className="view-container">
-        {children}
-      </div>
-  );
+        <div className="view-container">
+            {children}
+        </div>
+    );
 }
 
 RootLayout.propTypes = {

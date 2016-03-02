@@ -7,11 +7,11 @@ import style from './example_view.scss';
 
 function ExampleView() {
     return (
-    <div className={style['example-view']}>
-      <h2>This is the example view.</h2>
-      <Example />
-    </div>
-  );
+        <div className={style['example-view']}>
+            <h2>This is the example view.</h2>
+            <Example />
+        </div>
+    );
 }
 
 export default ExampleView;

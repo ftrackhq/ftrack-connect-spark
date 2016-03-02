@@ -7,12 +7,12 @@ import { Router } from 'react-router';
 class Root extends React.Component {
     render() {
         return (
-      <Provider store={this.props.store}>
-        <Router history={this.props.history}>
-          {this.props.routes}
-        </Router>
-      </Provider>
-    );
+            <Provider store={this.props.store}>
+                <Router history={this.props.history}>
+                    {this.props.routes}
+                </Router>
+            </Provider>
+        );
     }
 }
 
