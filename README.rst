@@ -76,7 +76,7 @@ Run the unit tests continuously (repeat the test when code changes are saved)::
 
   npm run test:watch
 
-Lint all files in src (also automatically done AFTER tests are run)::
+Lint all files in source (also automatically done after tests are run)::
 
   npm run lint
 
