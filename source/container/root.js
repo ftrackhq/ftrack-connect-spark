@@ -6,7 +6,7 @@ import { Router } from 'react-router';
 
 
 /** A root container. */
-class Root extends React.Component {
+class RootContainer extends React.Component {
     render() {
         return (
             <Provider store={this.props.store}>
@@ -18,10 +18,10 @@ class Root extends React.Component {
     }
 }
 
-Root.propTypes = {
+RootContainer.propTypes = {
     history: PropTypes.object.isRequired,
     routes: PropTypes.element.isRequired,
     store: PropTypes.object.isRequired,
 };
 
-export default Root;
+export default RootContainer;

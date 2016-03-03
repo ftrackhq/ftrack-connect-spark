@@ -3,9 +3,9 @@
 import React from 'react';
 import { Route, Redirect, IndexRoute } from 'react-router';
 
-import RootLayout from 'layout/root_layout';
-import NotFoundView from 'view/not_found_view';
-import ExampleView from 'view/example_view';
+import RootLayout from 'layout/root';
+import NotFoundView from 'view/not_found';
+import ExampleView from 'view/example';
 
 export default () => (
     <Route path="/" component={RootLayout}>

@@ -4,7 +4,7 @@ import React from 'react';
 
 import Example from 'component/example';
 
-import style from './example_view.scss';
+import style from './style.scss';
 
 
 /** An example view. */

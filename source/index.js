@@ -7,7 +7,7 @@ import { syncHistoryWithStore } from 'react-router-redux';
 
 import configureStore from './store/configure_store';
 import makeRoutes from './route';
-import Root from 'container/root';
+import RootContainer from 'container/root';
 
 // Create redux store and sync with react-router-redux.
 const store = configureStore();
@@ -19,6 +19,6 @@ const routes = makeRoutes(store);
 
 // Render the React application to the DOM
 ReactDOM.render(
-    <Root history={history} routes={routes} store={store} />,
+    <RootContainer history={history} routes={routes} store={store} />,
     document.getElementById('app')
 );

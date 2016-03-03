@@ -2,7 +2,7 @@
 
 import { applyMiddleware, createStore } from 'redux';
 
-import rootReducer from '../reducer/root_reducer.js';
+import rootReducer from '../reducer/root.js';
 
 export default function configureStore(initialState = {}) {
     // Compose redux middleware
@@ -12,8 +12,8 @@ export default function configureStore(initialState = {}) {
 
     if (module.hot) {
         // Enable Webpack hot module replacement for reducers
-        module.hot.accept('../reducer/root_reducer', () => {
-            const nextRootReducer = require('../reducer/root_reducer').default;
+        module.hot.accept('../reducer/root', () => {
+            const nextRootReducer = require('../reducer/root').default;
 
             store.replaceReducer(nextRootReducer);
         });
