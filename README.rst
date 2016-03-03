@@ -193,8 +193,8 @@ file during production builds.
 Testing
 =======
 
-Any file ending with `Test.js` in `test/` will be treated as a unit test and
-be run by Karma.
+Any Javascript file starting with `test_` in `test/` will be treated as a unit
+test and be run by Karma.
 
 When running tests, coverage information (provided via Istanbul) will also
 be written into the coverage/ directory.
