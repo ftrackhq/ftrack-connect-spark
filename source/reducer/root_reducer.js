@@ -1,4 +1,5 @@
 // :copyright: Copyright (c) 2016 ftrack
+
 import { combineReducers } from 'redux';
 import { routerReducer } from 'react-router-redux';
 

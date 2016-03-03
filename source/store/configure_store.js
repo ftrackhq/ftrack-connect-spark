@@ -1,4 +1,5 @@
 // :copyright: Copyright (c) 2016 ftrack
+
 import { applyMiddleware, createStore } from 'redux';
 
 import rootReducer from '../reducer/root_reducer.js';
