@@ -8,21 +8,23 @@ const allowedEnvs = ['dev', 'dist', 'test'];
 
 // Set the correct environment
 var env;
-if(args._.length > 0 && args._.indexOf('start') !== -1) {
-  env = 'test';
-} else if (args.env) {
-  env = args.env;
-} else {
-  env = 'dev';
+if (args._.length > 0 && args._.indexOf('start') !== -1) {
+    env = 'test';
+}
+else if (args.env) {
+    env = args.env;
+}
+else {
+    env = 'dev';
 }
 process.env.REACT_WEBPACK_ENV = env;
 
 // Get available configurations
 const configs = {
-  base: require(path.join(__dirname, 'config/base')),
-  dev: require(path.join(__dirname, 'config/dev')),
-  dist: require(path.join(__dirname, 'config/dist')),
-  test: require(path.join(__dirname, 'config/test'))
+    base: require(path.join(__dirname, 'config/base')),
+    dev: require(path.join(__dirname, 'config/dev')),
+    dist: require(path.join(__dirname, 'config/dist')),
+    test: require(path.join(__dirname, 'config/test'))
 };
 
 /**
@@ -31,9 +33,13 @@ const configs = {
  * @return {Object} Webpack config
  */
 function buildConfig(wantedEnv) {
-  let isValid = wantedEnv && wantedEnv.length > 0 && allowedEnvs.indexOf(wantedEnv) !== -1;
-  let validEnv = isValid ? wantedEnv : 'dev';
-  return configs[validEnv];
+    let isValid = (
+        wantedEnv &&
+        wantedEnv.length > 0 &&
+        allowedEnvs.indexOf(wantedEnv) !== -1
+    );
+    let validEnv = isValid ? wantedEnv : 'dev';
+    return configs[validEnv];
 }
 
 module.exports = buildConfig(env);

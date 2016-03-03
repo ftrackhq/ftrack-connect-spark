@@ -12,7 +12,7 @@ const config = Object.assign({}, baseConfig, {
     entry: [
         `webpack-dev-server/client?http://127.0.0.1:${defaultSettings.port}`,
         'webpack/hot/only-dev-server',
-        './source/index',
+        './source/index'
     ],
     cache: true,
     devtool: 'eval-source-map',
@@ -20,10 +20,10 @@ const config = Object.assign({}, baseConfig, {
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NoErrorsPlugin(),
         new BowerWebpackPlugin({
-            searchResolveModulesDirectories: false,
+            searchResolveModulesDirectories: false
         }),
     ],
-    module: defaultSettings.getDefaultModules(),
+    module: defaultSettings.getDefaultModules()
 });
 
 // Add needed loaders to the defaults here
@@ -33,7 +33,7 @@ config.module.loaders.push({
     include: [].concat(
         config.additionalPaths,
         [path.join(__dirname, '/../source')]
-    ),
+    )
 });
 
 module.exports = config;

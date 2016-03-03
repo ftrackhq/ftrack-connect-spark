@@ -19,13 +19,13 @@ function getDefaultModules() {
     const preLoaders = [{
         test: /\.(js|jsx)$/,
         loader: 'eslint-loader',
-        exclude: /node_modules/,
+        exclude: /node_modules/
     }];
 
     const BASE_CSS_LOADER = 'css?sourceMap&-minimize';
     const PATHS_TO_TREAT_AS_CSS_MODULES = [
         'react-toolbox',
-        srcPath,
+        srcPath
     ];
     const cssModulesRegex = new RegExp(
         `(${PATHS_TO_TREAT_AS_CSS_MODULES.join('|')})`
@@ -35,7 +35,7 @@ function getDefaultModules() {
         BASE_CSS_LOADER,
         'modules',
         'importLoaders=1',
-        'localIdentName=[name]__[local]___[hash:base64:5]',
+        'localIdentName=[name]__[local]___[hash:base64:5]'
     ].join('&');
 
     loaders.push({
@@ -45,8 +45,8 @@ function getDefaultModules() {
             'style',
             cssModulesLoader,
             'postcss',
-            'sass?sourceMap',
-        ],
+            'sass?sourceMap'
+        ]
     });
 
     loaders.push({
@@ -55,8 +55,8 @@ function getDefaultModules() {
         loaders: [
             'style',
             cssModulesLoader,
-            'postcss',
-        ],
+            'postcss'
+        ]
     });
 
     loaders.push({
@@ -66,8 +66,8 @@ function getDefaultModules() {
             'style',
             BASE_CSS_LOADER,
             'postcss',
-            'sass?sourceMap',
-        ],
+            'sass?sourceMap'
+        ]
     });
 
     loaders.push({
@@ -76,18 +76,18 @@ function getDefaultModules() {
         loaders: [
             'style',
             BASE_CSS_LOADER,
-            'postcss',
-        ],
+            'postcss'
+        ]
     });
 
     loaders.push({
         test: /\.(png|jpg|gif|woff|woff2)$/,
-        loader: 'url-loader?limit=8192',
+        loader: 'url-loader?limit=8192'
     });
 
     return {
         preLoaders,
-        loaders,
+        loaders
     };
 }
 
@@ -95,5 +95,5 @@ module.exports = {
     srcPath,
     publicPath: '/assets/',
     port: dfltPort,
-    getDefaultModules,
+    getDefaultModules
 };
