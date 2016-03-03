@@ -3,7 +3,7 @@
 import React, { PropTypes } from 'react';
 
 import 'normalize.css';
-import 'style/App.css';
+import 'style/app.css';
 
 
 /** A root layout. */
