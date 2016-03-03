@@ -3,7 +3,7 @@
     "private": true,
     "version": "0.0.1",
     "description": "ftrack-connect-spark provides a base to build ftrack integrations using web technologies.",
-    "main": "",
+    "main": "source/index.js",
     "scripts": {
         "clean": "rimraf dist/*",
         "copy": "copyfiles -f ./source/index.html ./source/favicon.ico ./dist",
