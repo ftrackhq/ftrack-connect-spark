@@ -21,19 +21,19 @@ Mac OS
 1. Install `homebrew <http://brew.sh/>`_, unless already installed.
 2. Ensure homebrew is installed correctly::
 
-  brew doctor
+    brew doctor
 
 3. Install latest node and npm versions::
 
-  brew install node
+    brew install node
 
 4. Install n globally::
 
-  npm install -g n
+    npm install -g n
 
 5. Install latest stable version::
 
-  n stable
+    n stable
 
 Windows
 -------
@@ -46,51 +46,50 @@ Setting up development environment
 1. Checkout this repository
 2. Install dependencies (will run for a few minutes for the first setup)::
 
-  npm install
+    npm install
 
 3. Start development server
 
-  npm start
+    npm start
 
 Commands
 --------
 
 Start for development::
 
-  npm start # or
-  npm run serve
+    npm start # or
+    npm run serve
 
 Start the dev-server with the dist version::
 
-  npm run serve:dist
+    npm run serve:dist
 
 Just build the dist version and copy static files::
 
-  npm run dist
+    npm run dist
 
 Run unit tests::
 
-  npm test
+    npm test
 
 Run the unit tests continuously (repeat the test when code changes are saved)::
 
-  npm run test:watch
+    npm run test:watch
 
 Lint all files in source (also automatically done after tests are run)::
 
-  npm run lint
+    npm run lint
 
 Clean up the dist directory::
 
-  npm run clean
+    npm run clean
 
 Just copy the static assets::
 
-  npm run copy
-
+    npm run copy
 
 Configuring your editor
-======================
+=======================
 
 If your editor supports `EditorConfig <http://editorconfig.org/>`_, the
 configuration should be picked up automatically. Plugins for several editors
@@ -98,17 +97,15 @@ such as Sublime Text, Visual Studio Code and Atom exists.
 
 Syntax highlighting for JavaScript extensions should be extended to add support
 for ES2015 and JSX language extensions through Babel.
-
-For sublime text, install the `Babel` package and change the default syntax
-used for .js files, by navigating to
-`View -> Syntax -> Open all with current extension as -> Babel -> JavaScript (Babel)`.
+For sublime text, install the `Babel` package and change the default syntax used
+for .js files, by navigating to `View -> Syntax -> Open all with current
+extension as -> Babel -> JavaScript (Babel)`.
 
 Next up, you should make sure your editor supplies you with linting information.
 For Sublime Text, install the following packages:
 
 * Sublime-Linter
 * SublimeLinter-contrib-eslint
-
 
 Technology used
 ===============
@@ -185,7 +182,6 @@ In the configuration, we make use of
 `resolve alias <http://webpack.github.io/docs/configuration.html#resolve-alias>`_
 to enable you to import modules relative to source root.
 
-
 Styles
 ======
 
@@ -209,19 +205,19 @@ Updating dependencies
 Use `npm-check-updates <https://www.npmjs.com/package/npm-check-updates>`_ to
 suggest the latest versions::
 
-  $ npm-check-updates
+    $ npm-check-updates
 
 Update package.json with new versions if you agree::
 
-  $ npm-check-updates -u
+    $ npm-check-updates -u
 
 Do a clean install::
 
-  $ rm -rf node_modules
-  $ npm install
+    $ rm -rf node_modules
+    $ npm install
 
 Use `npm shrinkwrap <https://docs.npmjs.com/cli/shrinkwrap>`_ exact versions
 to npm config file `npm-shrinkwrap.json`::
 
-  $ rm npm-shrinkwrap.json
-  $ npm shrinkwrap
+    $ rm npm-shrinkwrap.json
+    $ npm shrinkwrap
