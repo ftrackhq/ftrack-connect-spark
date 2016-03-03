@@ -1,7 +1,8 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 /**
- * Function that returns default values.
+ * Return default values.
+ *
  * Used because Object.assign does a shallow instead of a deep copy.
  * Using [].push will add to the base array, so a require will alter
  * the base array output.
@@ -10,10 +11,7 @@ const path = require('path');
 const srcPath = path.join(__dirname, '/../source');
 const dfltPort = 8000;
 
-/**
- * Get the default modules object for webpack
- * @return {Object}
- */
+/** Return the default modules object for webpack. */
 function getDefaultModules() {
     const loaders = [];
     const preLoaders = [{

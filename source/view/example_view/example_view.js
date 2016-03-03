@@ -6,6 +6,8 @@ import Example from 'component/example';
 
 import style from './example_view.scss';
 
+
+/** An example view. */
 function ExampleView() {
     return (
         <div className={style['example-view']}>

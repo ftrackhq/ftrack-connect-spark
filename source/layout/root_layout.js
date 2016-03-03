@@ -5,6 +5,8 @@ import React, { PropTypes } from 'react';
 import 'normalize.css';
 import 'style/App.css';
 
+
+/** A root layout. */
 function RootLayout({ children }) {
     return (
         <div className="view-container">

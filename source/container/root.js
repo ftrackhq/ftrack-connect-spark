@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { Router } from 'react-router';
 
 
+/** A root container. */
 class Root extends React.Component {
     render() {
         return (

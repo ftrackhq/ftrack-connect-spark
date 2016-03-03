@@ -3,6 +3,8 @@
 import React from 'react';
 import { IndexLink } from 'react-router';
 
+
+/** A view for indicating something was not found. */
 function NotFoundView() {
     return (
         <div>

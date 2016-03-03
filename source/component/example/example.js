@@ -5,6 +5,8 @@ import Button from 'react-toolbox/lib/button';
 
 import style from './example.scss';
 
+
+/** An example component. */
 class Example extends React.Component {
     render() {
         return (

@@ -27,11 +27,7 @@ const configs = {
     test: require(path.join(__dirname, 'config/test'))
 };
 
-/**
- * Build the webpack configuration
- * @param  {String} wantedEnv The wanted environment
- * @return {Object} Webpack config
- */
+/** Build the webpack configuration. */
 function buildConfig(wantedEnv) {
     let isValid = (
         wantedEnv &&
