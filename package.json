@@ -22,6 +22,7 @@
     "repository": "",
     "keywords": [],
     "author": "Your name here",
+    "license" : "Apache-2.0",
     "devDependencies": {
         "babel-core": "^6.0.0",
         "babel-eslint": "^5.0.0",
