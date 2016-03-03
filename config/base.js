@@ -12,7 +12,7 @@ module.exports = {
     output: {
         path: path.join(__dirname, '/../dist/assets'),
         filename: 'app.js',
-        publicPath: defaultSettings.publicPath
+        publicPath: defaultSettings.publicPath,
     },
     devServer: {
         contentBase: './source/',
@@ -20,7 +20,7 @@ module.exports = {
         hot: true,
         port: defaultSettings.port,
         publicPath: defaultSettings.publicPath,
-        noInfo: false
+        noInfo: false,
     },
     resolve: {
         extensions: ['', '.js', '.jsx', '.scss'],
@@ -32,8 +32,8 @@ module.exports = {
             layout: `${defaultSettings.srcPath}/layout/`,
             style: `${defaultSettings.srcPath}/style/`,
             reducer: `${defaultSettings.srcPath}/reducer/`,
-        }
+        },
     },
     module: {},
-    postcss: () => []
+    postcss: () => [],
 };

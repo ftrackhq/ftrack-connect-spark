@@ -16,14 +16,14 @@ module.exports = {
                 test: /\.(js|jsx)$/,
                 loader: 'isparta-instrumenter-loader',
                 include: [
-                    path.join(__dirname, '/../source')
-                ]
+                    path.join(__dirname, '/../source'),
+                ],
             },
         ],
         loaders: [
             {
                 test: /\.(png|jpg|gif|woff|woff2|css|sass|scss|less|styl)$/,
-                loader: 'null-loader'
+                loader: 'null-loader',
             },
             {
                 test: /\.(js|jsx)$/,
@@ -32,11 +32,11 @@ module.exports = {
                     baseConfig.additionalPaths,
                     [
                         path.join(__dirname, '/../source'),
-                        path.join(__dirname, '/../test')
+                        path.join(__dirname, '/../test'),
                     ]
-                )
-            }
-        ]
+                ),
+            },
+        ],
     },
     resolve: {
         extensions: ['', '.js', '.jsx', '.scss'],
@@ -48,12 +48,12 @@ module.exports = {
             layout: `${srcPath}/layout/`,
             style: `${srcPath}/style/`,
             reducer: `${srcPath}/reducer/`,
-            helper: path.join(__dirname, '/../test/helper')
-        }
+            helper: path.join(__dirname, '/../test/helper'),
+        },
     },
     plugins: [
         new BowerWebpackPlugin({
-            searchResolveModulesDirectories: false
-        })
-    ]
+            searchResolveModulesDirectories: false,
+        }),
+    ],
 };
