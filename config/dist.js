@@ -10,7 +10,10 @@ const defaultSettings = require('./defaults');
 const BowerWebpackPlugin = require('bower-webpack-plugin');
 
 const config = Object.assign({}, baseConfig, {
-    entry: path.join(__dirname, '../source/index'),
+    entry: {
+        main: ['babel-polyfill', path.join(__dirname, '../source/index')],
+        adobe: ['babel-polyfill', path.join(__dirname, '../source/adobe/index')],
+    },
     cache: false,
     devtool: 'sourcemap',
     plugins: [

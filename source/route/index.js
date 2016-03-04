@@ -11,6 +11,7 @@ export default () => (
     <Route path="/" component={RootLayout}>
         <IndexRoute component={ExampleView} />
 
+        <Redirect from="*.html" to="/" />
         <Route path="/404" component={NotFoundView} />
         <Redirect from="*" to="/404" />
     </Route>

@@ -1,14 +1,25 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import { applyMiddleware, createStore } from 'redux';
+import createLogger from 'redux-logger';
+import createSagaMiddleware from 'redux-saga';
+import rootReducer from 'reducer/root';
 
-import rootReducer from '../reducer/root.js';
-
-export default function configureStore(initialState = {}) {
+export default function createApplication(
+    initialState = {},
+    sagas = []
+) {
     // Compose redux middleware
-    const middleware = applyMiddleware();
+    const middleware = [];
+    if (sagas && sagas.length) {
+        middleware.push(createSagaMiddleware(...sagas));
+    }
+    middleware.push(createLogger());
+    const createStoreWithMiddleware = applyMiddleware(...middleware);
 
-    const store = middleware(createStore)(rootReducer, initialState);
+    const store = createStoreWithMiddleware(
+        createStore
+    )(rootReducer, initialState);
 
     if (module.hot) {
         // Enable Webpack hot module replacement for reducers
