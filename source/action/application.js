@@ -3,7 +3,6 @@
 const APPLICATION_SHOW_DEBUG_MESSAGE = 'APPLICATION_SHOW_DEBUG_MESSAGE';
 
 export function applicationDebugMessage(message = 'Hello world!') {
-    console.info('applicationDebugMessage', message);
     return {
         type: APPLICATION_SHOW_DEBUG_MESSAGE,
         payload: {
