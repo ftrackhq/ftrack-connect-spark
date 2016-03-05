@@ -153,6 +153,7 @@ The project directory structure looks like the following::
   │   ├── reducer            # Redux reducers
   │   ├── route              # Application route definitions
   │   ├── store              # Redux store
+  │   ├── saga               # Sagas orchestrate asynchronous operations.
   │   ├── static             # Static assets (images, etc..)
   │   ├── style              # Application-wide styles
   │   ├── view               # Components that live at a route
