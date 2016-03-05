@@ -5,9 +5,6 @@ const webpack = require('webpack');
 const baseConfig = require('./base');
 const defaultSettings = require('./defaults');
 
-// Add needed plugins here
-const BowerWebpackPlugin = require('bower-webpack-plugin');
-
 const config = Object.assign({}, baseConfig, {
     entry: {
         main: [
@@ -22,9 +19,6 @@ const config = Object.assign({}, baseConfig, {
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NoErrorsPlugin(),
-        new BowerWebpackPlugin({
-            searchResolveModulesDirectories: false,
-        }),
     ],
     module: defaultSettings.getDefaultModules(),
 });
