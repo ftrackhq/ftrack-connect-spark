@@ -14,4 +14,4 @@ function* mockSaga() {
     );
 }
 
-export default mockSaga;
+export default [mockSaga];
