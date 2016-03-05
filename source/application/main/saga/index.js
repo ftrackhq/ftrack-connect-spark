@@ -1,3 +1,5 @@
+// :copyright: Copyright (c) 2016 ftrack
+
 import { takeEvery } from 'redux-saga';
 import { call } from 'redux-saga/effects';
 import { type } from 'action/application';

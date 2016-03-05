@@ -147,6 +147,7 @@ The project directory structure looks like the following::
   ├── server.js              # Webpack dev server entry point
   ├── source                 # Application source code
   │   ├── action             # Redux actions
+  │   ├── application        # Application-specific behavior and entry points
   │   ├── component          # Presentational, "dumb", react components
   │   ├── container          # Components that provide context (e.g. Redux Provider)
   │   ├── layout             # Components that dictate major page structure

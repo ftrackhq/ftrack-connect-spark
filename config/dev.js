@@ -14,7 +14,7 @@ const config = Object.assign({}, baseConfig, {
             'babel-polyfill',
             `webpack-dev-server/client?http://127.0.0.1:${defaultSettings.port}`,
             'webpack/hot/only-dev-server',
-            './source/index',
+            './source/application/main/index',
         ],
     },
     cache: true,

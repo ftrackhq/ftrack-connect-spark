@@ -6,7 +6,7 @@
     "main": "source/index.js",
     "scripts": {
         "clean": "rimraf dist/*",
-        "copy": "copyfiles -f ./source/index.html ./source/favicon.ico ./dist",
+        "copy": "copyfiles -f ./source/index.html ./source/favicon.ico ./dist & copyfiles -f ./source/application/adobe/index.html ./dist/adobe ",
         "dist": "npm run copy & webpack --env=dist",
         "lint": "eslint ./source",
         "posttest": "npm run lint",
