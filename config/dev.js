@@ -32,7 +32,10 @@ const config = Object.assign({}, baseConfig, {
 // Add needed loaders to the defaults here
 config.module.loaders.push({
     test: /\.(js|jsx)$/,
-    loader: 'react-hot!babel-loader',
+    loader: 'babel-loader',
+    query: {
+        presets: ['react', 'es2015', 'react-hmre'],
+    },
     include: [].concat(
         config.additionalPaths,
         [path.join(__dirname, '/../source')]

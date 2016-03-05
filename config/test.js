@@ -28,6 +28,9 @@ module.exports = {
             {
                 test: /\.(js|jsx)$/,
                 loader: 'babel-loader',
+                query: {
+                    presets: ['react', 'es2015'],
+                },
                 include: [].concat(
                     baseConfig.additionalPaths,
                     [
