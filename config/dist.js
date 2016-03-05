@@ -10,11 +10,11 @@ const config = Object.assign({}, baseConfig, {
     entry: {
         main: [
             'babel-polyfill',
-            path.join(__dirname, '../source/application/main/index')
+            path.join(__dirname, '../source/application/main/index'),
         ],
         adobe: [
             'babel-polyfill',
-            path.join(__dirname, '../source/application/adobe/index')
+            path.join(__dirname, '../source/application/adobe/index'),
         ],
     },
     cache: false,
