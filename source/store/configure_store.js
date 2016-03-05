@@ -1,6 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-import { applyMiddleware, createStore } from 'redux';
+import { applyMiddleware, createStore, compose } from 'redux';
 import createLogger from 'redux-logger';
 import createSagaMiddleware from 'redux-saga';
 import rootReducer from 'reducer/root';
@@ -15,7 +15,10 @@ export default function createApplication(
         middleware.push(createSagaMiddleware(...sagas));
     }
     middleware.push(createLogger());
-    const createStoreWithMiddleware = applyMiddleware(...middleware);
+    const createStoreWithMiddleware = compose(
+        applyMiddleware(...middleware),
+        window.devToolsExtension ? window.devToolsExtension() : f => f
+    );
 
     const store = createStoreWithMiddleware(
         createStore
