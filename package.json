@@ -6,7 +6,7 @@
     "main": "source/index.js",
     "scripts": {
         "clean": "rimraf dist/*",
-        "copy": "copyfiles -f ./source/index.html ./source/favicon.ico ./dist",
+        "copy": "copyfiles -f ./source/index.html ./source/favicon.ico ./dist & copyfiles -f ./source/application/adobe/index.html ./dist/adobe ",
         "dist": "npm run copy & webpack --env=dist",
         "lint": "eslint ./source",
         "posttest": "npm run lint",
@@ -27,9 +27,10 @@
         "babel-core": "^6.0.0",
         "babel-eslint": "^5.0.0",
         "babel-loader": "^6.0.0",
+        "babel-polyfill": "^6.3.14",
         "babel-preset-es2015": "^6.0.15",
         "babel-preset-react": "^6.0.15",
-        "bower-webpack-plugin": "^0.1.9",
+        "babel-preset-react-hmre": "^1.1.0",
         "chai": "^3.2.0",
         "copyfiles": "^0.2.1",
         "css-loader": "^0.23.0",
@@ -57,7 +58,6 @@
         "postcss": "^5.0.11",
         "postcss-loader": "^0.8.0",
         "react-addons-test-utils": "^0.14.0",
-        "react-hot-loader": "^1.2.9",
         "rimraf": "^2.4.3",
         "sass-loader": "^3.1.2",
         "style-loader": "^0.13.0",
@@ -76,6 +76,8 @@
         "react-router": "^2.0.0",
         "react-router-redux": "^4.0.0",
         "react-toolbox": "^0.14.1",
-        "redux": "^3.3.1"
+        "redux": "^3.3.1",
+        "redux-saga": "^0.9.3",
+        "redux-logger": "^2.0.4"
     }
 }

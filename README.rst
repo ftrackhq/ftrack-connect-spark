@@ -147,12 +147,14 @@ The project directory structure looks like the following::
   ├── server.js              # Webpack dev server entry point
   ├── source                 # Application source code
   │   ├── action             # Redux actions
+  │   ├── application        # Application-specific behavior and entry points
   │   ├── component          # Presentational, "dumb", react components
   │   ├── container          # Components that provide context (e.g. Redux Provider)
   │   ├── layout             # Components that dictate major page structure
   │   ├── reducer            # Redux reducers
   │   ├── route              # Application route definitions
   │   ├── store              # Redux store
+  │   ├── saga               # Sagas orchestrate asynchronous operations.
   │   ├── static             # Static assets (images, etc..)
   │   ├── style              # Application-wide styles
   │   ├── view               # Components that live at a route
@@ -198,6 +200,28 @@ test and be run by Karma.
 
 When running tests, coverage information (provided via Istanbul) will also
 be written into the coverage/ directory.
+
+Development
+===========
+
+Hot module replacement
+----------------------
+
+React components, CSS styles and redux reducers will be replaced when modified
+when running in development mode. Hot module replacement is a feature provided with
+`webpack <http://webpack.github.io/docs/hot-module-replacement-with-webpack.html>`_
+and allows faster development iterations by replacing modules while an
+application is running without reloading. A babel preset,
+`react hmr <https://github.com/danmartinez101/babel-preset-react-hmre>`_,
+provides transformations necessary to support replacing components.
+
+Redux development tools
+-----------------------
+
+`Redux DevTools Extension <https://github.com/zalmoxisus/redux-devtools-extension>`_
+provides `Redux DevTools <https://github.com/gaearon/redux-devtools>`_ as a
+Chrome extension. This allows you to inspect redux actions and states and
+go back in time and replay actions.
 
 Updating dependencies
 =====================

@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import Example from 'component/example';
+import DebugMessageExample from 'container/debug_message_example';
 
 import style from './style.scss';
 
@@ -12,7 +12,7 @@ function ExampleView() {
     return (
         <div className={style['example-view']}>
             <h2>This is the example view.</h2>
-            <Example />
+            <DebugMessageExample />
         </div>
     );
 }
