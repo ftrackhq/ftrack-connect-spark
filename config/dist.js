@@ -6,18 +6,15 @@ const webpack = require('webpack');
 const baseConfig = require('./base');
 const defaultSettings = require('./defaults');
 
-// Add needed plugins here
-const BowerWebpackPlugin = require('bower-webpack-plugin');
-
 const config = Object.assign({}, baseConfig, {
     entry: {
         main: [
             'babel-polyfill',
-            path.join(__dirname, '../source/application/main/index')
+            path.join(__dirname, '../source/application/main/index'),
         ],
         adobe: [
             'babel-polyfill',
-            path.join(__dirname, '../source/application/adobe/index')
+            path.join(__dirname, '../source/application/adobe/index'),
         ],
     },
     cache: false,
@@ -26,9 +23,6 @@ const config = Object.assign({}, baseConfig, {
         new webpack.optimize.DedupePlugin(),
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': '"production"',
-        }),
-        new BowerWebpackPlugin({
-            searchResolveModulesDirectories: false,
         }),
         new webpack.optimize.UglifyJsPlugin(),
         new webpack.optimize.OccurenceOrderPlugin(),
@@ -41,7 +35,10 @@ const config = Object.assign({}, baseConfig, {
 // Add needed loaders to the defaults here
 config.module.loaders.push({
     test: /\.(js|jsx)$/,
-    loader: 'babel',
+    loader: 'babel-loader',
+    query: {
+        presets: ['react', 'es2015'],
+    },
     include: [].concat(
         config.additionalPaths,
         [path.join(__dirname, '/../source')]
