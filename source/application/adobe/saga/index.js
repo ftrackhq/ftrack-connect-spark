@@ -20,4 +20,4 @@ function* adobeSaga() {
     );
 }
 
-export default adobeSaga;
+export default [adobeSaga];

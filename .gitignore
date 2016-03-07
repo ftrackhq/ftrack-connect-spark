@@ -31,3 +31,6 @@ bower_components/
 
 # Development
 .idea/
+
+# ftrack API Credentials for development
+source/ftrack_api_credentials.json

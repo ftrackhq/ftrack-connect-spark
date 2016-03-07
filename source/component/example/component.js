@@ -25,8 +25,20 @@ class Example extends React.Component {
     }
 
     render() {
+        let userMessage;
+        if (this.props.user) {
+            userMessage = (
+                <p>
+                    Signed in as <em>{this.props.user.username}</em>
+                </p>
+            );
+        } else {
+            userMessage = <p>Not signed in</p>;
+        }
+
         return (
             <div className={style.example}>
+                {userMessage}
                 <Input
                     type="text"
                     label="Message"
@@ -48,10 +60,12 @@ class Example extends React.Component {
 Example.propTypes = {
     onButtonClicked: React.PropTypes.func,
     buttonLabel: React.PropTypes.string,
+    user: React.PropTypes.object,
 };
 
 Example.defaultProps = {
     buttonLabel: 'Press me.',
+    user: null,
 };
 
 export default Example;

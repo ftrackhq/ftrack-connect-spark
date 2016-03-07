@@ -204,6 +204,20 @@ be written into the coverage/ directory.
 Development
 ===========
 
+ftrack API credentials
+----------------------
+
+Specify your API credentials in a file, `source/ftrack_api_credentials.json`.
+It should contain the following keys::
+
+    {
+        "serverUrl": "",
+        "apiUser": "",
+        "apiKey": ""
+    }
+
+
+
 Hot module replacement
 ----------------------
 

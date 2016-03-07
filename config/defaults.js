@@ -78,9 +78,19 @@ function getDefaultModules() {
         ],
     });
 
+    // URL Loader (https://github.com/webpack/url-loader)
+    // Will return a data-url if lower than size limit, and otherwise pass to
+    // a file loader.
     loaders.push({
         test: /\.(png|jpg|gif|woff|woff2)$/,
         loader: 'url-loader?limit=8192',
+    });
+
+    // JSON file loader (https://github.com/webpack/json-loader)
+    // Returns file as parsed json object.
+    loaders.push({
+        test: /\.json$/,
+        loader: 'json-loader',
     });
 
     return {

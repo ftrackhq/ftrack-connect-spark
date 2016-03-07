@@ -1,6 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import createApplication from '../../create_application';
-import mockSaga from './saga';
+import defaultSagas from '../../saga';
+import mockSagas from './saga';
 
-createApplication({ sagas: [mockSaga] });
+createApplication({ sagas: [...defaultSagas, ...mockSagas] });
