@@ -5,7 +5,7 @@ import createLogger from 'redux-logger';
 import createSagaMiddleware from 'redux-saga';
 import rootReducer from 'reducer/root';
 
-export default function createApplication(
+export default function configureStore(
     initialState = {},
     sagas = []
 ) {
