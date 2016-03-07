@@ -6,11 +6,11 @@ import { Router } from 'react-router';
 
 
 /** A root container. */
-function RootContainer() {
+function RootContainer({ store, history, routes }) {
     return (
-        <Provider store={this.props.store}>
-            <Router history={this.props.history}>
-                {this.props.routes}
+        <Provider store={store}>
+            <Router history={history}>
+                {routes}
             </Router>
         </Provider>
     );
