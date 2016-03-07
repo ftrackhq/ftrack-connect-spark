@@ -6,16 +6,14 @@ import { Router } from 'react-router';
 
 
 /** A root container. */
-class RootContainer extends React.Component {
-    render() {
-        return (
-            <Provider store={this.props.store}>
-                <Router history={this.props.history}>
-                    {this.props.routes}
-                </Router>
-            </Provider>
-        );
-    }
+function RootContainer({ store, history, routes }) {
+    return (
+        <Provider store={store}>
+            <Router history={history}>
+                {routes}
+            </Router>
+        </Provider>
+    );
 }
 
 RootContainer.propTypes = {
