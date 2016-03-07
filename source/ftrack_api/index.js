@@ -4,15 +4,42 @@
  * ftrack API session
  */
 class Session {
+
+    /** Construct Session instance with API credentials. */
     constructor(serverUrl, apiUser, apiKey) {
         this._apiUser = apiUser;
         this._apiKey = apiKey;
         this._serverUrl = serverUrl;
-
-        this._name = 'Session';
     }
 
-    _call(data) {
+    /**
+     * Initialize session
+     * Returns promise which will be resolved once session is ready for use.
+     */
+    initialize() {
+        const operations = [
+            { action: 'query_server_information' },
+            { action: 'query_schemas' },
+        ];
+        const request = this._call(operations);
+
+        request.then(
+            (responses) => {
+                this._serverInformation = responses[0];
+                this._schemas = responses[1];
+            }
+        );
+
+        return request;
+    }
+
+    /**
+     * Call API with array of operation objects in *operations*.
+     *
+     * Returns promise which will be resolved with an array of decoded
+     * responses.
+     */
+    _call(operations) {
         const url = `${this._serverUrl}/api`;
 
         const request = fetch(url, {
@@ -23,7 +50,7 @@ class Session {
                 'ftrack-api-key': this._apiKey,
                 'ftrack-user': this._apiUser,
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify(operations),
         }).then(
             (response) => response.json()
         );
@@ -35,7 +62,14 @@ class Session {
 /** Shared API session instance. */
 export let session = null;
 
-/** Configure shared session instance. */
-export function configureSession(serverUrl, apiUser, apiKey) {
+/**
+ * Configure shared session instance.
+ *
+ * Returns promise which will be resolved once session is ready for use.
+ */
+export function configureSharedApiSession(
+    serverUrl, apiUser, apiKey
+) {
     session = new Session(serverUrl, apiUser, apiKey);
+    return session.initialize();
 }
