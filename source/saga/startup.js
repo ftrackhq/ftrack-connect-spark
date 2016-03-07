@@ -3,7 +3,6 @@
 import { call, put } from 'redux-saga/effects';
 
 import { configureSharedApiSession, session } from '../ftrack_api';
-import credentials from '../ftrack_api_credentials.json';
 import {
     ftrackApiUserAuthenticated,
     ftrackApiAuthenticationFailed,
@@ -26,6 +25,17 @@ function queryUserOperation(apiUser) {
 /** Return user object from batched api responses. */
 const extractUserObject = (responses) => responses[0].data[0];
 
+/** Return ftrack API credentials. */
+function getCredentials() {
+    let credentials = null;
+    try {
+        credentials = require('../ftrack_api_credentials.json');
+    } catch (error) {
+        console.log(error); // eslint-disable-line no-console
+    }
+    return credentials;
+}
+
 /**
  * Startup saga
  *
@@ -40,6 +50,7 @@ const extractUserObject = (responses) => responses[0].data[0];
  */
 function* startupSaga() {
     try {
+        const credentials = yield call(getCredentials);
         yield configureSharedApiSession(
             credentials.serverUrl,
             credentials.apiUser,
