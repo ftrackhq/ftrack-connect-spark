@@ -57,6 +57,20 @@ class Session {
 
         return request;
     }
+
+    /**
+     * Perform a single query operation with *expression*.
+     *
+     * Returns a promise which will be resolved with an array of matched
+     * entities.
+     */
+    _query(expression) {
+        const operation = { action: 'query', expression };
+        let request = this._call([operation]);
+        request = request.then((responses) => responses[0].data);
+
+        return request;
+    }
 }
 
 /** Shared API session instance. */
