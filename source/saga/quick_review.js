@@ -3,8 +3,7 @@
 import { take, call, put } from 'redux-saga/effects';
 
 import { session } from '../ftrack_api';
-import apiActions from 'action/ftrack_api';
-import quickReviewActions, { quickReviewProjectsLoaded } from 'action/quick_review';
+import actions, { quickReviewProjectsLoaded } from 'action/quick_review';
 
 /** Load projects */
 function* loadProjects() {
@@ -25,13 +24,10 @@ function submitQuickReview(action) {
  */
 function* quickReviewSubmitSaga() {
     while (true) {
-        yield take([
-            apiActions.FTRACK_API_USER_AUTHENTICATED,
-            quickReviewActions.QUICK_REVIEW_LOAD,
-        ]);
+        yield take(actions.QUICK_REVIEW_LOAD);
         yield loadProjects();
 
-        const action = yield take(quickReviewActions.QUICK_REVIEW_SUBMIT);
+        const action = yield take(actions.QUICK_REVIEW_SUBMIT);
         submitQuickReview(action);
     }
 }
