@@ -6,6 +6,9 @@ import Autocomplete from 'react-toolbox/lib/autocomplete';
 
 /**
  * Project selector
+ *
+ * TODO: Improve UX of Autocomplete with multiple=false.
+ * Show all alternatives when opening dropdown with an active selection.
  */
 class ProjectSelector extends React.Component {
     constructor() {
@@ -14,9 +17,17 @@ class ProjectSelector extends React.Component {
         this._onChange = this._onChange.bind(this);
     }
 
+    /** Update internal state and call prop.onChange on change. */
     _onChange(value) {
         this.setState({ value });
+        // Trigger blur to set redux form's touched state.
+        this.props.onBlur(this.state.value);
+
         this.props.onChange(value);
+    }
+
+    _errorMessage(field) {
+        return field.touched && field.error || null;
     }
 
     render() {
@@ -25,9 +36,11 @@ class ProjectSelector extends React.Component {
                 direction="down"
                 label="Choose project"
                 multiple={false}
-                onChange={this._onChange}
                 source={this.props.projects}
+                {...this.props}
                 value={this.props.projects[this.state.value] || ''}
+                onChange={this._onChange}
+                error={this._errorMessage(this.props)}
             />
         );
     }
@@ -35,6 +48,7 @@ class ProjectSelector extends React.Component {
 
 ProjectSelector.propTypes = {
     onChange: React.PropTypes.func,
+    onBlur: React.PropTypes.func,
     projects: React.PropTypes.object,
 };
 

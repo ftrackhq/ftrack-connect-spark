@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { reduxForm } from 'redux-form';
 
 import Input from 'react-toolbox/lib/input';
 import DatePicker from 'react-toolbox/lib/date_picker';
@@ -19,34 +20,33 @@ function QuickReviewPreview() {
     );
 }
 
+const validate = values => {
+    const errors = {};
+
+    if (!values.name) {
+        errors.name = 'Required';
+    }
+
+    if (!values.project) {
+        errors.project = 'Required';
+    }
+
+    if (!values.collaborators) {
+        errors.collaborators = 'Required';
+    }
+
+    return errors;
+};
+
+
 /** Quick review view */
+/* eslint-disable react/prefer-stateless-function */
 class QuickReviewView extends React.Component {
     constructor() {
         super();
-        this.state = {
-            values: {
-                name: '',
-                collaborators: '',
-                description: '',
-                expiryDate: undefined,
-            },
-        };
-        this._onFieldChange = this._onFieldChange.bind(this);
         this._onCancelClick = this._onCancelClick.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
-    }
-
-    /** Update internal state when field is changed. */
-    _onFieldChange(name) {
-        return (value) => {
-            console.info('field changed', name, value); // eslint-disable-line no-console
-            const nextState = {
-                values: Object.assign(
-                    {}, this.state.values, { [name]: value }
-                ),
-            };
-            this.setState(nextState);
-        };
+        this._isSubmitDisabled = this._isSubmitDisabled.bind(this);
     }
 
     /** Navigate back on cancel clicked */
@@ -55,13 +55,34 @@ class QuickReviewView extends React.Component {
         this.context.router.goBack();
     }
 
-    /** Call onSubmit prop on form submission. */
+    /** Trigger handleSubmit with values on submission. */
     _onSubmit(e) {
         e.preventDefault();
-        this.props.onSubmit(this.state.values);
+        this.props.handleSubmit(this.props.values);
     }
 
+    /** Return if submit should be disabled */
+    _isSubmitDisabled() {
+        const validationErrors = validate(this.props.values);
+        return (
+            this.props.submitting ||
+            !!Object.keys(validationErrors).length
+        );
+    }
+
+    /** Return error message for *field*. */
+    _errorMessage(field) {
+        return field.touched && field.error || null;
+    }
+
+
     render() {
+        const {
+            fields: {
+                name, project, collaborators, description, expiryDate,
+            },
+        } = this.props;
+
         return (
             <form
                 className={style['quick-review']}
@@ -70,38 +91,38 @@ class QuickReviewView extends React.Component {
                 <h2>Share a quick review</h2>
                 <QuickReviewPreview />
                 <ProjectSelector
-                    onChange={this._onFieldChange('project')}
                     projects={this.props.projects}
+                    {...project}
                 />
                 <Input
                     type="text"
                     label="Review session name"
                     name="name"
-                    value={this.state.values.name}
-                    onChange={this._onFieldChange('name')}
+                    {...name}
+                    error={this._errorMessage(name)}
                 />
                 <Input
                     type="text"
                     label="Invite collaborators"
                     name="collaborators"
-                    value={this.state.values.collaborators}
-                    onChange={this._onFieldChange('collaborators')}
+                    {...collaborators}
+                    error={this._errorMessage(collaborators)}
                 />
                 <Reveal label="Add description" className={style['align-left']}>
                     <Input
                         type="text"
                         label="Description"
                         name="description"
-                        value={this.state.values.description}
-                        onChange={this._onFieldChange('description')}
+                        multiline
                         autoFocus
+                        {...description}
+                        error={this._errorMessage(description)}
                     />
                 </Reveal>
                 <Reveal label="Add expiry" className={style['align-left']}>
                     <DatePicker
                         label="Expiry date"
-                        value={this.state.values.expiryDate}
-                        onChange={this._onFieldChange('expiryDate')}
+                        {...expiryDate}
                     />
                 </Reveal>
                 <div className={style.actions}>
@@ -113,6 +134,7 @@ class QuickReviewView extends React.Component {
                         label="Share"
                         raised
                         primary
+                        disabled={this._isSubmitDisabled()}
                     />
                 </div>
             </form>
@@ -125,13 +147,17 @@ QuickReviewView.contextTypes = {
 };
 
 QuickReviewView.propTypes = {
-    onSubmit: React.PropTypes.func,
+    values: React.PropTypes.object.isRequired,
+    fields: React.PropTypes.object.isRequired,
+    handleSubmit: React.PropTypes.func.isRequired,
+    resetForm: React.PropTypes.func.isRequired,
+    submitting: React.PropTypes.bool.isRequired,
     projects: React.PropTypes.object,
 };
 
 function mapDispatchToProps(dispatch) {
     return {
-        onSubmit(values) {
+        handleSubmit(values) {
             dispatch(quickReviewSubmit(values));
         },
     };
@@ -142,5 +168,12 @@ QuickReviewView = connect(
     mapDispatchToProps
 )(QuickReviewView);
 
+QuickReviewView = reduxForm({
+    form: 'quickReview',
+    fields: [
+        'name', 'project', 'collaborators', 'description', 'expiryDate',
+    ],
+    validate,
+})(QuickReviewView);
 
 export default QuickReviewView;
