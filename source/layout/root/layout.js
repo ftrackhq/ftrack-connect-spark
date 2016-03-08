@@ -5,8 +5,8 @@ import ToolboxApp from 'react-toolbox/lib/app';
 
 import HeaderContainer from 'container/header';
 
-import 'normalize.css';
-import 'style/app.scss';
+import 'react-toolbox/components/commons.scss';
+import style from './style.scss';
 
 
 /** A root layout. */
@@ -14,7 +14,9 @@ function RootLayout({ children }) {
     return (
         <ToolboxApp>
             <HeaderContainer />
-            {children}
+            <div className={style.main}>
+                {children}
+            </div>
         </ToolboxApp>
     );
 }
