@@ -1,4 +1,3 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-.quick-review {
-}
+export { default } from './layout.js';

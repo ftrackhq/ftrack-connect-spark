@@ -23,7 +23,7 @@ class HeaderContainer extends React.Component {
     render() {
         return (
             <AppBar flat className={style.appbar}>
-                <h2 className={style.title}>ftrack</h2>
+                <h3 className={style.title}>ftrack</h3>
                 <IconMenu
                     className={style.menu}
                     icon="share"
