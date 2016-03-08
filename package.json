@@ -78,6 +78,7 @@
         "react-router-redux": "^4.0.0",
         "react-toolbox": "^0.14.2",
         "redux": "^3.3.1",
+        "redux-form": "^4.2.0",
         "redux-saga": "^0.9.3",
         "redux-logger": "^2.0.4"
     }
