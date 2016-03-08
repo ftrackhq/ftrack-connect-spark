@@ -8,6 +8,7 @@ import style from './style';
 
 
 /** Header container containing share menu */
+/* eslint-disable react/prefer-stateless-function */
 class HeaderContainer extends React.Component {
 
     constructor() {
