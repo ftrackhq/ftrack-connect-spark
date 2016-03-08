@@ -46,7 +46,7 @@
         "karma-chai": "^0.1.0",
         "karma-coverage": "^0.5.3",
         "karma-mocha": "^0.2.0",
-        "karma-mocha-reporter": "^1.1.1",
+        "karma-mocha-reporter": "^2.0.0",
         "karma-phantomjs-launcher": "^1.0.0",
         "karma-sourcemap-loader": "^0.3.5",
         "karma-webpack": "^1.7.0",
@@ -76,7 +76,7 @@
         "react-redux": "^4.4.0",
         "react-router": "^2.0.0",
         "react-router-redux": "^4.0.0",
-        "react-toolbox": "^0.14.1",
+        "react-toolbox": "^0.14.2",
         "redux": "^3.3.1",
         "redux-saga": "^0.9.3",
         "redux-logger": "^2.0.4"
