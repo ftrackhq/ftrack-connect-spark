@@ -1,0 +1,8 @@
+{
+
+    "rules": {
+
+        // Allow constant condition in redux-saga generators.
+        "no-constant-condition": 0,
+    }
+}

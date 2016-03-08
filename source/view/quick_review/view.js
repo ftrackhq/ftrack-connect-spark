@@ -1,96 +1,146 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
+import { connect } from 'react-redux';
 
-import style from './style.scss';
-
-import Autocomplete from 'react-toolbox/lib/autocomplete';
 import Input from 'react-toolbox/lib/input';
 import DatePicker from 'react-toolbox/lib/date_picker';
+import Button from 'react-toolbox/lib/button';
 
+import ProjectSelector from 'container/project_selector';
+import Reveal from 'component/reveal';
+import { quickReviewSubmit } from 'action/quick_review';
+import style from './style.scss';
 
-class ProjectSelector extends React.Component {
-    constructor() {
-        super();
-        this.state = { values: [] };
-        this._onChange = this._onChange.bind(this);
-    }
-
-    _onChange(value) {
-        this.setState({ values: [value] });
-        this.props.onChange(value);
-    }
-
-    render() {
-        return (
-            <Autocomplete
-                direction="down"
-                label="Choose project"
-                onChange={this._onChange}
-                source={{
-                    1: 'Project 1',
-                    2: 'Project 2',
-                    3: 'Project 3',
-                    4: 'Project 4',
-                }}
-                name={this.state.values[0]}
-                value={this.state.values}
-            />
-        );
-    }
+/** Quick Review Preview (Placeholder element) */
+function QuickReviewPreview() {
+    return (
+        <div className={style.preview}>[Preview]</div>
+    );
 }
-ProjectSelector.propTypes = {
-    onChange: React.PropTypes.func,
-};
 
 /** Quick review view */
 class QuickReviewView extends React.Component {
-    _onProjectSelectorChange(value) {
-        console.info('_onProjectSelectorChange', value);
+    constructor() {
+        super();
+        this.state = {
+            values: {
+                name: '',
+                collaborators: '',
+                description: '',
+                expiryDate: undefined,
+            },
+        };
+        this._onFieldChange = this._onFieldChange.bind(this);
+        this._onCancelClick = this._onCancelClick.bind(this);
+        this._onSubmit = this._onSubmit.bind(this);
     }
 
-    _onNameChange(value) {
-        console.info('_onNameChange', value);
+    /** Update internal state when field is changed. */
+    _onFieldChange(name) {
+        return (value) => {
+            console.info('field changed', name, value); // eslint-disable-line no-console
+            const nextState = {
+                values: Object.assign(
+                    {}, this.state.values, { [name]: value }
+                ),
+            };
+            this.setState(nextState);
+        };
     }
 
-    _onCollaboratorsChange(value) {
-        console.info('_onCollaboratorsChange', value);
+    /** Navigate back on cancel clicked */
+    _onCancelClick(e) {
+        e.preventDefault();
+        this.context.router.goBack();
     }
 
-    _onDescriptionChange(value) {
-        console.info('_onDescriptionChange', value);
+    /** Call onSubmit prop on form submission. */
+    _onSubmit(e) {
+        e.preventDefault();
+        this.props.onSubmit(this.state.values);
     }
 
     render() {
         return (
-            <div className={style['quick-review']}>
+            <form
+                className={style['quick-review']}
+                onSubmit={this._onSubmit}
+            >
                 <h2>Share a quick review</h2>
-                <div>[Preview]</div>
-                <ProjectSelector onChange={this._onProjectSelectorChange} />
+                <QuickReviewPreview />
+                <ProjectSelector
+                    onChange={this._onFieldChange('project')}
+                    projects={this.props.projects}
+                />
                 <Input
                     type="text"
                     label="Review session name"
                     name="name"
-                    onChange={this._onNameChange}
+                    value={this.state.values.name}
+                    onChange={this._onFieldChange('name')}
                 />
                 <Input
                     type="text"
                     label="Invite collaborators"
                     name="collaborators"
-                    onChange={this._onCollaboratorsChange}
+                    value={this.state.values.collaborators}
+                    onChange={this._onFieldChange('collaborators')}
                 />
-                <Input
-                    type="text"
-                    label="Description"
-                    name="description"
-                    onChange={this._onDescriptionChange}
-                />
-                <DatePicker
-                    label="Expiry date"
-                />
-            </div>
+                <Reveal label="Add description" className={style['align-left']}>
+                    <Input
+                        type="text"
+                        label="Description"
+                        name="description"
+                        value={this.state.values.description}
+                        onChange={this._onFieldChange('description')}
+                        autoFocus
+                    />
+                </Reveal>
+                <Reveal label="Add expiry" className={style['align-left']}>
+                    <DatePicker
+                        label="Expiry date"
+                        value={this.state.values.expiryDate}
+                        onChange={this._onFieldChange('expiryDate')}
+                    />
+                </Reveal>
+                <div className={style.actions}>
+                    <Button
+                        label="Cancel"
+                        onClick={this._onCancelClick}
+                    />
+                    <Button
+                        label="Share"
+                        raised
+                        primary
+                    />
+                </div>
+            </form>
         );
     }
 }
+
+QuickReviewView.contextTypes = {
+    router: React.PropTypes.object.isRequired,
+};
+
+QuickReviewView.propTypes = {
+    onSubmit: React.PropTypes.func,
+    projects: React.PropTypes.object,
+};
+
+function mapDispatchToProps(dispatch) {
+    return {
+        onSubmit(values) {
+            dispatch(quickReviewSubmit(values));
+        },
+    };
+}
+
+QuickReviewView = connect(
+    null,
+    mapDispatchToProps
+)(QuickReviewView);
+
 
 export default QuickReviewView;
