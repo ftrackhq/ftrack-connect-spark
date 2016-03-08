@@ -20,19 +20,21 @@ function QuickReviewPreview() {
     );
 }
 
-const validate = values => {
+const validate = ({ name, project, collaborators }) => {
     const errors = {};
 
-    if (!values.name) {
+    if (!name) {
         errors.name = 'Required';
     }
 
-    if (!values.project) {
+    if (!project) {
         errors.project = 'Required';
     }
 
-    if (!values.collaborators) {
+    if (!collaborators) {
         errors.collaborators = 'Required';
+    } else if (!collaborators.includes('@')) {
+        errors.collaborators = 'Invalid email address(es)';
     }
 
     return errors;
