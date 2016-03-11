@@ -20,6 +20,13 @@ function QuickReviewPreview() {
     );
 }
 
+/** Return if *value* is a valid list of comma-separated emails. */
+function isValidCommaSeparatedEmails(value) {
+    return value.split(',').every(
+        (email) => email.includes('@')
+    );
+}
+
 const validate = ({ name, project, collaborators }) => {
     const errors = {};
 
@@ -33,7 +40,7 @@ const validate = ({ name, project, collaborators }) => {
 
     if (!collaborators) {
         errors.collaborators = 'Required';
-    } else if (!collaborators.includes('@')) {
+    } else if (!isValidCommaSeparatedEmails(collaborators)) {
         errors.collaborators = 'Invalid email address(es)';
     }
 
