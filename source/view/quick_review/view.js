@@ -27,18 +27,24 @@ function isValidCommaSeparatedEmails(value) {
     );
 }
 
+/** Return if *str* is null/undefined or an empty string. */
+function isEmptyString(str) {
+    return (!str || !str.length || !str.trim());
+}
+
+/** Validate form values and return error object. */
 const validate = ({ name, project, collaborators }) => {
     const errors = {};
 
-    if (!name) {
+    if (isEmptyString(name)) {
         errors.name = 'Required';
     }
 
-    if (!project) {
+    if (isEmptyString(project)) {
         errors.project = 'Required';
     }
 
-    if (!collaborators) {
+    if (isEmptyString(collaborators)) {
         errors.collaborators = 'Required';
     } else if (!isValidCommaSeparatedEmails(collaborators)) {
         errors.collaborators = 'Invalid email address(es)';
