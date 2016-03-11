@@ -21,7 +21,11 @@ export class AdobeMediator {
 
     uploadMedia({ path, url, headers }) {
         const uploader = window.top.FT.uploader;
-        console.info('[AdobeMediator]', 'Uploading media', Object.keys(uploader)[0], uploader.uploadMedia);
+
+        console.info(
+            '[AdobeMediator]', 'Uploading media',
+            Object.keys(uploader)[0], uploader.uploadMedia
+        );
 
         const promise = new Promise((resolve, reject) => {
             uploader.uploadFile(path, url, headers, (error, response) => {
