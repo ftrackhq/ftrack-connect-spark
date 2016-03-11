@@ -5,14 +5,19 @@ import ReactDOM from 'react-dom';
 import { browserHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 
-import configureStore from './store/configure_store';
-import makeRoutes from './route';
+import configureStore from '../store/configure_store';
+import makeRoutes from '../route';
 import RootContainer from 'container/root';
+
+export let mediator = null;
 
 export default function createApplication({
     initialState = {},
     sagas = [],
+    applicationMediator = null,
 }) {
+    mediator = applicationMediator;
+
     // Create redux store and sync with react-router-redux.
     const store = configureStore(initialState, sagas);
     const history = syncHistoryWithStore(browserHistory, store);
