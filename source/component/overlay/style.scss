@@ -1,0 +1,32 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+@import "../../style/_color.scss";
+
+.outer {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    background: rgba($color-background, 0.9);
+
+    transition: transform 0.1s ease;
+    transform: translate3d(0,-1000px,0);
+    visibility: hidden;
+}
+
+.active {
+    visibility: visible;
+    transform: translate3d(0,0,0);
+}
+
+.inner {
+    flex: 1;
+}
+
+.message {
+    margin: 2rem;
+}
