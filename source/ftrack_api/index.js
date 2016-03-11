@@ -44,6 +44,7 @@ class Session {
 
         const request = fetch(url, {
             method: 'post',
+            credentials: 'include',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
