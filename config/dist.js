@@ -20,6 +20,10 @@ const config = Object.assign({}, baseConfig, {
     cache: false,
     devtool: 'sourcemap',
     plugins: [
+        new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en/),
+        new webpack.ProvidePlugin({
+            fetch: 'exports?self.fetch!whatwg-fetch',
+        }),
         new webpack.optimize.DedupePlugin(),
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': '"production"',
