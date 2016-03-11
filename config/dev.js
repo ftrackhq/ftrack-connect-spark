@@ -21,6 +21,9 @@ const config = Object.assign({}, baseConfig, {
         new webpack.NoErrorsPlugin(),
     ],
     module: defaultSettings.getDefaultModules(),
+    eslint: {
+        emitWarning: true,
+    },
 });
 
 // Add needed loaders to the defaults here

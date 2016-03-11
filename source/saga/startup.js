@@ -10,20 +10,16 @@ import {
 
 
 /** Return API operation to query user details. */
-function queryUserOperation(apiUser) {
+function queryUserExpression(apiUser) {
     const userFields = [
         'email', 'first_name', 'is_active', 'last_name', 'resource_type',
         'username', 'thumbnail_id',
     ];
-    const userQuery = `
+    return `
         select ${userFields.join()} from User
         where username is "${apiUser}"
     `;
-    return { action: 'query', expression: userQuery };
 }
-
-/** Return user object from batched api responses. */
-const extractUserObject = (responses) => responses[0].data[0];
 
 /** Return ftrack API credentials. */
 function getCredentials() {
@@ -56,11 +52,11 @@ function* startupSaga() {
             credentials.apiUser,
             credentials.apiKey
         );
-        const responses = yield call(
-            [session, session._call],
-            [queryUserOperation(credentials.apiUser)]
+        const users = yield call(
+            [session, session._query],
+            [queryUserExpression(credentials.apiUser)]
         );
-        yield put(ftrackApiUserAuthenticated(extractUserObject(responses)));
+        yield put(ftrackApiUserAuthenticated(users[0]));
     } catch (error) {
         yield put(ftrackApiAuthenticationFailed(error));
     }

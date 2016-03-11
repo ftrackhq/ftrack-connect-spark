@@ -7,15 +7,13 @@ import style from './style.scss';
 
 
 /** Home view */
-class HomeView extends React.Component {
-    render() {
-        return (
-            <div className={style.home}>
-                <h2>ftrack connect spark</h2>
-                <p><Link to="/example">To example view</Link></p>
-            </div>
-        );
-    }
+function HomeView() {
+    return (
+        <div className={style.home}>
+            <h2>ftrack connect spark</h2>
+            <p><Link to="/example">To example view</Link></p>
+        </div>
+    );
 }
 
 export default HomeView;
