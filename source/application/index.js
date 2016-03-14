@@ -4,6 +4,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { browserHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
+import loglevel from 'loglevel';
+const logger = loglevel.getLogger('application');
+
 
 import configureStore from '../store/configure_store';
 import makeRoutes from '../route';
@@ -17,6 +20,10 @@ export default function createApplication({
     applicationMediator = null,
 }) {
     mediator = applicationMediator;
+
+    // Configure logging
+    loglevel.setLevel('debug');
+    logger.debug('Creating application');
 
     // Create redux store and sync with react-router-redux.
     const store = configureStore(initialState, sagas);

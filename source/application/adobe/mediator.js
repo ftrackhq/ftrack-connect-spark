@@ -1,13 +1,30 @@
+// :copyright: Copyright (c) 2016 ftrack
 
+import loglevel from 'loglevel';
+const logger = loglevel.getLogger('adobe:mediator');
 
+/**
+ * Adobe Mediator
+ *
+ * Provides adobe-specific logic by calling methods in
+ * `ftrack-connect-spark-adobe` exposed on the `window` object.
+ */
 export class AdobeMediator {
+
+    /**
+     * Export reviewable media.
+     *
+     * Return promise which is resolved with array of exported media objects,
+     * in the following format: [{ path, name, extension, size }]
+     *
+     */
     exportReviewableMedia(options) {
         const exporter = window.top.FT.exporter;
-        console.info('[AdobeMediator]', '<-[export]-', options);
+        logger.info('Exporting media', options);
 
         const promise = new Promise((resolve, reject) => {
             exporter.exportReviewableMedia(options, (error, response) => {
-                console.info('[AdobeMediator]', '-[export]->', error, response);
+                logger.info('Exported media', error, response);
                 if (error) {
                     reject(error);
                 } else {
@@ -19,16 +36,19 @@ export class AdobeMediator {
         return promise;
     }
 
+    /**
+     * Upload media
+     *
+     * Uploads *path* to *url* with specified *headers*.
+     * Return promise which is resolved when upload is complete.
+     */
     uploadMedia({ path, url, headers }) {
         const uploader = window.top.FT.uploader;
-
-        console.info(
-            '[AdobeMediator]', 'Uploading media',
-            Object.keys(uploader)[0], uploader.uploadMedia
-        );
+        logger.info('Uploading media');
 
         const promise = new Promise((resolve, reject) => {
             uploader.uploadFile(path, url, headers, (error, response) => {
+                logger.info('Uploaded media', error, response);
                 if (error) {
                     reject(error);
                 } else {

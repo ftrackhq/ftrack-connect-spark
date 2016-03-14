@@ -1,18 +1,47 @@
+// :copyright: Copyright (c) 2016 ftrack
 
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+import loglevel from 'loglevel';
+const logger = loglevel.getLogger('main:mediator');
 
-function randomDelay(min, max) {
+/** Return promise which is resolved after *ms* delay. */
+export const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+/**
+ * Return promise which is resolved with *result* after a random delay.
+ *
+ * *min* and *max* should be specified in milliseconds.
+ */
+export function delayedResponse(result, min = 200, max = 600) {
     const timeout = min + (max - min) * Math.random();
-    return delay(timeout);
+    const promise = new Promise((resolve) => {
+        delay(timeout).then(resolve(result));
+    });
+    return promise;
 }
 
-export class WebMediator {
+/**
+ * Main Mediator
+ *
+ * Used for development purposes only.
+ */
+export class MainMediator {
+
+    exportReviewableMedia(options) {
+        logger.info('[MainMediator]', 'Exporting media', options);
+        return delayedResponse([{
+            name: 'image',
+            path: '/Users/Shared/ftrack/media/image.jpg',
+            extension: '.jpg',
+            size: 10403354,
+        }]);
+    }
+
     uploadMedia(options) {
-        console.info('[WebMediator]', 'Uploading media', options);
-        return randomDelay(200, 600);
+        logger.info('[MainMediator]', 'Uploading media', options);
+        return delayedResponse(true);
     }
 }
 
-const webMediator = new WebMediator();
-
-export default webMediator;
+/** Export *MainMediator* instance. */
+const mainMediator = new MainMediator();
+export default mainMediator;
