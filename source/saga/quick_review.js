@@ -13,6 +13,9 @@ import overlayActions, { overlayShow } from 'action/overlay';
 
 import { mediator } from '../application';
 
+import loglevel from 'loglevel';
+const logger = loglevel.getLogger('saga:quick_review');
+
 /** Load projects */
 function* loadProjects() {
     const projects = yield call(
@@ -67,7 +70,6 @@ function* createQuickReview(values, media) {
 
     const componentVersions = [];
     for (const componentId of Object.keys(media)) {
-
         // TODO: Replace asset creation with create or version-up based on
         // existing asset name.
         // This is the `Upload` asset type, which is guaranteed to exist.
@@ -124,12 +126,12 @@ function* createQuickReview(values, media) {
         }
     }
 
-    console.info('operations', operations); // eslint-disable-line no-console
+    logger.debug('Create Quick Review operations', operations);
     let responses = yield call(
         [session, session._call],
         operations
     );
-    console.info('responses', responses); // eslint-disable-line no-console
+    logger.debug('Create Quick Review responses', responses);
 
     // TODO: Move this logic to previous batch once the issues in API backend
     // has been resolved.
@@ -144,12 +146,12 @@ function* createQuickReview(values, media) {
             }
         ));
     }
-    console.info('operations', operations); // eslint-disable-line no-console
+    logger.debug('Update component operations', operations);
     responses = yield call(
         [session, session._call],
         operations
     );
-    console.info('responses', responses); // eslint-disable-line no-console
+    logger.debug('Update component responses', responses);
 
     return reviewSessionInviteeIds;
 }
@@ -164,12 +166,12 @@ function* sendInvites(reviewSessionInviteeIds) {
         });
     }
 
-    console.info('operations', operations); // eslint-disable-line no-console
+    logger.debug('Send invites operations', operations);
     const responses = yield call(
         [session, session._call],
         operations
     );
-    console.info('responses', responses); // eslint-disable-line no-console
+    logger.debug('Send invites responses', responses);
 }
 
 /** Dispatch a show overlay action with *header* and a progress-style layout. */
@@ -210,14 +212,14 @@ function* getUploadMetadata(media) {
         [session, session._call], operations
     );
 
-    console.info('responses', responses); // eslint-disable-line no-console
+    logger.debug('Get upload metadata responses', responses);
     for (let i = 0; i < responses.length; i += 2) {
         const componentResult = responses[i].data;
         const uploadMetadataResult = responses[i + 1];
         result[uploadMetadataResult.component_id].component = componentResult;
         result[uploadMetadataResult.component_id].upload = uploadMetadataResult;
     }
-    console.info('result', result); // eslint-disable-line no-console
+    logger.debug('Get upload metadata result', result);
     return result;
 }
 
@@ -225,15 +227,11 @@ function* getUploadMetadata(media) {
 function* uploadMedia(uploadMeta) {
     const promises = [];
     Object.keys(uploadMeta).forEach((componentId) => {
-        console.info( // eslint-disable-line no-console
-            'uploadMeta', componentId, uploadMeta[componentId]
-        );
-
         const path = uploadMeta[componentId].path;
         const url = uploadMeta[componentId].upload.url;
         const headers = uploadMeta[componentId].upload.headers;
 
-        console.info('uploading media', path, url, headers); // eslint-disable-line no-console
+        logger.debug('Uploading media', path, url, headers);
         promises.push(
             mediator.uploadMedia({ path, url, headers })
         );
@@ -302,33 +300,33 @@ function* finalizeUpload(uploadMeta) {
 function* submitQuickReview(action) {
     let responses;
     const values = action.payload;
-    console.info('submitQuickReview', values); // eslint-disable-line no-console
+    logger.debug('submitQuickReview', values);
 
     yield showProgress('Gathering media...');
     const media = yield call([mediator, mediator.exportReviewableMedia], {});
-    console.info('Gathered media', media); // eslint-disable-line no-console
+    logger.debug('Gathered media', media);
 
     yield showProgress('Preparing upload...');
     const uploadMeta = yield call(getUploadMetadata, media);
-    console.info('Prepared upload', uploadMeta); // eslint-disable-line no-console
+    logger.debug('Prepared upload', uploadMeta);
 
     yield showProgress('Uploading...');
     responses = yield call(uploadMedia, uploadMeta);
-    console.info('Uploaded', responses); // eslint-disable-line no-console
+    logger.debug('Uploaded', responses);
 
     yield showProgress('Finalizing upload...');
     responses = yield call(finalizeUpload, uploadMeta);
-    console.info('Finalized upload', responses); // eslint-disable-line no-console
+    logger.debug('Finalized upload', responses);
 
     yield showProgress('Creating objects...');
     const reviewSessionInviteeIds = yield call(
         createQuickReview, values, uploadMeta
     );
-    console.info('Created objects', reviewSessionInviteeIds); // eslint-disable-line no-console
+    logger.debug('Created objects', reviewSessionInviteeIds);
 
     yield showProgress('Sending out invites...');
     responses = yield sendInvites(reviewSessionInviteeIds);
-    console.info('Sent invites', responses); // eslint-disable-line no-console
+    logger.debug('Sent invites', responses);
 
     yield call(showCompletion);
 }
