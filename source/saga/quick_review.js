@@ -22,6 +22,12 @@ function* loadProjects() {
     yield put(quickReviewProjectsLoaded(projects));
 }
 
+/**
+ * Return guessed invitee name from *email*
+ *
+ * Retrieves the part before the at sign, replaces separators with space
+ * and transform to title case.
+ */
 function guessInviteeName(email) {
     let name = email.split('@')[0];
     name = name.replace(/[._-]/g, ' ').replace(/\s\s+/g, ' ');
@@ -31,12 +37,24 @@ function guessInviteeName(email) {
     return name;
 }
 
-function* createQuickReview(values, uploadMeta) {
+/**
+ * Create quick review from form *values* and *media*.
+ *
+ * Creates the following entities in ftrack
+ *
+ * - ReviewSession
+ * - for each component in *media*
+ *     ReviewSessionObject
+ *     Asset
+ *         AssetVersion
+ * - for each collaborator
+ *     ReviewSessionInvitee
+ *
+ * Also update all components in *media* to be children of the created versions.
+ */
+function* createQuickReview(values, media) {
     let operations = [];
     const oneYear = moment().add(1, 'year');
-
-    const assetTypeId = '8f4144e0-a8e6-11e2-9e96-0800200c9a66';
-    const assetId = uuid.v4();
 
     const reviewSessionId = uuid.v4();
     operations.push(createOperation('ReviewSession', {
@@ -48,23 +66,28 @@ function* createQuickReview(values, uploadMeta) {
     }));
 
     const componentVersions = [];
-    for (const componentId of Object.keys(uploadMeta)) {
-        const fileName = `${uploadMeta[componentId].name}-${uuid.v4().substr(0, 4)}`;
+    for (const componentId of Object.keys(media)) {
+
+        // TODO: Replace asset creation with create or version-up based on
+        // existing asset name.
+        // This is the `Upload` asset type, which is guaranteed to exist.
+        const assetTypeId = '8f4144e0-a8e6-11e2-9e96-0800200c9a66';
+        const assetId = uuid.v4();
+        const fileName = media[componentId].name;
+        // TODO: Remove the suffix once the asset is guaranteed unique.
+        const assetName = `${fileName}-${uuid.v4().substr(0, 4)}`;
         operations.push(createOperation('Asset', {
             id: assetId,
-            name: fileName,
+            name: assetName,
             context_id: values.project,
             type_id: assetTypeId,
         }));
 
         const versionId = uuid.v4();
-
         // TODO: Update this once you can select task in spark.
         const taskId = null;
-
         // TODO: Update this once a component is being encoded.
         const thumbnailId = componentId;
-
         operations.push(createOperation('AssetVersion', {
             id: versionId,
             thumbnail_id: thumbnailId,
@@ -108,6 +131,8 @@ function* createQuickReview(values, uploadMeta) {
     );
     console.info('responses', responses); // eslint-disable-line no-console
 
+    // TODO: Move this logic to previous batch once the issues in API backend
+    // has been resolved.
     // Update file components seperatly as it causes integrity errors
     // due to a bug in the API backend.
     operations = [];
@@ -129,6 +154,7 @@ function* createQuickReview(values, uploadMeta) {
     return reviewSessionInviteeIds;
 }
 
+/** Send invites for *reviewSessionInviteeIds*. */
 function* sendInvites(reviewSessionInviteeIds) {
     const operations = [];
     for (const reviewSessionInviteeId of reviewSessionInviteeIds) {
@@ -146,6 +172,7 @@ function* sendInvites(reviewSessionInviteeIds) {
     console.info('responses', responses); // eslint-disable-line no-console
 }
 
+/** Dispatch a show overlay action with *header* and a progress-style layout. */
 function* showProgress(header) {
     yield put(overlayShow({
         header,
@@ -154,6 +181,11 @@ function* showProgress(header) {
     }));
 }
 
+/**
+ * Create file components and retrieve upload meta data for array of *media*.
+ *
+ * Return object mapping component ids to component and upload data.
+ */
 function* getUploadMetadata(media) {
     const operations = [];
 
@@ -164,7 +196,7 @@ function* getUploadMetadata(media) {
         operations.push(
             createOperation('FileComponent', {
                 id: componentId,
-                name: 'ftrackreview-image',
+                name: file.name,
                 size: file.size,
                 file_type: file.extension,
             })
@@ -189,6 +221,7 @@ function* getUploadMetadata(media) {
     return result;
 }
 
+/** Upload component data through mediator for each item in *uploadMeta*. */
 function* uploadMedia(uploadMeta) {
     const promises = [];
     Object.keys(uploadMeta).forEach((componentId) => {
@@ -208,6 +241,23 @@ function* uploadMedia(uploadMeta) {
     yield Promise.all(promises);
 }
 
+/** Show completed overlay and redirect to root once closed. */
+function* showCompletion() {
+    yield put(overlayShow({
+        header: 'Completed',
+        message: 'The review session has now been created.',
+        dissmissable: true,
+    }));
+    yield take(overlayActions.OVERLAY_HIDE);
+    browserHistory.replace('/');
+}
+
+/**
+ * Finalize uploaded component data.
+ *
+ * Create ComponentLocation objects.
+ * Create review-specific Metadata.
+ */
 function* finalizeUpload(uploadMeta) {
     const operations = [];
     const serverLocationId = '3a372bde-05bc-11e4-8908-20c9d081909b';
@@ -221,6 +271,12 @@ function* finalizeUpload(uploadMeta) {
             })
         );
 
+        // TODO: Update this if components are being encoded.
+        operations.push(updateOperation(
+            'FileComponent', [componentId], {
+                name: 'ftrackreview-image',
+            }
+        ));
         operations.push(
             createOperation('Metadata', {
                 parent_id: componentId,
@@ -236,7 +292,13 @@ function* finalizeUpload(uploadMeta) {
     );
 }
 
-/** Handle submit quick review action */
+/**
+ * Handle submit quick review action.
+ *
+ * Upload media, create ftrack entities and send invitees
+ *
+ *
+ */
 function* submitQuickReview(action) {
     let responses;
     const values = action.payload;
@@ -259,22 +321,20 @@ function* submitQuickReview(action) {
     console.info('Finalized upload', responses); // eslint-disable-line no-console
 
     yield showProgress('Creating objects...');
-    const reviewSessionInviteeIds = yield createQuickReview(values, uploadMeta);
+    const reviewSessionInviteeIds = yield call(
+        createQuickReview, values, uploadMeta
+    );
+    console.info('Created objects', reviewSessionInviteeIds); // eslint-disable-line no-console
 
     yield showProgress('Sending out invites...');
     responses = yield sendInvites(reviewSessionInviteeIds);
     console.info('Sent invites', responses); // eslint-disable-line no-console
 
-    yield put(overlayShow({
-        header: 'Completed',
-        message: 'The review session has now been created.',
-        dissmissable: true,
-    }));
-    yield take(overlayActions.OVERLAY_HIDE);
-    browserHistory.replace('/');
+    yield call(showCompletion);
 }
 
 /** Run loadProjects on QUICK_REVIEW_LOAD */
+// TODO: Remove this once ProjectSelector is replaced with query selector.
 export function* quickReviewLoadSaga() {
     yield takeEvery(actions.QUICK_REVIEW_LOAD, loadProjects);
 }
