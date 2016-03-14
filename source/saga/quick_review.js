@@ -7,7 +7,7 @@ import { takeEvery } from 'redux-saga';
 import { call, put, take } from 'redux-saga/effects';
 import { browserHistory } from 'react-router';
 
-import { session } from '../ftrack_api';
+import { session, createOperation, updateOperation } from '../ftrack_api';
 import actions, { quickReviewProjectsLoaded } from 'action/quick_review';
 import overlayActions, { overlayShow } from 'action/overlay';
 
@@ -20,22 +20,6 @@ function* loadProjects() {
         'select id, name, full_name from Project where status is "active"'
     );
     yield put(quickReviewProjectsLoaded(projects));
-}
-
-function createOperation(type, data) {
-    const operation = { action: 'create', entity_type: type };
-    operation.entity_data = Object.assign({}, data, { __entity_type__: type });
-    return operation;
-}
-
-function updateOperation(type, keys, data) {
-    const operation = {
-        action: 'update',
-        entity_type: type,
-        entity_key: keys,
-    };
-    operation.entity_data = Object.assign({}, data, { __entity_type__: type });
-    return operation;
 }
 
 function guessInviteeName(email) {
