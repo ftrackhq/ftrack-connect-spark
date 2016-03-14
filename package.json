@@ -15,8 +15,8 @@
         "release:patch": "npm version patch && npm publish && git push --follow-tags",
         "serve": "node server.js --env=dev",
         "serve:dist": "node server.js --env=dist",
+        "serve:adobe": "node server.js --env=dev_adobe",
         "start": "node server.js --env=dev",
-        "start:adobe": "node server.js --env=dev_adobe",
         "test": "karma start",
         "test:watch": "karma start --autoWatch=true --singleRun=false"
     },
