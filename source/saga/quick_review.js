@@ -13,8 +13,6 @@ import overlayActions, { overlayShow } from 'action/overlay';
 
 import { mediator } from '../application';
 
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
 /** Load projects */
 function* loadProjects() {
     const projects = yield call(
@@ -50,7 +48,7 @@ function guessInviteeName(email) {
 }
 
 function* createQuickReview(values, uploadMeta) {
-    const operations = [];
+    let operations = [];
     const oneYear = moment().add(1, 'year');
 
     const assetTypeId = '8f4144e0-a8e6-11e2-9e96-0800200c9a66';
@@ -65,6 +63,7 @@ function* createQuickReview(values, uploadMeta) {
         end_date: values.expiryDate || oneYear,
     }));
 
+    const componentVersions = [];
     for (const componentId of Object.keys(uploadMeta)) {
         const fileName = `${uploadMeta[componentId].name}-${uuid.v4().substr(0, 4)}`;
         operations.push(createOperation('Asset', {
@@ -98,19 +97,19 @@ function* createQuickReview(values, uploadMeta) {
             review_session_id: reviewSessionId,
         }));
 
-        // TODO: Update this once components are being encoded.
-        operations.push(updateOperation(
-            'FileComponent', [componentId], {
-                version_id: versionId,
-            }
-        ));
+        componentVersions.push({ componentId, versionId });
     }
 
     const emails = values.collaborators.split(',').map((value) => value.trim());
+    const reviewSessionInviteeIds = [];
     for (const email of emails) {
         if (email.includes('@')) {
             const inviteeName = guessInviteeName(email);
+            const reviewSessionInviteeId = uuid.v4();
+            reviewSessionInviteeIds.push(reviewSessionInviteeId);
+
             operations.push(createOperation('ReviewSessionInvitee', {
+                id: reviewSessionInviteeId,
                 review_session_id: reviewSessionId,
                 email,
                 name: inviteeName,
@@ -119,27 +118,48 @@ function* createQuickReview(values, uploadMeta) {
     }
 
     console.info('operations', operations); // eslint-disable-line no-console
-    const responses = yield call(
+    let responses = yield call(
         [session, session._call],
         operations
     );
     console.info('responses', responses); // eslint-disable-line no-console
 
-    // operations = [];
-    // operations.push(createOperation('FileComponent', {
-    //     name: fileName,
-    //     size: fileSize,
-    //     file_type: fileExtension,
-    //     version_id: versionId,
-    // }));
+    // Update file components seperatly as it causes integrity errors
+    // due to a bug in the API backend.
+    operations = [];
+    for (const componentVersion of componentVersions) {
+        // TODO: Update this once components are being encoded.
+        operations.push(updateOperation(
+            'FileComponent', [componentVersion.componentId], {
+                version_id: componentVersion.versionId,
+            }
+        ));
+    }
+    console.info('operations', operations); // eslint-disable-line no-console
+    responses = yield call(
+        [session, session._call],
+        operations
+    );
+    console.info('responses', responses); // eslint-disable-line no-console
 
-    // responses = yield call(
-    //     [session, session._call],
-    //     operations
-    // );
-    // console.info('responses', responses); // eslint-disable-line no-console
+    return reviewSessionInviteeIds;
+}
 
-    return true;
+function* sendInvites(reviewSessionInviteeIds) {
+    const operations = [];
+    for (const reviewSessionInviteeId of reviewSessionInviteeIds) {
+        operations.push({
+            action: 'send_review_session_invite',
+            review_session_invitee_id: reviewSessionInviteeId,
+        });
+    }
+
+    console.info('operations', operations); // eslint-disable-line no-console
+    const responses = yield call(
+        [session, session._call],
+        operations
+    );
+    console.info('responses', responses); // eslint-disable-line no-console
 }
 
 function* showProgress(header) {
@@ -254,16 +274,12 @@ function* submitQuickReview(action) {
     responses = yield call(finalizeUpload, uploadMeta);
     console.info('Finalized upload', responses); // eslint-disable-line no-console
 
-    // TODO: Gather media
-    yield call(delay, 1000);
     yield showProgress('Creating objects...');
-    // TODO: Upload media, update names.
-    yield createQuickReview(values, uploadMeta);
-    yield call(delay, 1000);
+    const reviewSessionInviteeIds = yield createQuickReview(values, uploadMeta);
 
     yield showProgress('Sending out invites...');
-    // TODO: Send out invite emails
-    yield call(delay, 1000);
+    responses = yield sendInvites(reviewSessionInviteeIds);
+    console.info('Sent invites', responses); // eslint-disable-line no-console
 
     yield put(overlayShow({
         header: 'Completed',
