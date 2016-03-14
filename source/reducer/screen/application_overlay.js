@@ -2,6 +2,11 @@
 
 import types from 'action/overlay';
 
+/**
+ * Reduce state for application-wide overlay.
+ *
+ * Set overlay on OVERLAY_SHOW, remove it on OVERLAY_HIDE
+ */
 export default function applicationOverlayReducer(state = {}, action) {
     let nextState = state;
     if (action.type === types.OVERLAY_SHOW) {

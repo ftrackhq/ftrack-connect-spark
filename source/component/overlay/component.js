@@ -8,7 +8,11 @@ import classNames from 'classnames';
 import style from './style';
 
 
-/** Header container containing share menu */
+/**
+ * Overlay component.
+ *
+ * Displays a full-screen overlay which can be customized with various props.
+ */
 function Overlay({ className, active, loader, header, message, dissmissable, onDismss }) {
     const _classNames = classNames(
         style.outer, { [style.active]: active }, className
