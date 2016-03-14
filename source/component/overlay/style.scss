@@ -30,3 +30,9 @@
 .message {
     margin: 2rem;
 }
+
+.error-message {
+    composes: message;
+    font-size: small;
+    color: $color-text-error;
+}

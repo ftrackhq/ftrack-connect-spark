@@ -13,7 +13,7 @@ import style from './style';
  *
  * Displays a full-screen overlay which can be customized with various props.
  */
-function Overlay({ className, active, loader, header, message, dissmissable, onDismss }) {
+function Overlay({ className, active, loader, header, message, error, dissmissable, onDismss }) {
     const _classNames = classNames(
         style.outer, { [style.active]: active }, className
     );
@@ -30,6 +30,10 @@ function Overlay({ className, active, loader, header, message, dissmissable, onD
 
     if (message) {
         children.push(<p className={style.message}>{message}</p>);
+    }
+
+    if (error) {
+        children.push(<p className={style['error-message']}>Error: {error}</p>);
     }
 
     if (dissmissable) {
@@ -51,6 +55,7 @@ Overlay.propTypes = {
     loader: React.PropTypes.bool,
     header: React.PropTypes.node,
     message: React.PropTypes.node,
+    error: React.PropTypes.node,
     dissmissable: React.PropTypes.bool,
     onDismss: React.PropTypes.func,
 };
@@ -61,6 +66,7 @@ Overlay.defaultProps = {
     loader: false,
     header: null,
     message: null,
+    error: null,
     dissmissable: false,
     onDismss: null,
 };
