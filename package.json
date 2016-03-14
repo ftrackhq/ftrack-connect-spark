@@ -25,6 +25,7 @@
     "author": "ftrack",
     "license" : "Apache-2.0",
     "devDependencies": {
+        "autoprefixer": "^6.3.3",
         "babel-core": "^6.0.0",
         "babel-eslint": "^5.0.0",
         "babel-loader": "^6.0.0",
