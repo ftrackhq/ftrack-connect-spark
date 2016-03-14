@@ -250,6 +250,17 @@ function* showCompletion() {
     browserHistory.replace('/');
 }
 
+/** Show completed overlay and redirect to root once closed. */
+function* showFailure(error) {
+    yield put(overlayShow({
+        header: 'Failed to create review',
+        message: 'Please try again or contact support with the following details',
+        error: error && error.message || '',
+        dissmissable: true,
+    }));
+    yield take(overlayActions.OVERLAY_HIDE);
+}
+
 /**
  * Finalize uploaded component data.
  *
@@ -298,37 +309,41 @@ function* finalizeUpload(uploadMeta) {
  *
  */
 function* submitQuickReview(action) {
-    let responses;
-    const values = action.payload;
-    logger.debug('submitQuickReview', values);
+    try {
+        let responses;
+        const values = action.payload;
+        logger.debug('submitQuickReview', values);
 
-    yield showProgress('Gathering media...');
-    const media = yield call([mediator, mediator.exportReviewableMedia], {});
-    logger.debug('Gathered media', media);
+        yield showProgress('Gathering media...');
+        const media = yield call([mediator, mediator.exportReviewableMedia], {});
+        logger.debug('Gathered media', media);
 
-    yield showProgress('Preparing upload...');
-    const uploadMeta = yield call(getUploadMetadata, media);
-    logger.debug('Prepared upload', uploadMeta);
+        yield showProgress('Preparing upload...');
+        const uploadMeta = yield call(getUploadMetadata, media);
+        logger.debug('Prepared upload', uploadMeta);
 
-    yield showProgress('Uploading...');
-    responses = yield call(uploadMedia, uploadMeta);
-    logger.debug('Uploaded', responses);
+        yield showProgress('Uploading...');
+        responses = yield call(uploadMedia, uploadMeta);
+        logger.debug('Uploaded', responses);
 
-    yield showProgress('Finalizing upload...');
-    responses = yield call(finalizeUpload, uploadMeta);
-    logger.debug('Finalized upload', responses);
+        yield showProgress('Finalizing upload...');
+        responses = yield call(finalizeUpload, uploadMeta);
+        logger.debug('Finalized upload', responses);
 
-    yield showProgress('Creating objects...');
-    const reviewSessionInviteeIds = yield call(
-        createQuickReview, values, uploadMeta
-    );
-    logger.debug('Created objects', reviewSessionInviteeIds);
+        yield showProgress('Creating objects...');
+        const reviewSessionInviteeIds = yield call(
+            createQuickReview, values, uploadMeta
+        );
+        logger.debug('Created objects', reviewSessionInviteeIds);
 
-    yield showProgress('Sending out invites...');
-    responses = yield sendInvites(reviewSessionInviteeIds);
-    logger.debug('Sent invites', responses);
+        yield showProgress('Sending out invites...');
+        responses = yield sendInvites(reviewSessionInviteeIds);
+        logger.debug('Sent invites', responses);
 
-    yield call(showCompletion);
+        yield call(showCompletion);
+    } catch (error) {
+        yield call(showFailure, error);
+    }
 }
 
 /** Run loadProjects on QUICK_REVIEW_LOAD */

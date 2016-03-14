@@ -42,7 +42,7 @@ class Session {
     _call(operations) {
         const url = `${this._serverUrl}/api`;
 
-        const request = fetch(url, {
+        let request = fetch(url, {
             method: 'post',
             credentials: 'include',
             headers: {
@@ -52,9 +52,21 @@ class Session {
                 'ftrack-user': this._apiUser,
             },
             body: JSON.stringify(operations),
-        }).then(
+        });
+
+        request = request.then(
             (response) => response.json()
         );
+
+        // Reject promise on API exception.
+        request = request.then((response) => {
+            if (response.exception) {
+                return Promise.reject(
+                    new Error(`${response.exception}: ${response.content}`)
+                );
+            }
+            return Promise.resolve(response);
+        });
 
         return request;
     }
