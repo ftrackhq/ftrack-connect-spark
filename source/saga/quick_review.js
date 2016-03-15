@@ -330,7 +330,7 @@ function* submitQuickReview(action) {
         responses = yield call(finalizeUpload, uploadMeta);
         logger.debug('Finalized upload', responses);
 
-        yield showProgress('Creating objects...');
+        yield showProgress('Creating review session...');
         const reviewSessionInviteeIds = yield call(
             createQuickReview, values, uploadMeta
         );
