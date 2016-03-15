@@ -7,7 +7,7 @@ import { overlayHide } from 'action/overlay';
 
 /** Return overlay configuration. */
 function selectOverlay(state) {
-    return state.screen.overlay || {};
+    return Object.assign({}, state.screen.overlay, { fixed: true });
 }
 
 function mapDispatchToProps(dispatch) {

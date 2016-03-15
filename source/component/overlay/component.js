@@ -13,9 +13,17 @@ import style from './style';
  *
  * Displays a full-screen overlay which can be customized with various props.
  */
-function Overlay({ className, active, loader, header, message, error, dissmissable, onDismss }) {
+function Overlay(props) {
+    const {
+        className, active, fixed, loader, header, message, error,
+        dissmissable, onDismss,
+    } = props;
+
     const _classNames = classNames(
-        style.outer, { [style.active]: active }, className
+        style.outer, {
+            [style.active]: active,
+            [style.fixed]: fixed,
+        }, className
     );
 
     const children = [];
@@ -52,6 +60,7 @@ function Overlay({ className, active, loader, header, message, error, dissmissab
 Overlay.propTypes = {
     className: React.PropTypes.string,
     active: React.PropTypes.bool,
+    fixed: React.PropTypes.bool,
     loader: React.PropTypes.bool,
     header: React.PropTypes.node,
     message: React.PropTypes.node,
@@ -63,6 +72,7 @@ Overlay.propTypes = {
 Overlay.defaultProps = {
     className: '',
     active: false,
+    fixed: false,
     loader: false,
     header: null,
     message: null,

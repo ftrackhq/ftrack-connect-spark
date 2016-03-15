@@ -18,6 +18,10 @@
     visibility: hidden;
 }
 
+.fixed {
+    position: fixed;
+}
+
 .active {
     visibility: visible;
     transform: translate3d(0,0,0);
