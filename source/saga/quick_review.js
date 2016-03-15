@@ -7,7 +7,9 @@ import { takeEvery } from 'redux-saga';
 import { call, put, take } from 'redux-saga/effects';
 import { browserHistory } from 'react-router';
 
-import { session, createOperation, updateOperation } from '../ftrack_api';
+import {
+    session, createOperation, updateOperation, queryOperation,
+} from '../ftrack_api';
 import actions, { quickReviewProjectsLoaded } from 'action/quick_review';
 import overlayActions, { overlayShow } from 'action/overlay';
 
@@ -41,6 +43,60 @@ function guessInviteeName(email) {
 }
 
 /**
+ * Return promise which will be resolved with an array of two elements:
+ *
+ * componentAssets
+ *     Array of objects containing { componentId, assetId } for existing and
+ *     new assets.
+ * createOperations
+ *     Array of API operations to create assets not existing on server.
+ */
+function gatherAssets(contextId, media) {
+    // This is the `Upload` asset type, which is guaranteed to exist.
+    const assetTypeId = '8f4144e0-a8e6-11e2-9e96-0800200c9a66';
+    const operations = [];
+    const componentAssets = Object.keys(media).map(
+        (componentId) => ({ componentId, name: media[componentId].name }));
+
+    for (const componentAsset of componentAssets) {
+        const name = componentAsset.name;
+        operations.push(queryOperation(
+            `select id from Asset where
+            context_id is "${contextId}" and
+            type_id is "${assetTypeId}" and
+            name is "${name}"
+            limit 1`
+        ));
+    }
+
+    const request = session._call(operations);
+    const createOperations = [];
+    const promise = request.then((responses) => {
+        for (let i = 0; i < responses.length; i += 1) {
+            logger.info(responses);
+            const asset = responses[i].data && responses[i].data[0];
+            if (asset) {
+                logger.info('Asset ', asset.id);
+                componentAssets[i].assetId = asset.id;
+            } else {
+                logger.info('No asset ');
+
+                componentAssets[i].assetId = uuid.v4();
+                createOperations.push(createOperation('Asset', {
+                    id: componentAssets[i].assetId,
+                    name: componentAssets[i].name,
+                    context_id: contextId,
+                    type_id: assetTypeId,
+                }));
+            }
+        }
+        return Promise.resolve([componentAssets, createOperations]);
+    });
+
+    return promise;
+}
+
+/**
  * Create quick review from form *values* and *media*.
  *
  * Creates the following entities in ftrack
@@ -59,6 +115,13 @@ function* createQuickReview(values, media) {
     let operations = [];
     const oneYear = moment().add(1, 'year');
 
+    // Get existing or create new assets for media.
+    const [componentAssets, createAssetOperations] = yield call(
+        gatherAssets,
+        values.project, media
+    );
+    operations.push(...createAssetOperations);
+
     const reviewSessionId = uuid.v4();
     operations.push(createOperation('ReviewSession', {
         id: reviewSessionId,
@@ -69,21 +132,10 @@ function* createQuickReview(values, media) {
     }));
 
     const componentVersions = [];
-    for (const componentId of Object.keys(media)) {
-        // TODO: Replace asset creation with create or version-up based on
-        // existing asset name.
-        // This is the `Upload` asset type, which is guaranteed to exist.
-        const assetTypeId = '8f4144e0-a8e6-11e2-9e96-0800200c9a66';
-        const assetId = uuid.v4();
-        const fileName = media[componentId].name;
-        // TODO: Remove the suffix once the asset is guaranteed unique.
-        const assetName = `${fileName}-${uuid.v4().substr(0, 4)}`;
-        operations.push(createOperation('Asset', {
-            id: assetId,
-            name: assetName,
-            context_id: values.project,
-            type_id: assetTypeId,
-        }));
+    for (const componentAsset of componentAssets) {
+        const componentId = componentAsset.componentId;
+        const assetId = componentAsset.assetId;
+        const fileName = componentAsset.name;
 
         const versionId = uuid.v4();
         // TODO: Update this once you can select task in spark.
