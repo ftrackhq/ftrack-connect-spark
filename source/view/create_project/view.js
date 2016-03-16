@@ -3,6 +3,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
+import moment from 'moment';
 
 import Input from 'react-toolbox/lib/input';
 import DatePicker from 'react-toolbox/lib/date_picker';
@@ -174,8 +175,8 @@ CreateProjectView = reduxForm({
         'name', 'workflow', 'startDate', 'dueDate',
     ],
     initialValues: {
-        startDate: new Date(),
-        dueDate: new Date(),
+        startDate: moment().toDate(),
+        dueDate: moment().add(1, 'month').toDate(),
     },
     validate,
 })(CreateProjectView);
