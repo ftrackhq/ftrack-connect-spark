@@ -1,5 +1,9 @@
 @import "../../style/_color.scss";
 
+.link {
+    justify-content: flex-start;
+}
+
 .link > abbr {
     text-transform: uppercase;
     color: $palette-light-green-500;

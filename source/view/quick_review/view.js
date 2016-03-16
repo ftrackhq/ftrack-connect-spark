@@ -6,21 +6,13 @@ import { reduxForm } from 'redux-form';
 
 import Input from 'react-toolbox/lib/input';
 import DatePicker from 'react-toolbox/lib/date_picker';
-import Button from 'react-toolbox/lib/button';
 
+import Form from 'component/form';
 import Selector from 'component/selector';
 import { session } from '../../ftrack_api';
 
 import Reveal from 'component/reveal';
 import { quickReviewSubmit } from 'action/quick_review';
-import style from './style.scss';
-
-/** Quick Review Preview (Placeholder element) */
-function QuickReviewPreview() {
-    return (
-        <div className={style.preview}>[Preview]</div>
-    );
-}
 
 /** Return if *value* is a valid list of comma-separated emails. */
 function isValidCommaSeparatedEmails(value) {
@@ -113,12 +105,13 @@ class QuickReviewView extends React.Component {
         } = this.props;
 
         return (
-            <form
-                className={style['quick-review']}
+            <Form
+                header="Share a quick review"
+                submitLabel="Share"
                 onSubmit={this._onSubmit}
+                onCancel={this._onCancelClick}
+                submitDisabled={this._isSubmitDisabled()}
             >
-                <h2>Share a quick review</h2>
-                <QuickReviewPreview />
                 <Selector
                     label="Projects"
                     query={this._projects}
@@ -138,7 +131,7 @@ class QuickReviewView extends React.Component {
                     {...collaborators}
                     error={this._errorMessage(collaborators)}
                 />
-                <Reveal label="Add description" className={style['align-left']}>
+                <Reveal label="Add description">
                     <Input
                         type="text"
                         label="Description"
@@ -149,25 +142,13 @@ class QuickReviewView extends React.Component {
                         error={this._errorMessage(description)}
                     />
                 </Reveal>
-                <Reveal label="Add expiry" className={style['align-left']}>
+                <Reveal label="Add expiry">
                     <DatePicker
                         label="Expiry date"
                         {...expiryDate}
                     />
                 </Reveal>
-                <div className={style.actions}>
-                    <Button
-                        label="Cancel"
-                        onClick={this._onCancelClick}
-                    />
-                    <Button
-                        label="Share"
-                        raised
-                        primary
-                        disabled={this._isSubmitDisabled()}
-                    />
-                </div>
-            </form>
+            </Form>
         );
     }
 }

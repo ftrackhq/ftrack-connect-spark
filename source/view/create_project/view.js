@@ -7,16 +7,16 @@ import moment from 'moment';
 
 import Input from 'react-toolbox/lib/input';
 import DatePicker from 'react-toolbox/lib/date_picker';
-import Button from 'react-toolbox/lib/button';
 
+import Form from 'component/form';
 import Selector from 'component/selector';
 import Reveal from 'component/reveal';
 import { createProjectSubmit } from 'action/create_project';
-import style from './style.scss';
 
 import { session } from '../../ftrack_api';
 
 
+/** Validate form values and return errors */
 const validate = ({ name, workflow, startDate, dueDate }) => {
     const errors = {};
 
@@ -96,11 +96,13 @@ class CreateProjectView extends React.Component {
         } = this.props;
 
         return (
-            <form
-                className={style['create-project']}
+            <Form
+                header="Create project"
+                submitLabel="Create"
                 onSubmit={this._onSubmit}
+                onCancel={this._onCancelClick}
+                submitDisabled={this._isSubmitDisabled()}
             >
-                <h2>Create project</h2>
                 <Input
                     type="text"
                     label="Project name"
@@ -113,7 +115,7 @@ class CreateProjectView extends React.Component {
                     query={this._workflows}
                     {...workflow}
                 />
-                <Reveal label="Add dates" className={style['align-left']}>
+                <Reveal label="Add dates">
                     <DatePicker
                         label="Start date"
                         {...startDate}
@@ -123,19 +125,7 @@ class CreateProjectView extends React.Component {
                         {...dueDate}
                     />
                 </Reveal>
-                <div className={style.actions}>
-                    <Button
-                        label="Cancel"
-                        onClick={this._onCancelClick}
-                    />
-                    <Button
-                        label="Create"
-                        raised
-                        primary
-                        disabled={this._isSubmitDisabled()}
-                    />
-                </div>
-            </form>
+            </Form>
         );
     }
 }
