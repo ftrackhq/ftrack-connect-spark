@@ -8,7 +8,9 @@ import Input from 'react-toolbox/lib/input';
 import DatePicker from 'react-toolbox/lib/date_picker';
 import Button from 'react-toolbox/lib/button';
 
-import ProjectSelector from 'container/project_selector';
+import Selector from 'component/selector';
+import { session } from '../../ftrack_api';
+
 import Reveal from 'component/reveal';
 import { quickReviewSubmit } from 'action/quick_review';
 import style from './style.scss';
@@ -62,6 +64,18 @@ class QuickReviewView extends React.Component {
         this._onCancelClick = this._onCancelClick.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
         this._isSubmitDisabled = this._isSubmitDisabled.bind(this);
+
+        const _projects = session._query(
+            'select id, full_name from Project where status is "active"'
+        );
+
+        this._projects = _projects.then((data) => {
+            const result = {};
+            for (const project of data) {
+                result[project.id] = project.full_name;
+            }
+            return result;
+        });
     }
 
     /** Navigate back on cancel clicked */
@@ -105,8 +119,9 @@ class QuickReviewView extends React.Component {
             >
                 <h2>Share a quick review</h2>
                 <QuickReviewPreview />
-                <ProjectSelector
-                    projects={this.props.projects}
+                <Selector
+                    label="Projects"
+                    query={this._projects}
                     {...project}
                 />
                 <Input
