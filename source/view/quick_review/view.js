@@ -6,6 +6,7 @@ import { reduxForm } from 'redux-form';
 
 import Input from 'react-toolbox/lib/input';
 import DatePicker from 'react-toolbox/lib/date_picker';
+import { Link } from 'react-router';
 
 import Form from 'component/form';
 import Selector from 'component/selector';
@@ -113,10 +114,11 @@ class QuickReviewView extends React.Component {
                 submitDisabled={this._isSubmitDisabled()}
             >
                 <Selector
-                    label="Projects"
+                    label="Select project"
                     query={this._projects}
                     {...project}
                 />
+                <p>Or, <Link to="/create-project">create a new project</Link>.</p>
                 <Input
                     type="text"
                     label="Review session name"

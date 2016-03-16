@@ -38,11 +38,6 @@ class HeaderContainer extends React.Component {
                         caption="Quick review"
                     />
                     <MenuItem
-                        value="create-project"
-                        icon="play_circle_outline"
-                        caption="Create project"
-                    />
-                    <MenuItem
                         value="publish"
                         icon="file_upload"
                         caption="Publish"
