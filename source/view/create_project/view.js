@@ -32,8 +32,8 @@ const validate = ({ name, workflow, startDate, dueDate }) => {
         errors.startDate = 'Required';
     }
 
-    if (!startDate) {
-        errors.startDate = 'Required';
+    if (!dueDate) {
+        errors.dueDate = 'Required';
     }
 
     return errors;
@@ -53,13 +53,10 @@ class CreateProjectView extends React.Component {
         );
 
         this._workflows = _workflows.then((data) => {
-            let result = {};
-
-            for (let workflow of data) {
-                console.debug(workflow);
+            const result = {};
+            for (const workflow of data) {
                 result[workflow.id] = workflow.name;
             }
-
             return result;
         });
     }

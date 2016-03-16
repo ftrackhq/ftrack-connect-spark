@@ -54,7 +54,7 @@ class Selector extends React.Component {
 Selector.propTypes = {
     onChange: React.PropTypes.func,
     onBlur: React.PropTypes.func,
-    query: React.PropTypes.object
+    query: React.PropTypes.object,
 };
 
 export default Selector;
