@@ -20,20 +20,33 @@ function QuickReviewPreview() {
     );
 }
 
+/** Return if *value* is a valid list of comma-separated emails. */
+function isValidCommaSeparatedEmails(value) {
+    return value.split(',').every(
+        (email) => email.includes('@')
+    );
+}
+
+/** Return if *str* is null/undefined or an empty string. */
+function isEmptyString(str) {
+    return (!str || !str.length || !str.trim());
+}
+
+/** Validate form values and return error object. */
 const validate = ({ name, project, collaborators }) => {
     const errors = {};
 
-    if (!name) {
+    if (isEmptyString(name)) {
         errors.name = 'Required';
     }
 
-    if (!project) {
+    if (isEmptyString(project)) {
         errors.project = 'Required';
     }
 
-    if (!collaborators) {
+    if (isEmptyString(collaborators)) {
         errors.collaborators = 'Required';
-    } else if (!collaborators.includes('@')) {
+    } else if (!isValidCommaSeparatedEmails(collaborators)) {
         errors.collaborators = 'Invalid email address(es)';
     }
 

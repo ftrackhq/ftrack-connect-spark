@@ -1,3 +1,5 @@
+// :copyright: Copyright (c) 2016 ftrack
+
 import types from 'action/ftrack_api';
 
 export default function userReducer(state = null, action) {
