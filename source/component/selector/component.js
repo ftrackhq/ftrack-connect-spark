@@ -16,7 +16,7 @@ class Selector extends React.Component {
         this._onChange = this._onChange.bind(this);
     }
 
-    /** Load the data on render. */
+    /** Load the data when the component has mounted. */
     componentDidMount() {
         this.props.query.then((data) => {
             this.setState({ source: data });
