@@ -9,22 +9,24 @@ import Input from 'react-toolbox/lib/input';
 import Form from 'component/form';
 import Selector from 'component/selector';
 import { session } from '../../ftrack_api';
-import { isEmptyString, validate } from '../../util/validation';
+import { isEmptyString } from '../../util/validation';
 
 import Reveal from 'component/reveal';
 import { quickReviewSubmit } from 'action/quick_review';
 
 import style from './style.scss';
 
-
 /** Validate form values and return error object. */
-const validateForm = ({ name, context, type }) => (
-    {
-        name: validate(name, isEmptyString, 'Required'),
-        context: validate(context, isEmptyString, 'Required'),
-        type: validate(type, isEmptyString, 'Required'),
+const validateForm = (values) => {
+    const errors = {};
+    const requiredFields = ['name', 'context', 'type'];
+    for (const field of requiredFields) {
+        if (isEmptyString(values[field])) {
+            errors[field] = 'Required';
+        }
     }
-);
+    return errors;
+};
 
 
 /** Quick review view */
@@ -67,7 +69,7 @@ class PublishView extends React.Component {
 
     /** Return if submit should be disabled */
     _isSubmitDisabled() {
-        const validationErrors = validate(this.props.values);
+        const validationErrors = validateForm(this.props.values);
         return (
             this.props.submitting ||
             !!Object.keys(validationErrors).length

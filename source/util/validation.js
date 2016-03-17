@@ -5,10 +5,9 @@ export function isEmptyString(str) {
     return (!str || !str.length || !str.trim());
 }
 
-/** Return *message* if *isValueInvalid* returns true for *value*. */
-export function validate(value, isValueInvalid, message) {
-    if (isValueInvalid(value)) {
-        return message;
-    }
-    return null;
+/** Return if *value* is a valid list of comma-separated emails. */
+export function isValidCommaSeparatedEmails(value) {
+    return value.split(',').every(
+        (email) => email.includes('@')
+    );
 }

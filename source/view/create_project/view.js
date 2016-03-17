@@ -14,17 +14,18 @@ import Reveal from 'component/reveal';
 import { createProjectSubmit } from 'action/create_project';
 
 import { session } from '../../ftrack_api';
+import { isEmptyString } from '../../util/validation';
 
 
-/** Validate form values and return errors */
-const validate = ({ name, workflow, startDate, dueDate }) => {
+/** Validate form values and return error object. */
+const validateForm = ({ name, workflow, startDate, dueDate }) => {
     const errors = {};
 
-    if (!name) {
+    if (isEmptyString(name)) {
         errors.name = 'Required';
     }
 
-    if (!workflow) {
+    if (isEmptyString(workflow)) {
         errors.workflow = 'Required';
     }
 
@@ -75,7 +76,7 @@ class CreateProjectView extends React.Component {
 
     /** Return if submit should be disabled */
     _isSubmitDisabled() {
-        const validationErrors = validate(this.props.values);
+        const validationErrors = validateForm(this.props.values);
         return (
             this.props.submitting ||
             !!Object.keys(validationErrors).length
@@ -165,7 +166,7 @@ CreateProjectView = reduxForm({
         startDate: moment().toDate(),
         dueDate: moment().add(1, 'month').toDate(),
     },
-    validate,
+    validateForm,
 })(CreateProjectView);
 
 export default CreateProjectView;

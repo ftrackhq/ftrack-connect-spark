@@ -11,43 +11,30 @@ import { Link } from 'react-router';
 import Form from 'component/form';
 import Selector from 'component/selector';
 import { session } from '../../ftrack_api';
-
+import {
+    isValidCommaSeparatedEmails, isEmptyString,
+} from '../../util/validation';
 import Reveal from 'component/reveal';
 import { quickReviewSubmit } from 'action/quick_review';
 
-/** Return if *value* is a valid list of comma-separated emails. */
-function isValidCommaSeparatedEmails(value) {
-    return value.split(',').every(
-        (email) => email.includes('@')
-    );
-}
-
-/** Return if *str* is null/undefined or an empty string. */
-function isEmptyString(str) {
-    return (!str || !str.length || !str.trim());
-}
-
 /** Validate form values and return error object. */
-const validate = ({ name, project, collaborators }) => {
+const validateForm = (values) => {
     const errors = {};
-
-    if (isEmptyString(name)) {
-        errors.name = 'Required';
+    const requiredFields = ['name', 'project'];
+    for (const field of requiredFields) {
+        if (isEmptyString(values[field])) {
+            errors[field] = 'Required';
+        }
     }
 
-    if (isEmptyString(project)) {
-        errors.project = 'Required';
-    }
-
-    if (isEmptyString(collaborators)) {
+    if (isEmptyString(values.collaborators)) {
         errors.collaborators = 'Required';
-    } else if (!isValidCommaSeparatedEmails(collaborators)) {
+    } else if (!isValidCommaSeparatedEmails(values.collaborators)) {
         errors.collaborators = 'Invalid email address(es)';
     }
 
     return errors;
 };
-
 
 /** Quick review view */
 /* eslint-disable react/prefer-stateless-function */
@@ -85,7 +72,7 @@ class QuickReviewView extends React.Component {
 
     /** Return if submit should be disabled */
     _isSubmitDisabled() {
-        const validationErrors = validate(this.props.values);
+        const validationErrors = validateForm(this.props.values);
         return (
             this.props.submitting ||
             !!Object.keys(validationErrors).length
@@ -186,7 +173,7 @@ QuickReviewView = reduxForm({
     fields: [
         'name', 'project', 'collaborators', 'description', 'expiryDate',
     ],
-    validate,
+    validateForm,
 })(QuickReviewView);
 
 export default QuickReviewView;
