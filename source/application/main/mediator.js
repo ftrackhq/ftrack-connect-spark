@@ -33,13 +33,20 @@ export class MainMediator {
         });
     }
 
-    exportReviewableMedia(options) {
+    exportMedia(options) {
         logger.info('[MainMediator]', 'Exporting media', options);
         return delayedResponse([{
+            use: 'review',
             name: 'image',
             path: '/Users/Shared/ftrack/media/image.jpg',
             extension: '.jpg',
             size: 10403354,
+        }, {
+            use: 'delivery',
+            name: 'photoshop-document',
+            path: '/Users/Shared/ftrack/media/image.psd',
+            extension: '.psd',
+            size: 20800042,
         }]);
     }
 

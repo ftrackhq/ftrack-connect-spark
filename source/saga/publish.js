@@ -2,10 +2,15 @@
 
 import { takeEvery } from 'redux-saga';
 import { call, put } from 'redux-saga/effects';
+import uuid from 'uuid';
 
 import actions, { publishOptions } from 'action/publish';
 import { showProgress, hideOverlay, showFailure } from './lib/overlay';
 import { mediator } from '../application';
+import { gatherAssets } from './lib/share';
+import {
+    session, createOperation, updateOperation, queryOperation,
+} from '../ftrack_api';
 
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('saga:publish');
@@ -15,7 +20,7 @@ const logger = loglevel.getLogger('saga:publish');
  * Prepare publish
  */
 function* preparePublish() {
-    logger.info('preparePublish');
+    logger.info('Prepare publish');
     yield showProgress('Preparing publish...');
 
     // TODO: Ensure connect is running
@@ -38,8 +43,52 @@ function* preparePublish() {
 /**
  * Submit publish
  */
-function* submitPublish() {
-    logger.info('submitPublish');
+function* submitPublish(action) {
+    logger.info('Submit publish');
+    const values = action.payload;
+
+    yield showProgress('Exporting media...');
+    const exportMediaOptions = { reviewable: true, deliverable: true };
+    const media = yield call(
+        [mediator, mediator.exportMedia], exportMediaOptions
+    );
+    logger.info('Exported media', media);
+
+    const reviewableMedia = media.filter((file) => file.use === 'review');
+    const deliverableMedia = media.filter((file) => file.use === 'delivery');
+
+    // Get-or-create asset
+    const assetData = {
+        context_id: values.contextId, name: values.name, type: values.type,
+    };
+    const [assets, createAssetsOperations] = yield call(
+        gatherAssets, [assetData]
+    );
+
+    const assetId = assets[0].id;
+    const versionId = uuid.v4();
+    // TODO: Update this once you can select task in spark.
+    const taskId = null;
+    // TODO: Update this once a component is being encoded.
+    const thumbnailId = null;
+
+    const operations = [
+        ...createAssetsOperations,
+        createOperation('AssetVersion', {
+            id: versionId,
+            thumbnail_id: thumbnailId,
+            asset_id: assetId,
+            status_id: null,
+            task_id: taskId,
+        }),
+    ];
+
+    logger.debug('Create version operations', operations);
+    const responses = yield call(
+        [session, session._call],
+        operations
+    );
+    logger.debug('Create version responses', responses);
 
     // Parallel:
 
@@ -56,6 +105,7 @@ function* submitPublish() {
 
         // TODO: Publish create-component event with data
         // TODO: Await event response
+    logger.info('Finished publish');
 }
 
 
