@@ -10,7 +10,7 @@ import { browserHistory } from 'react-router';
 import {
     session, createOperation, updateOperation, queryOperation,
 } from '../ftrack_api';
-import actions, { quickReviewProjectsLoaded } from 'action/quick_review';
+import actions from 'action/quick_review';
 import overlayActions, { overlayShow } from 'action/overlay';
 
 import { mediator } from '../application';
@@ -18,14 +18,6 @@ import { mediator } from '../application';
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('saga:quick_review');
 
-/** Load projects */
-function* loadProjects() {
-    const projects = yield call(
-        [session, session._query],
-        'select id, name, full_name from Project where status is "active"'
-    );
-    yield put(quickReviewProjectsLoaded(projects));
-}
 
 /**
  * Return guessed invitee name from *email*
@@ -396,12 +388,6 @@ function* submitQuickReview(action) {
     } catch (error) {
         yield call(showFailure, error);
     }
-}
-
-/** Run loadProjects on QUICK_REVIEW_LOAD */
-// TODO: Remove this once ProjectSelector is replaced with query selector.
-export function* quickReviewLoadSaga() {
-    yield takeEvery(actions.QUICK_REVIEW_LOAD, loadProjects);
 }
 
 /** Run submitQuickReview on QUICK_REVIEW_SUBMIT */

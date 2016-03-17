@@ -1,20 +1,8 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-.quick-review {
+.root {
     display: flex;
     flex-direction: column;
-}
-
-.preview {
-    background: #eee;
-    color: #ccc;
-    margin: 1rem 0;
-    padding: 2rem;
-    text-align: center;
-}
-
-.align-left {
-    justify-content: flex-start;
 }
 
 .actions {

@@ -6,19 +6,14 @@ import { reduxForm } from 'redux-form';
 
 import Input from 'react-toolbox/lib/input';
 import DatePicker from 'react-toolbox/lib/date_picker';
-import Button from 'react-toolbox/lib/button';
+import { Link } from 'react-router';
 
-import ProjectSelector from 'container/project_selector';
+import Form from 'component/form';
+import Selector from 'component/selector';
+import { session } from '../../ftrack_api';
+
 import Reveal from 'component/reveal';
 import { quickReviewSubmit } from 'action/quick_review';
-import style from './style.scss';
-
-/** Quick Review Preview (Placeholder element) */
-function QuickReviewPreview() {
-    return (
-        <div className={style.preview}>[Preview]</div>
-    );
-}
 
 /** Return if *value* is a valid list of comma-separated emails. */
 function isValidCommaSeparatedEmails(value) {
@@ -62,6 +57,18 @@ class QuickReviewView extends React.Component {
         this._onCancelClick = this._onCancelClick.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
         this._isSubmitDisabled = this._isSubmitDisabled.bind(this);
+
+        const _projects = session._query(
+            'select id, full_name from Project where status is "active"'
+        );
+
+        this._projects = _projects.then((data) => {
+            const result = {};
+            for (const project of data) {
+                result[project.id] = project.full_name;
+            }
+            return result;
+        });
     }
 
     /** Navigate back on cancel clicked */
@@ -99,16 +106,19 @@ class QuickReviewView extends React.Component {
         } = this.props;
 
         return (
-            <form
-                className={style['quick-review']}
+            <Form
+                header="Share a quick review"
+                submitLabel="Share"
                 onSubmit={this._onSubmit}
+                onCancel={this._onCancelClick}
+                submitDisabled={this._isSubmitDisabled()}
             >
-                <h2>Share a quick review</h2>
-                <QuickReviewPreview />
-                <ProjectSelector
-                    projects={this.props.projects}
+                <Selector
+                    label="Select project"
+                    query={this._projects}
                     {...project}
                 />
+                <p>Or, <Link to="/create-project">create a new project</Link>.</p>
                 <Input
                     type="text"
                     label="Review session name"
@@ -123,7 +133,7 @@ class QuickReviewView extends React.Component {
                     {...collaborators}
                     error={this._errorMessage(collaborators)}
                 />
-                <Reveal label="Add description" className={style['align-left']}>
+                <Reveal label="Add description">
                     <Input
                         type="text"
                         label="Description"
@@ -134,25 +144,13 @@ class QuickReviewView extends React.Component {
                         error={this._errorMessage(description)}
                     />
                 </Reveal>
-                <Reveal label="Add expiry" className={style['align-left']}>
+                <Reveal label="Add expiry">
                     <DatePicker
                         label="Expiry date"
                         {...expiryDate}
                     />
                 </Reveal>
-                <div className={style.actions}>
-                    <Button
-                        label="Cancel"
-                        onClick={this._onCancelClick}
-                    />
-                    <Button
-                        label="Share"
-                        raised
-                        primary
-                        disabled={this._isSubmitDisabled()}
-                    />
-                </div>
-            </form>
+            </Form>
         );
     }
 }

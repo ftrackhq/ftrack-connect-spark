@@ -8,20 +8,20 @@ import NotFoundView from 'view/not_found';
 import HomeView from 'view/home';
 import ExampleView from 'view/example';
 import QuickReviewView from 'view/quick_review';
-import { quickReviewLoad } from 'action/quick_review';
+import CreateProjectView from 'view/create_project';
 
-function dispatchOnEnter(dispatch, actionCreator) {
-    return () => { dispatch(actionCreator()); };
-}
 
-export default (store) => (
+export default () => (
     <Route path="/" component={RootLayout}>
         <IndexRoute component={HomeView} />
         <Route path="/example" component={ExampleView} />
         <Route
             path="/quick-review"
             component={QuickReviewView}
-            onEnter={dispatchOnEnter(store.dispatch, quickReviewLoad)}
+        />
+        <Route
+            path="/create-project"
+            component={CreateProjectView}
         />
 
         <Redirect from="*.html" to="/" />

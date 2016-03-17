@@ -1,20 +1,26 @@
 // :copyright: Copyright (c) 2016 ftrack
 import React from 'react';
-import { connect } from 'react-redux';
 
 import Autocomplete from 'react-toolbox/lib/autocomplete';
 
 /**
- * Project selector
+ * Selector
  *
  * TODO: Improve UX of Autocomplete with multiple=false.
  * Show all alternatives when opening dropdown with an active selection.
  */
-class ProjectSelector extends React.Component {
+class Selector extends React.Component {
     constructor() {
         super();
-        this.state = { value: null };
+        this.state = { value: null, source: {} };
         this._onChange = this._onChange.bind(this);
+    }
+
+    /** Load the data when the component has mounted. */
+    componentDidMount() {
+        this.props.query.then((data) => {
+            this.setState({ source: data });
+        });
     }
 
     /** Update internal state and call prop.onChange on change. */
@@ -34,11 +40,10 @@ class ProjectSelector extends React.Component {
         return (
             <Autocomplete
                 direction="down"
-                label="Choose project"
                 multiple={false}
-                source={this.props.projects}
+                source={this.state.source}
                 {...this.props}
-                value={this.props.projects[this.state.value] || ''}
+                value={this.state.source[this.state.value] || ''}
                 onChange={this._onChange}
                 error={this._errorMessage(this.props)}
             />
@@ -46,31 +51,10 @@ class ProjectSelector extends React.Component {
     }
 }
 
-ProjectSelector.propTypes = {
+Selector.propTypes = {
     onChange: React.PropTypes.func,
     onBlur: React.PropTypes.func,
-    projects: React.PropTypes.object,
+    query: React.PropTypes.object,
 };
 
-ProjectSelector.defaultProps = {
-    projects: {},
-};
-
-/** Return object with project project id: project name from store. */
-function selectProjects({ quickReview }) {
-    const projectData = quickReview && quickReview.projects || [];
-    const projects = projectData.reduce(
-        (accumulator, project) => Object.assign(
-            accumulator, { [project.id]: project.full_name }
-        ), {}
-    );
-    return projects;
-}
-
-function mapStateToProps(state) {
-    return { projects: selectProjects(state) || {} };
-}
-
-ProjectSelector = connect(mapStateToProps)(ProjectSelector);
-
-export default ProjectSelector;
+export default Selector;
