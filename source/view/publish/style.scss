@@ -1,0 +1,19 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+.asset {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    > div {
+        width: calc(1/2 * 100% - 2rem);
+    }
+}
+
+@media (max-width: 400px) {
+    .asset > div {
+        width: calc(2/2 * 100%);
+    }
+}
