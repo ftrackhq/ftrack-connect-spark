@@ -236,7 +236,10 @@ function* submitQuickReview(action) {
         logger.debug('submitQuickReview', values);
 
         yield showProgress('Gathering media...');
-        const media = yield call([mediator, mediator.exportReviewableMedia], {});
+        const media = yield call([mediator, mediator.exportMedia], {
+            reviewable: true,
+            deliverable: false,
+        });
         logger.debug('Gathered media', media);
 
         yield showProgress('Preparing upload...');

@@ -60,6 +60,7 @@ function* createVersion(values, thumbnailId) {
             asset_id: assetId,
             status_id: null,
             task_id: taskId,
+            comment: values.description,
         }),
     ];
 

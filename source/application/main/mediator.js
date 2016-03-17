@@ -35,19 +35,26 @@ export class MainMediator {
 
     exportMedia(options) {
         logger.info('[MainMediator]', 'Exporting media', options);
-        return delayedResponse([{
-            use: 'review',
-            name: 'image',
-            path: '/Users/Shared/ftrack/media/image.jpg',
-            extension: '.jpg',
-            size: 10403354,
-        }, {
-            use: 'delivery',
-            name: 'photoshop-document',
-            path: '/Users/Shared/ftrack/media/image.psd',
-            extension: '.psd',
-            size: 20800042,
-        }]);
+        const media = [];
+        if (options.reviewable) {
+            media.push({
+                use: 'review',
+                name: 'image',
+                path: '/Users/Shared/ftrack/media/image.jpg',
+                extension: '.jpg',
+                size: 10403354,
+            });
+        }
+        if (options.deliverable) {
+            media.push({
+                use: 'delivery',
+                name: 'photoshop-document',
+                path: '/Users/Shared/ftrack/media/image.psd',
+                extension: '.psd',
+                size: 20800042,
+            });
+        }
+        return delayedResponse(media);
     }
 
     uploadMedia(options) {
