@@ -65,7 +65,7 @@ class ListContext extends React.Component {
                 key={ item.id }
                 avatar={ session.thumbnail(item.thumbnail_id, 100) }
                 caption={ item.name }
-                legend={ item.thumbnail_id }
+                legend={ item.__entity_type__ }
                 rightIcon="star"
                 onClick={ onClick }
                 selectable={ 1 }
