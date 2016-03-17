@@ -9,12 +9,15 @@ import HomeView from 'view/home';
 import ExampleView from 'view/example';
 import QuickReviewView from 'view/quick_review';
 import CreateProjectView from 'view/create_project';
+import ListContext from 'view/list_context';
 
 
 export default () => (
     <Route path="/" component={RootLayout}>
         <IndexRoute component={HomeView} />
         <Route path="/example" component={ExampleView} />
+        <Route path="/context" component={ListContext} />
+        <Route path="/context/:parentId" component={ListContext} />
         <Route
             path="/quick-review"
             component={QuickReviewView}

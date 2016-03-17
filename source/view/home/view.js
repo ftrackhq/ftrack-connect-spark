@@ -12,6 +12,7 @@ function HomeView() {
         <div className={style.home}>
             <h2>ftrack connect spark</h2>
             <p><Link to="/example">To example view</Link></p>
+            <p><Link to="/context">Context browser</Link></p>
         </div>
     );
 }
