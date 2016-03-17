@@ -4,15 +4,15 @@ import moment from 'moment';
 import uuid from 'uuid';
 
 import { takeEvery } from 'redux-saga';
-import { call, put, take } from 'redux-saga/effects';
+import { call } from 'redux-saga/effects';
 import { browserHistory } from 'react-router';
 
 import {
     session, createOperation, updateOperation, queryOperation,
 } from '../ftrack_api';
 import actions from 'action/quick_review';
-import overlayActions, { overlayShow } from 'action/overlay';
 
+import { showProgress, showCompletion, showFailure } from './lib/overlay';
 import { mediator } from '../application';
 
 import loglevel from 'loglevel';
@@ -218,14 +218,6 @@ function* sendInvites(reviewSessionInviteeIds) {
     logger.debug('Send invites responses', responses);
 }
 
-/** Dispatch a show overlay action with *header* and a progress-style layout. */
-function* showProgress(header) {
-    yield put(overlayShow({
-        header,
-        message: 'This may take a few minutes. Please keep this window open until finished.',
-        loader: true,
-    }));
-}
 
 /**
  * Create file components and retrieve upload meta data for array of *media*.
@@ -281,28 +273,6 @@ function* uploadMedia(uploadMeta) {
         );
     });
     yield Promise.all(promises);
-}
-
-/** Show completed overlay and redirect to root once closed. */
-function* showCompletion() {
-    yield put(overlayShow({
-        header: 'Completed',
-        message: 'The review session has now been created.',
-        dissmissable: true,
-    }));
-    yield take(overlayActions.OVERLAY_HIDE);
-    browserHistory.replace('/');
-}
-
-/** Show completed overlay and redirect to root once closed. */
-function* showFailure(error) {
-    yield put(overlayShow({
-        header: 'Failed to create review',
-        message: 'Please try again or contact support with the following details',
-        error: error && error.message || '',
-        dissmissable: true,
-    }));
-    yield take(overlayActions.OVERLAY_HIDE);
 }
 
 /**
@@ -384,7 +354,9 @@ function* submitQuickReview(action) {
         responses = yield sendInvites(reviewSessionInviteeIds);
         logger.debug('Sent invites', responses);
 
-        yield call(showCompletion);
+        yield call(showCompletion, () => {
+            browserHistory.replace('/');
+        });
     } catch (error) {
         yield call(showFailure, error);
     }

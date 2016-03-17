@@ -145,6 +145,27 @@ PublishView.propTypes = {
     contexts: React.PropTypes.object,
 };
 
+const formOptions = {
+    form: 'publish',
+    fields: [
+        'name', 'context', 'type', 'description',
+    ],
+    validateForm,
+};
+
+function mapStateToProps(state) {
+    const publish = state.screen.publish || {};
+    // This is the `Upload` asset type, which is guaranteed to exist.
+    const assetTypeId = '8f4144e0-a8e6-11e2-9e96-0800200c9a66';
+
+    return {
+        initialValues: {
+            name: publish.name || '',
+            type: publish.type || assetTypeId,
+        },
+    };
+}
+
 function mapDispatchToProps(dispatch) {
     return {
         handleSubmit(values) {
@@ -153,17 +174,8 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-PublishView = connect(
-    null,
-    mapDispatchToProps
+PublishView = reduxForm(
+    formOptions, mapStateToProps, mapDispatchToProps
 )(PublishView);
-
-PublishView = reduxForm({
-    form: 'publish',
-    fields: [
-        'name', 'context', 'type', 'description',
-    ],
-    validateForm,
-})(PublishView);
 
 export default PublishView;

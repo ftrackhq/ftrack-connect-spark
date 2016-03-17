@@ -11,7 +11,7 @@ export const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
  *
  * *min* and *max* should be specified in milliseconds.
  */
-export function delayedResponse(result, min = 200, max = 600) {
+export function delayedResponse(result, min = 500, max = 750) {
     const timeout = min + (max - min) * Math.random();
     const promise = new Promise((resolve) => {
         delay(timeout).then(resolve(result));
@@ -25,6 +25,13 @@ export function delayedResponse(result, min = 200, max = 600) {
  * Used for development purposes only.
  */
 export class MainMediator {
+
+    getPublishOptions() {
+        logger.info('[MainMediator]', 'Get publish options');
+        return delayedResponse({
+            name: 'image',
+        });
+    }
 
     exportReviewableMedia(options) {
         logger.info('[MainMediator]', 'Exporting media', options);
