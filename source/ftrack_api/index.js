@@ -1,5 +1,34 @@
 // :copyright: Copyright (c) 2016 ftrack
 
+
+/** Return create operation object for entity *type* and *data*. */
+export function createOperation(type, data) {
+    const operation = { action: 'create', entity_type: type };
+    operation.entity_data = Object.assign({}, data, { __entity_type__: type });
+    return operation;
+}
+
+
+/** Return query operation object for *expression*. */
+export function queryOperation(expression) {
+    return { action: 'query', expression };
+}
+
+/**
+ * Return update operation object for entity *type* identified by *keys*.
+ *
+ * *data* should be an object of values to update.
+ */
+export function updateOperation(type, keys, data) {
+    const operation = {
+        action: 'update',
+        entity_type: type,
+        entity_key: keys,
+    };
+    operation.entity_data = Object.assign({}, data, { __entity_type__: type });
+    return operation;
+}
+
 /**
  * ftrack API session
  */
@@ -42,8 +71,9 @@ class Session {
     _call(operations) {
         const url = `${this._serverUrl}/api`;
 
-        const request = fetch(url, {
+        let request = fetch(url, {
             method: 'post',
+            credentials: 'include',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
@@ -51,9 +81,35 @@ class Session {
                 'ftrack-user': this._apiUser,
             },
             body: JSON.stringify(operations),
-        }).then(
+        });
+
+        request = request.then(
             (response) => response.json()
         );
+
+        // Reject promise on API exception.
+        request = request.then((response) => {
+            if (response.exception) {
+                return Promise.reject(
+                    new Error(`${response.exception}: ${response.content}`)
+                );
+            }
+            return Promise.resolve(response);
+        });
+
+        return request;
+    }
+
+    /**
+     * Perform a single query operation with *expression*.
+     *
+     * Returns a promise which will be resolved with an array of matched
+     * entities.
+     */
+    _query(expression) {
+        const operation = queryOperation(expression);
+        let request = this._call([operation]);
+        request = request.then((responses) => responses[0].data);
 
         return request;
     }

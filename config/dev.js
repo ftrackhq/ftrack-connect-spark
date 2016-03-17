@@ -17,10 +17,17 @@ const config = Object.assign({}, baseConfig, {
     cache: true,
     devtool: 'eval-source-map',
     plugins: [
+        new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en/),
+        new webpack.ProvidePlugin({
+            fetch: 'exports?self.fetch!whatwg-fetch',
+        }),
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NoErrorsPlugin(),
     ],
     module: defaultSettings.getDefaultModules(),
+    eslint: {
+        emitWarning: true,
+    },
 });
 
 // Add needed loaders to the defaults here

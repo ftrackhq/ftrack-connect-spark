@@ -10,5 +10,9 @@
         // Validate props indentation in JSX
         // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-indent-props.md
         "react/jsx-indent-props": [2, 4],
+
+        // Require stateless functions when not using lifecycle methods, setState or ref
+        // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/prefer-stateless-function.md
+        "react/prefer-stateless-function": 1,
     }
 }

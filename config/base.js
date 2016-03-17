@@ -1,6 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 const path = require('path');
+const autoprefixer = require('autoprefixer');
 const defaultSettings = require('./defaults');
 const additionalPaths = [];
 
@@ -35,5 +36,13 @@ module.exports = {
         },
     },
     module: {},
-    postcss: () => [],
+    postcss: () => [autoprefixer({
+        browsers: [
+            '> 1%',
+            'last 2 versions',
+            'Firefox ESR',
+            'Chrome >= 40',
+            'Explorer >= 10',
+        ],
+    })],
 };

@@ -1,0 +1,13 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+.root {
+    display: flex;
+    flex-direction: column;
+}
+
+.actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 2rem;
+}
