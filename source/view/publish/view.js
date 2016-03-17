@@ -9,6 +9,7 @@ import Input from 'react-toolbox/lib/input';
 import Form from 'component/form';
 import Selector from 'component/selector';
 import { session } from '../../ftrack_api';
+import { isEmptyString, validate } from '../../util/validation';
 
 import Reveal from 'component/reveal';
 import { quickReviewSubmit } from 'action/quick_review';
@@ -16,29 +17,14 @@ import { quickReviewSubmit } from 'action/quick_review';
 import style from './style.scss';
 
 
-/** Return if *str* is null/undefined or an empty string. */
-function isEmptyString(str) {
-    return (!str || !str.length || !str.trim());
-}
-
 /** Validate form values and return error object. */
-const validate = ({ name, context, type }) => {
-    const errors = {};
-
-    if (isEmptyString(name)) {
-        errors.name = 'Required';
+const validateForm = ({ name, context, type }) => (
+    {
+        name: validate(name, isEmptyString, 'Required'),
+        context: validate(context, isEmptyString, 'Required'),
+        type: validate(type, isEmptyString, 'Required'),
     }
-
-    if (isEmptyString(context)) {
-        errors.context = 'Required';
-    }
-
-    if (isEmptyString(type)) {
-        errors.type = 'Required';
-    }
-
-    return errors;
-};
+);
 
 
 /** Quick review view */
@@ -119,13 +105,11 @@ class PublishView extends React.Component {
                         type="text"
                         label="Name"
                         name="name"
-                        className={style['asset-name']}
                         {...name}
                         error={this._errorMessage(name)}
                     />
                     <Selector
                         label="Type"
-                        className={style['asset-type']}
                         query={this._assetTypes}
                         {...type}
                     />
@@ -173,11 +157,11 @@ PublishView = connect(
 )(PublishView);
 
 PublishView = reduxForm({
-    form: 'quickReview',
+    form: 'publish',
     fields: [
         'name', 'context', 'type', 'description',
     ],
-    validate,
+    validateForm,
 })(PublishView);
 
 export default PublishView;
