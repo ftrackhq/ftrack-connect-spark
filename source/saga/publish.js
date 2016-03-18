@@ -99,8 +99,8 @@ function* submitPublish(action) {
 
     yield showProgress('Exporting media...');
     const media = yield call([mediator, mediator.exportMedia], {
-        reviewable: true,
-        deliverable: true,
+        review: true,
+        delivery: true,
     });
     const reviewableMedia = media.filter((file) => file.use === 'review');
     const deliverableMedia = media.filter((file) => file.use === 'delivery');
@@ -115,7 +115,10 @@ function* submitPublish(action) {
     yield call(createComponents, versionId, deliverableMedia);
 
     logger.info('Finished publish');
-    yield call(showCompletion, () => {
+    yield call(showCompletion, {
+        header: 'Completed',
+        message: 'The versions has been published.',
+    }, () => {
         logger.info('Complete');
     });
 }

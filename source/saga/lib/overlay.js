@@ -15,10 +15,10 @@ export function* showProgress(header) {
 
 
 /** Show completed overlay. */
-export function* showCompletion(callback) {
+export function* showCompletion({ header, message }, callback) {
     yield put(overlayShow({
-        header: 'Completed',
-        message: 'The review session has now been created.',
+        header,
+        message,
         dissmissable: true,
     }));
     yield take(actions.OVERLAY_HIDE);
@@ -26,9 +26,9 @@ export function* showCompletion(callback) {
 }
 
 /** Show failure overlay. */
-export function* showFailure(error, callback = () => {}) {
+export function* showFailure({ header, error }, callback = () => {}) {
     yield put(overlayShow({
-        header: 'Failed to create review',
+        header,
         message: 'Please try again or contact support with the following details',
         error: error && error.message || '',
         dissmissable: true,
