@@ -9,8 +9,8 @@ import actions, { publishOptions } from 'action/publish';
 import {
     showProgress, hideOverlay, showCompletion, showFailure,
 } from './lib/overlay';
-import { gatherAssets, uploadReviewMedia } from './lib/share';
-import { session, createOperation } from '../ftrack_api';
+import { gatherAssets, uploadReviewMedia, updateComponentVersions } from './lib/share';
+import { session, createOperation, Event } from '../ftrack_api';
 
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('saga:publish');
@@ -23,8 +23,19 @@ function* preparePublish() {
     logger.info('Prepare publish');
     yield showProgress('Preparing publish...');
 
-    // TODO: Ensure connect is running
-
+    try {
+        const isConnectRunning = yield session.eventHub.publish(
+            new Event('ftrack.connect.discover', {}),
+            true, 10
+        );
+        logger.debug('Connect discover: ', isConnectRunning);
+    } catch (error) {
+        yield call(showFailure, {
+            header: 'Failed communicate with Connect',
+            message: 'Please ensure ftrack Connect is running.',
+            error,
+        });
+    }
     // TODO: Get asset name
     const options = yield call([mediator, mediator.getPublishOptions], {});
     logger.debug('Gathered options', options);
@@ -88,10 +99,9 @@ function* createComponents(versionId, media) {
     }
 
     logger.info('Creating components', components);
-    // TODO: Create components using connect.
-    // Return promise resolved once components has been created
-    return Promise.reject(
-        new Error('Creating components via connect not yet implemented.')
+    return session.eventHub.publish(
+        new Event('ftrack.spark.publish-components', { components }),
+        true, 10
     );
 }
 
@@ -117,10 +127,13 @@ function* submitPublish(action) {
         yield showProgress('Creating version...');
         const versionId = yield call(createVersion, values, componentIds[0]);
 
-        yield showProgress('Publishing...');
-        yield call(createComponents, versionId, deliverableMedia);
+        const componentVersions = componentIds.map((componentId) => ({ componentId, versionId }));
+        yield call(updateComponentVersions, componentVersions);
 
-        logger.info('Finished publish');
+        yield showProgress('Publishing...');
+        const reply = yield call(createComponents, versionId, deliverableMedia);
+        logger.info('Finished publish', reply);
+
         yield call(showCompletion, {
             header: 'Completed',
             message: 'The versions has been published.',

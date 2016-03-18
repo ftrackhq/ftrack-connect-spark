@@ -8,13 +8,13 @@ import { call } from 'redux-saga/effects';
 import { browserHistory } from 'react-router';
 
 import {
-    session, createOperation, updateOperation, queryOperation,
+    session, createOperation, queryOperation,
 } from '../ftrack_api';
 import actions from 'action/quick_review';
 
 import { showProgress, showCompletion, showFailure } from './lib/overlay';
 import {
-    getUploadMetadata, uploadMedia, finalizeUpload,
+    getUploadMetadata, uploadMedia, finalizeUpload, updateComponentVersions,
 } from './lib/share';
 
 import { mediator } from '../application';
@@ -108,7 +108,7 @@ function gatherAssets(contextId, media) {
  * Also update all components in *media* to be children of the created versions.
  */
 function* createQuickReview(values, media) {
-    let operations = [];
+    const operations = [];
     const oneYear = moment().add(1, 'year');
 
     // Get existing or create new assets for media.
@@ -175,7 +175,7 @@ function* createQuickReview(values, media) {
     }
 
     logger.debug('Create Quick Review operations', operations);
-    let responses = yield call(
+    const responses = yield call(
         [session, session._call],
         operations
     );
@@ -185,21 +185,7 @@ function* createQuickReview(values, media) {
     // has been resolved.
     // Update file components seperatly as it causes integrity errors
     // due to a bug in the API backend.
-    operations = [];
-    for (const componentVersion of componentVersions) {
-        // TODO: Update this once components are being encoded.
-        operations.push(updateOperation(
-            'FileComponent', [componentVersion.componentId], {
-                version_id: componentVersion.versionId,
-            }
-        ));
-    }
-    logger.debug('Update component operations', operations);
-    responses = yield call(
-        [session, session._call],
-        operations
-    );
-    logger.debug('Update component responses', responses);
+    yield updateComponentVersions(componentVersions);
 
     return reviewSessionInviteeIds;
 }

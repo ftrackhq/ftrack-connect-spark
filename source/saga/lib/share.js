@@ -171,3 +171,28 @@ export function* uploadReviewMedia(media) {
     logger.debug('Finalized upload', responses);
     return componentIds;
 }
+
+
+export function* updateComponentVersions(componentVersions) {
+    // TODO: Move this logic to previous batch once the issues in API backend
+    // has been resolved.
+    // Update file components seperatly as it causes integrity errors
+    // due to a bug in the API backend.
+    const operations = [];
+    for (const componentVersion of componentVersions) {
+        // TODO: Update this once components are being encoded.
+        operations.push(updateOperation(
+            'FileComponent', [componentVersion.componentId], {
+                version_id: componentVersion.versionId,
+            }
+        ));
+    }
+    logger.debug('Update component operations', operations);
+    const responses = yield call(
+        [session, session._call],
+        operations
+    );
+    logger.debug('Update component responses', responses);
+    return true;
+}
+
