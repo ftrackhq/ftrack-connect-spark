@@ -4,13 +4,11 @@ import { takeEvery } from 'redux-saga';
 import { call, put } from 'redux-saga/effects';
 import uuid from 'uuid';
 
-import actions, { publishOptions } from 'action/publish';
-import { showProgress, hideOverlay, showFailure } from './lib/overlay';
 import { mediator } from '../application';
-import { gatherAssets } from './lib/share';
-import {
-    session, createOperation, updateOperation, queryOperation,
-} from '../ftrack_api';
+import actions, { publishOptions } from 'action/publish';
+import { showProgress, hideOverlay, showCompletion } from './lib/overlay';
+import { gatherAssets, uploadReviewMedia } from './lib/share';
+import { session, createOperation } from '../ftrack_api';
 
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('saga:publish');
@@ -40,26 +38,10 @@ function* preparePublish() {
     yield hideOverlay();
 }
 
-/**
- * Submit publish
- */
-function* submitPublish(action) {
-    logger.info('Submit publish');
-    const values = action.payload;
-
-    yield showProgress('Exporting media...');
-    const exportMediaOptions = { reviewable: true, deliverable: true };
-    const media = yield call(
-        [mediator, mediator.exportMedia], exportMediaOptions
-    );
-    logger.info('Exported media', media);
-
-    const reviewableMedia = media.filter((file) => file.use === 'review');
-    const deliverableMedia = media.filter((file) => file.use === 'delivery');
-
-    // Get-or-create asset
+/** Create version */
+function* createVersion(values, thumbnailId) {
     const assetData = {
-        context_id: values.contextId, name: values.name, type: values.type,
+        context_id: values.context, name: values.name, type_id: values.type,
     };
     const [assets, createAssetsOperations] = yield call(
         gatherAssets, [assetData]
@@ -69,8 +51,6 @@ function* submitPublish(action) {
     const versionId = uuid.v4();
     // TODO: Update this once you can select task in spark.
     const taskId = null;
-    // TODO: Update this once a component is being encoded.
-    const thumbnailId = null;
 
     const operations = [
         ...createAssetsOperations,
@@ -80,32 +60,64 @@ function* submitPublish(action) {
             asset_id: assetId,
             status_id: null,
             task_id: taskId,
+            comment: values.description,
         }),
     ];
 
-    logger.debug('Create version operations', operations);
+    logger.info('Create version operations', operations);
     const responses = yield call(
         [session, session._call],
         operations
     );
-    logger.debug('Create version responses', responses);
+    logger.info('Create version responses', responses);
 
-    // Parallel:
+    return versionId;
+}
 
-        // TODO: Export data using specified options
-        //  * Original file
-        //  (Future: * Full-size JPEG)
-        //  * Web-playable media (review + thumbnail)
+/** Create components */
+function* createComponents(versionId, media) {
+    const components = [];
+    for (const file of media) {
+        components.push({
+            name: file.name,
+            path: file.path,
+            version_id: versionId,
+        });
+    }
 
-        // TODO: Get-or-create asset
-        // TODO: Create asset version
+    // TODO: Create components using connect.
+    // Return promise resolved once components has been created
+    logger.info('Creating components', components);
+}
 
-    // Parallel:
-        // TODO: Upload and create reviewable media
+/**
+ * Submit publish
+ */
+function* submitPublish(action) {
+    logger.info('Submit publish');
+    const values = action.payload;
 
-        // TODO: Publish create-component event with data
-        // TODO: Await event response
+    yield showProgress('Exporting media...');
+    const media = yield call([mediator, mediator.exportMedia], {
+        reviewable: true,
+        deliverable: true,
+    });
+    const reviewableMedia = media.filter((file) => file.use === 'review');
+    const deliverableMedia = media.filter((file) => file.use === 'delivery');
+
+    yield showProgress('Uploading review media...');
+    const componentIds = yield call(uploadReviewMedia, reviewableMedia);
+
+    yield showProgress('Creating version...');
+    const versionId = yield call(createVersion, values, componentIds[0]);
+
+    yield showProgress('Publishing...');
+    yield call(createComponents, versionId, deliverableMedia);
+
     logger.info('Finished publish');
+    yield call(showCompletion, () => {
+        logger.info('Complete');
+    });
 }
 
 

@@ -1,9 +1,11 @@
 // :copyright: Copyright (c) 2016 ftrack
 import uuid from 'uuid';
+import { call } from 'redux-saga/effects';
 
 import {
-    session, createOperation, queryOperation,
+    session, createOperation, queryOperation, updateOperation,
 } from '../../ftrack_api';
+import { mediator } from '../../application';
 
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('saga:lib:share');
@@ -39,7 +41,6 @@ export function gatherAssets(assets) {
     const createOperations = [];
     const promise = request.then((responses) => {
         for (let i = 0; i < responses.length; i += 1) {
-            logger.info(responses);
             const asset = responses[i].data && responses[i].data[0];
             if (asset) {
                 result[i].id = asset.id;
@@ -57,4 +58,116 @@ export function gatherAssets(assets) {
     });
 
     return promise;
+}
+
+
+/**
+ * Create file components and retrieve upload meta data for array of *media*.
+ *
+ * Return object mapping component ids to component and upload data.
+ */
+export function* getUploadMetadata(media) {
+    const operations = [];
+
+    const result = {};
+    for (const file of media) {
+        const componentId = uuid.v4();
+        result[componentId] = Object.assign({}, file);
+        operations.push(
+            createOperation('FileComponent', {
+                id: componentId,
+                name: file.name,
+                size: file.size,
+                file_type: file.extension,
+            })
+        );
+        operations.push({
+            action: 'get_upload_metadata',
+            component_id: componentId,
+        });
+    }
+    const responses = yield call(
+        [session, session._call], operations
+    );
+
+    logger.debug('Get upload metadata responses', responses);
+    for (let i = 0; i < responses.length; i += 2) {
+        const componentResult = responses[i].data;
+        const uploadMetadataResult = responses[i + 1];
+        result[uploadMetadataResult.component_id].component = componentResult;
+        result[uploadMetadataResult.component_id].upload = uploadMetadataResult;
+    }
+    logger.debug('Get upload metadata result', result);
+    return result;
+}
+
+/** Upload component data through mediator for each item in *uploadMeta*. */
+export function* uploadMedia(uploadMeta) {
+    const promises = [];
+    Object.keys(uploadMeta).forEach((componentId) => {
+        const path = uploadMeta[componentId].path;
+        const url = uploadMeta[componentId].upload.url;
+        const headers = uploadMeta[componentId].upload.headers;
+
+        logger.debug('Uploading media', path, url, headers);
+        promises.push(
+            mediator.uploadMedia({ path, url, headers })
+        );
+    });
+    yield Promise.all(promises);
+}
+
+/**
+ * Finalize uploaded component data.
+ *
+ * Create ComponentLocation objects.
+ * Create review-specific Metadata.
+ */
+export function* finalizeUpload(componentIds, updateData = null) {
+    const operations = [];
+    const serverLocationId = '3a372bde-05bc-11e4-8908-20c9d081909b';
+
+    for (const componentId of componentIds) {
+        operations.push(
+            createOperation('ComponentLocation', {
+                component_id: componentId,
+                location_id: serverLocationId,
+                resource_identifier: componentId,
+            })
+        );
+
+        // TODO: Update this if components are being encoded.
+        if (updateData) {
+            operations.push(updateOperation(
+                'FileComponent', [componentId], updateData
+            ));
+        }
+        operations.push(
+            createOperation('Metadata', {
+                parent_id: componentId,
+                parent_type: 'FileComponent',
+                key: 'ftr_meta',
+                value: '{"format": "image"}',
+            })
+        );
+    }
+
+    yield call(
+        [session, session._call], operations
+    );
+}
+
+export function* uploadReviewMedia(media) {
+    const uploadMeta = yield call(getUploadMetadata, media);
+    logger.debug('Prepared upload', uploadMeta);
+
+    let responses = yield call(uploadMedia, uploadMeta);
+    logger.debug('Uploaded', responses);
+
+    const componentIds = Object.keys(uploadMeta);
+    responses = yield call(
+        finalizeUpload, componentIds, { name: 'ftrackreview-image' }
+    );
+    logger.debug('Finalized upload', responses);
+    return componentIds;
 }

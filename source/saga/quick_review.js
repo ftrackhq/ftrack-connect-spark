@@ -13,6 +13,10 @@ import {
 import actions from 'action/quick_review';
 
 import { showProgress, showCompletion, showFailure } from './lib/overlay';
+import {
+    getUploadMetadata, uploadMedia, finalizeUpload,
+} from './lib/share';
+
 import { mediator } from '../application';
 
 import loglevel from 'loglevel';
@@ -218,103 +222,6 @@ function* sendInvites(reviewSessionInviteeIds) {
     logger.debug('Send invites responses', responses);
 }
 
-
-/**
- * Create file components and retrieve upload meta data for array of *media*.
- *
- * Return object mapping component ids to component and upload data.
- */
-function* getUploadMetadata(media) {
-    const operations = [];
-
-    const result = {};
-    for (const file of media) {
-        const componentId = uuid.v4();
-        result[componentId] = Object.assign({}, file);
-        operations.push(
-            createOperation('FileComponent', {
-                id: componentId,
-                name: file.name,
-                size: file.size,
-                file_type: file.extension,
-            })
-        );
-        operations.push({
-            action: 'get_upload_metadata',
-            component_id: componentId,
-        });
-    }
-    const responses = yield call(
-        [session, session._call], operations
-    );
-
-    logger.debug('Get upload metadata responses', responses);
-    for (let i = 0; i < responses.length; i += 2) {
-        const componentResult = responses[i].data;
-        const uploadMetadataResult = responses[i + 1];
-        result[uploadMetadataResult.component_id].component = componentResult;
-        result[uploadMetadataResult.component_id].upload = uploadMetadataResult;
-    }
-    logger.debug('Get upload metadata result', result);
-    return result;
-}
-
-/** Upload component data through mediator for each item in *uploadMeta*. */
-function* uploadMedia(uploadMeta) {
-    const promises = [];
-    Object.keys(uploadMeta).forEach((componentId) => {
-        const path = uploadMeta[componentId].path;
-        const url = uploadMeta[componentId].upload.url;
-        const headers = uploadMeta[componentId].upload.headers;
-
-        logger.debug('Uploading media', path, url, headers);
-        promises.push(
-            mediator.uploadMedia({ path, url, headers })
-        );
-    });
-    yield Promise.all(promises);
-}
-
-/**
- * Finalize uploaded component data.
- *
- * Create ComponentLocation objects.
- * Create review-specific Metadata.
- */
-function* finalizeUpload(uploadMeta) {
-    const operations = [];
-    const serverLocationId = '3a372bde-05bc-11e4-8908-20c9d081909b';
-
-    for (const componentId of Object.keys(uploadMeta)) {
-        operations.push(
-            createOperation('ComponentLocation', {
-                component_id: componentId,
-                location_id: serverLocationId,
-                resource_identifier: componentId,
-            })
-        );
-
-        // TODO: Update this if components are being encoded.
-        operations.push(updateOperation(
-            'FileComponent', [componentId], {
-                name: 'ftrackreview-image',
-            }
-        ));
-        operations.push(
-            createOperation('Metadata', {
-                parent_id: componentId,
-                parent_type: 'FileComponent',
-                key: 'ftr_meta',
-                value: '{"format": "image"}',
-            })
-        );
-    }
-
-    yield call(
-        [session, session._call], operations
-    );
-}
-
 /**
  * Handle submit quick review action.
  *
@@ -329,7 +236,10 @@ function* submitQuickReview(action) {
         logger.debug('submitQuickReview', values);
 
         yield showProgress('Gathering media...');
-        const media = yield call([mediator, mediator.exportReviewableMedia], {});
+        const media = yield call([mediator, mediator.exportMedia], {
+            reviewable: true,
+            deliverable: false,
+        });
         logger.debug('Gathered media', media);
 
         yield showProgress('Preparing upload...');
@@ -341,7 +251,10 @@ function* submitQuickReview(action) {
         logger.debug('Uploaded', responses);
 
         yield showProgress('Finalizing upload...');
-        responses = yield call(finalizeUpload, uploadMeta);
+        const componentIds = Object.keys(uploadMeta);
+        responses = yield call(
+            finalizeUpload, componentIds, { name: 'ftrackreview-image' }
+        );
         logger.debug('Finalized upload', responses);
 
         yield showProgress('Creating review session...');
