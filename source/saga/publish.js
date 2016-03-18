@@ -6,7 +6,9 @@ import uuid from 'uuid';
 
 import { mediator } from '../application';
 import actions, { publishOptions } from 'action/publish';
-import { showProgress, hideOverlay, showCompletion } from './lib/overlay';
+import {
+    showProgress, hideOverlay, showCompletion, showFailure,
+} from './lib/overlay';
 import { gatherAssets, uploadReviewMedia } from './lib/share';
 import { session, createOperation } from '../ftrack_api';
 
@@ -85,39 +87,52 @@ function* createComponents(versionId, media) {
         });
     }
 
+    logger.info('Creating components', components);
     // TODO: Create components using connect.
     // Return promise resolved once components has been created
-    logger.info('Creating components', components);
+    return Promise.reject(
+        new Error('Creating components via connect not yet implemented.')
+    );
 }
 
 /**
  * Submit publish
  */
 function* submitPublish(action) {
-    logger.info('Submit publish');
-    const values = action.payload;
+    try {
+        logger.info('Submit publish');
+        const values = action.payload;
 
-    yield showProgress('Exporting media...');
-    const media = yield call([mediator, mediator.exportMedia], {
-        reviewable: true,
-        deliverable: true,
-    });
-    const reviewableMedia = media.filter((file) => file.use === 'review');
-    const deliverableMedia = media.filter((file) => file.use === 'delivery');
+        yield showProgress('Exporting media...');
+        const media = yield call([mediator, mediator.exportMedia], {
+            review: true,
+            delivery: true,
+        });
+        const reviewableMedia = media.filter((file) => file.use === 'review');
+        const deliverableMedia = media.filter((file) => file.use === 'delivery');
 
-    yield showProgress('Uploading review media...');
-    const componentIds = yield call(uploadReviewMedia, reviewableMedia);
+        yield showProgress('Uploading review media...');
+        const componentIds = yield call(uploadReviewMedia, reviewableMedia);
 
-    yield showProgress('Creating version...');
-    const versionId = yield call(createVersion, values, componentIds[0]);
+        yield showProgress('Creating version...');
+        const versionId = yield call(createVersion, values, componentIds[0]);
 
-    yield showProgress('Publishing...');
-    yield call(createComponents, versionId, deliverableMedia);
+        yield showProgress('Publishing...');
+        yield call(createComponents, versionId, deliverableMedia);
 
-    logger.info('Finished publish');
-    yield call(showCompletion, () => {
-        logger.info('Complete');
-    });
+        logger.info('Finished publish');
+        yield call(showCompletion, {
+            header: 'Completed',
+            message: 'The versions has been published.',
+        }, () => {
+            logger.info('Complete');
+        });
+    } catch (error) {
+        yield call(showFailure, {
+            header: 'Publish failed',
+            error,
+        });
+    }
 }
 
 

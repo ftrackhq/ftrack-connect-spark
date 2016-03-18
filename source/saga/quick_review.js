@@ -237,8 +237,8 @@ function* submitQuickReview(action) {
 
         yield showProgress('Gathering media...');
         const media = yield call([mediator, mediator.exportMedia], {
-            reviewable: true,
-            deliverable: false,
+            review: true,
+            delivery: false,
         });
         logger.debug('Gathered media', media);
 
@@ -267,11 +267,14 @@ function* submitQuickReview(action) {
         responses = yield sendInvites(reviewSessionInviteeIds);
         logger.debug('Sent invites', responses);
 
-        yield call(showCompletion, () => {
+        yield call(showCompletion, {
+            header: 'Completed',
+            message: 'The review session has now been created.',
+        }, () => {
             browserHistory.replace('/');
         });
     } catch (error) {
-        yield call(showFailure, error);
+        yield call(showFailure, { header: 'Failed to create review session', error });
     }
 }
 
