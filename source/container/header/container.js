@@ -41,7 +41,6 @@ class HeaderContainer extends React.Component {
                         value="publish"
                         icon="file_upload"
                         caption="Publish"
-                        disabled
                     />
                 </IconMenu>
             </AppBar>

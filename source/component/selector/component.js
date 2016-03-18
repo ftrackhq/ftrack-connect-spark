@@ -10,15 +10,32 @@ import Autocomplete from 'react-toolbox/lib/autocomplete';
  * Show all alternatives when opening dropdown with an active selection.
  */
 class Selector extends React.Component {
-    constructor() {
-        super();
-        this.state = { value: null, source: {} };
+    constructor(props) {
+        super(props);
+        this.state = { value: props.value, source: {} };
         this._onChange = this._onChange.bind(this);
+        this._loadData = this._loadData.bind(this);
     }
 
     /** Load the data when the component has mounted. */
     componentDidMount() {
-        this.props.query.then((data) => {
+        this._loadData(this.props.query);
+    }
+
+    /** Update internal state when props change. */
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.value !== this.props.value) {
+            this.setState({ value: nextProps.value });
+        }
+
+        if (nextProps.query !== this.props.query) {
+            this._loadData(nextProps.query);
+        }
+    }
+
+    /** Update autocomplete source from *query*. */
+    _loadData(query) {
+        query.then((data) => {
             this.setState({ source: data });
         });
     }
@@ -52,9 +69,16 @@ class Selector extends React.Component {
 }
 
 Selector.propTypes = {
+    value: React.PropTypes.string,
     onChange: React.PropTypes.func,
     onBlur: React.PropTypes.func,
-    query: React.PropTypes.object,
+    query: React.PropTypes.object.isRequired,
+};
+
+Selector.defaultProps = {
+    value: null,
+    onChange: () => {},
+    onBlur: () => {},
 };
 
 export default Selector;
