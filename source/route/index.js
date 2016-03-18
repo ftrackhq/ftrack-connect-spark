@@ -9,6 +9,7 @@ import HomeView from 'view/home';
 import ExampleView from 'view/example';
 import QuickReviewView from 'view/quick_review';
 import CreateProjectView from 'view/create_project';
+import PublishView from 'view/publish';
 
 
 export default () => (
@@ -23,7 +24,7 @@ export default () => (
             path="/create-project"
             component={CreateProjectView}
         />
-
+        <Route path="/publish" component={PublishView} />
         <Redirect from="*.html" to="/" />
         <Route path="/404" component={NotFoundView} />
         <Redirect from="*" to="/404" />

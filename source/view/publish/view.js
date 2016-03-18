@@ -3,63 +3,56 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
-import moment from 'moment';
 
 import Input from 'react-toolbox/lib/input';
-import DatePicker from 'react-toolbox/lib/date_picker';
 
 import Form from 'component/form';
 import Selector from 'component/selector';
-import Reveal from 'component/reveal';
-import { createProjectSubmit } from 'action/create_project';
-
 import { session } from '../../ftrack_api';
 import { isEmptyString } from '../../util/validation';
 
+import Reveal from 'component/reveal';
+import { quickReviewSubmit } from 'action/quick_review';
+
+import style from './style.scss';
 
 /** Validate form values and return error object. */
-const validateForm = ({ name, workflow, startDate, dueDate }) => {
+const validateForm = (values) => {
     const errors = {};
-
-    if (isEmptyString(name)) {
-        errors.name = 'Required';
+    const requiredFields = ['name', 'context', 'type'];
+    for (const field of requiredFields) {
+        if (isEmptyString(values[field])) {
+            errors[field] = 'Required';
+        }
     }
-
-    if (isEmptyString(workflow)) {
-        errors.workflow = 'Required';
-    }
-
-    if (!startDate) {
-        errors.startDate = 'Required';
-    }
-
-    if (!dueDate) {
-        errors.dueDate = 'Required';
-    }
-
     return errors;
 };
 
 
 /** Quick review view */
 /* eslint-disable react/prefer-stateless-function */
-class CreateProjectView extends React.Component {
+class PublishView extends React.Component {
     constructor() {
         super();
         this._onCancelClick = this._onCancelClick.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
         this._isSubmitDisabled = this._isSubmitDisabled.bind(this);
-        const _workflows = session._query(
-            'select id, name from ProjectSchema'
-        );
 
-        this._workflows = _workflows.then((data) => {
-            const result = {};
-            for (const workflow of data) {
-                result[workflow.id] = workflow.name;
-            }
-            return result;
-        });
+        this._contexts = session._query(
+            'select id, full_name from Project'
+        ).then((data) => data.reduce(
+            (accumulator, item) => (
+                Object.assign({}, accumulator, { [item.id]: item.full_name })
+            ), {}
+        ));
+
+        this._assetTypes = session._query(
+            'select id, name from AssetType'
+        ).then((data) => data.reduce(
+            (accumulator, item) => (
+                Object.assign({}, accumulator, { [item.id]: item.name })
+            ), {}
+        ));
     }
 
     /** Navigate back on cancel clicked */
@@ -92,38 +85,46 @@ class CreateProjectView extends React.Component {
     render() {
         const {
             fields: {
-                name, workflow, startDate, dueDate,
+                context, name, type, description,
             },
         } = this.props;
 
         return (
             <Form
-                header="Create project"
-                submitLabel="Create"
+                header="Publish your work"
+                submitLabel="Publish"
                 onSubmit={this._onSubmit}
                 onCancel={this._onCancelClick}
                 submitDisabled={this._isSubmitDisabled()}
             >
-                <Input
-                    type="text"
-                    label="Project name"
-                    name="name"
-                    {...name}
-                    error={this._errorMessage(name)}
-                />
                 <Selector
-                    label="Workflow"
-                    query={this._workflows}
-                    {...workflow}
+                    label="Select context"
+                    query={this._contexts}
+                    {...context}
                 />
-                <Reveal label="Add dates">
-                    <DatePicker
-                        label="Start date"
-                        {...startDate}
+                <div className={style.asset}>
+                    <Input
+                        type="text"
+                        label="Name"
+                        name="name"
+                        {...name}
+                        error={this._errorMessage(name)}
                     />
-                    <DatePicker
-                        label="Due date"
-                        {...dueDate}
+                    <Selector
+                        label="Type"
+                        query={this._assetTypes}
+                        {...type}
+                    />
+                </div>
+                <Reveal label="Add description">
+                    <Input
+                        type="text"
+                        label="Description"
+                        name="description"
+                        multiline
+                        autoFocus
+                        {...description}
+                        error={this._errorMessage(description)}
                     />
                 </Reveal>
             </Form>
@@ -131,42 +132,38 @@ class CreateProjectView extends React.Component {
     }
 }
 
-CreateProjectView.contextTypes = {
+PublishView.contextTypes = {
     router: React.PropTypes.object.isRequired,
 };
 
-CreateProjectView.propTypes = {
+PublishView.propTypes = {
     values: React.PropTypes.object.isRequired,
     fields: React.PropTypes.object.isRequired,
     handleSubmit: React.PropTypes.func.isRequired,
     resetForm: React.PropTypes.func.isRequired,
     submitting: React.PropTypes.bool.isRequired,
-    workflow: React.PropTypes.object,
+    contexts: React.PropTypes.object,
 };
 
 function mapDispatchToProps(dispatch) {
     return {
         handleSubmit(values) {
-            dispatch(createProjectSubmit(values));
+            dispatch(quickReviewSubmit(values));
         },
     };
 }
 
-CreateProjectView = connect(
+PublishView = connect(
     null,
     mapDispatchToProps
-)(CreateProjectView);
+)(PublishView);
 
-CreateProjectView = reduxForm({
-    form: 'createProject',
+PublishView = reduxForm({
+    form: 'publish',
     fields: [
-        'name', 'workflow', 'startDate', 'dueDate',
+        'name', 'context', 'type', 'description',
     ],
-    initialValues: {
-        startDate: moment().toDate(),
-        dueDate: moment().add(1, 'month').toDate(),
-    },
     validateForm,
-})(CreateProjectView);
+})(PublishView);
 
-export default CreateProjectView;
+export default PublishView;
