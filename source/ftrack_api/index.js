@@ -35,7 +35,7 @@ export function updateOperation(type, keys, data) {
 /**
  * ftrack API Event class.
  */
-class Event {
+export class Event {
 
     /** Construct EventHub instance with API credentials. */
     constructor(topic, data) {
@@ -84,6 +84,7 @@ class EventHub {
             'max reconnection attempts': Infinity,
             'reconnection limit': 10000,
             'reconnection delay': 5000,
+            transports: ['websocket'],
             query: ''.concat(
                 'api_user=', this._apiUser, '&api_key=', this._apiKey
             ),
@@ -125,6 +126,7 @@ class EventHub {
         event.addSource(
             {
                 id: this._id,
+                applicationId: 'ftrack.client.spark',
                 user: {
                     username: this._apiUser,
                 },
@@ -135,7 +137,9 @@ class EventHub {
             this._runWhenConnected(resolve);
 
             if (timeout) {
-                setTimeout(reject, timeout * 1000);
+                setTimeout(() => reject(
+                    new Error('Unable to connect to event server within timeout.')
+                ), timeout * 1000);
             }
         });
 
@@ -154,7 +158,9 @@ class EventHub {
                 this._replyCallbacks[event.getData().id] = resolve;
 
                 if (timeout) {
-                    setTimeout(reject, timeout * 1000);
+                    setTimeout(() => reject(
+                        new Error('No reply event received within timeout.')
+                    ), timeout * 1000);
                 }
             });
 
@@ -183,7 +189,7 @@ class EventHub {
             {
                 subscriber: {
                     id: this._id,
-                    applicationId: 'ftrack.spark',
+                    applicationId: 'ftrack.client.spark',
                 },
                 subscription,
             }
