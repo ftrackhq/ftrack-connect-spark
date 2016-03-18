@@ -26,7 +26,7 @@ class ListContext extends React.Component {
     }
 
     _setQuery(props) {
-        if (props && props.params.parentId) {
+        if (props && props.params.parentId !== 'projects') {
             this._baseQuery = (
                 'select id, name, thumbnail_id from TypedContext where ' +
                 `parent_id is ${props.params.parentId} order by name, id`
@@ -49,9 +49,10 @@ class ListContext extends React.Component {
 
     _onClick(item) {
         if (item.__entity_type__ === 'Task') {
-            // Do nothing.
+            const path = `/${this.props.params.callback}/${item.id}`;
+            browserHistory.push(path);
         } else {
-            const path = `/context/${item.id}`;
+            const path = `/context/${this.props.params.callback}/${item.id}`;
             browserHistory.push(path);
         }
     }
