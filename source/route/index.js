@@ -9,6 +9,7 @@ import HomeView from 'view/home';
 import ExampleView from 'view/example';
 import QuickReviewView from 'view/quick_review';
 import CreateProjectView from 'view/create_project';
+import ListContext from 'view/list_context';
 import PublishView from 'view/publish';
 import { publishLoad } from 'action/publish';
 
@@ -22,6 +23,7 @@ export default (store) => (
     <Route path="/" component={RootLayout}>
         <IndexRoute component={HomeView} />
         <Route path="/example" component={ExampleView} />
+        <Route path="/context/:callback/:parentId" component={ListContext} />
         <Route
             path="/quick-review"
             component={QuickReviewView}
@@ -32,6 +34,11 @@ export default (store) => (
         />
         <Route
             path="/publish"
+            component={PublishView}
+            onEnter={dispatchOnEnter(store.dispatch, publishLoad)}
+        />
+        <Route
+            path="/publish/:contextId"
             component={PublishView}
             onEnter={dispatchOnEnter(store.dispatch, publishLoad)}
         />

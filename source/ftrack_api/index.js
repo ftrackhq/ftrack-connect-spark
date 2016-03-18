@@ -293,6 +293,18 @@ class Session {
 
         return request;
     }
+
+    /** Return thumbnail URL for *componentId* with *size*. */
+    thumbnail(componentId, size) {
+        if (!componentId) {
+            return `${this._serverUrl}/img/thumbnail2.png`;
+        }
+
+        return (
+            `${this._serverUrl}/component/thumbnail?id=${componentId}` +
+            `&size=${size}&username=${this._apiUser}&apiKey=${this._apiKey}`
+        );
+    }
 }
 
 /** Shared API session instance. */

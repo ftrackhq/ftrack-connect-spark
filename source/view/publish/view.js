@@ -2,8 +2,10 @@
 
 import React from 'react';
 import { reduxForm } from 'redux-form';
+import { browserHistory } from 'react-router';
 
 import Input from 'react-toolbox/lib/input';
+import Button from 'react-toolbox/lib/button';
 
 import Form from 'component/form';
 import Selector from 'component/selector';
@@ -33,9 +35,12 @@ const validateForm = (values) => {
 class PublishView extends React.Component {
     constructor() {
         super();
+        this._contextId = null;
+        this.state = { link: '' };
         this._onCancelClick = this._onCancelClick.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
         this._isSubmitDisabled = this._isSubmitDisabled.bind(this);
+        this._link = 'Nothing selected.'
 
         this._contexts = session._query(
             'select id, full_name from Project'
@@ -52,6 +57,34 @@ class PublishView extends React.Component {
                 Object.assign({}, accumulator, { [item.id]: item.name })
             ), {}
         ));
+    }
+
+    componentWillUpdate() {
+        // TODO: Props are not passed in correctly. Investigate why and remove
+        // the need to store contextId on this.
+        if (
+            this.props.params.contextId &&
+            this.props.params.contextId !== this._contextId
+        ) {
+            this._contextId = this.props.params.contextId;
+
+            session._query(
+                'select link from Context where id is ' +
+                `${this.props.params.contextId}`
+            ).then((data) => {
+                if (data && data.length === 1) {
+                    const names = [];
+                    for (const item of data[0].link) {
+                        names.push(item.name);
+                    }
+
+                    this.props.fields.context.onChange(
+                        this.props.params.contextId
+                    );
+                    this.setState({ link: names.join(' / ') });
+                }
+            });
+        }
     }
 
     /** Navigate back on cancel clicked */
@@ -80,6 +113,10 @@ class PublishView extends React.Component {
         return field.touched && field.error || null;
     }
 
+    _onBrowse() {
+        const path = '/context/publish/projects';
+        browserHistory.push(path);
+    }
 
     render() {
         const {
@@ -96,11 +133,20 @@ class PublishView extends React.Component {
                 onCancel={this._onCancelClick}
                 submitDisabled={this._isSubmitDisabled()}
             >
-                <Selector
-                    label="Select context"
-                    query={this._contexts}
-                    {...context}
-                />
+                <div>
+                    <Input
+                        type="text"
+                        label="Linked to"
+                        disabled
+                        value={ this.state.link }
+                    />
+                    <Button
+                        label="Browse"
+                        flat
+                        onClick={ this._onBrowse }
+                        type="button"
+                    />
+                </div>
                 <div className={style.asset}>
                     <Input
                         type="text"
@@ -142,6 +188,11 @@ PublishView.propTypes = {
     resetForm: React.PropTypes.func.isRequired,
     submitting: React.PropTypes.bool.isRequired,
     contexts: React.PropTypes.object,
+    params: React.PropTypes.object,
+};
+
+PublishView.defaultProps = {
+    params: {},
 };
 
 const formOptions = {
