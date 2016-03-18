@@ -23,7 +23,7 @@
     "repository": "https://bitbucket.org/ftrack/ftrack-connect-spark",
     "keywords": [],
     "author": "ftrack",
-    "license" : "Apache-2.0",
+    "license": "Apache-2.0",
     "devDependencies": {
         "autoprefixer": "^6.3.3",
         "babel-core": "^6.0.0",
@@ -72,6 +72,8 @@
     },
     "dependencies": {
         "core-js": "^2.0.0",
+        "loglevel": "^1.4.0",
+        "moment": "^2.12.0",
         "normalize.css": "^3.0.3",
         "react": "^0.14.0",
         "react-addons-css-transition-group": "^0.14.7",
@@ -82,11 +84,10 @@
         "react-toolbox": "^0.14.2",
         "redux": "^3.3.1",
         "redux-form": "^4.2.0",
-        "redux-saga": "^0.9.3",
         "redux-logger": "^2.0.4",
-        "moment": "^2.12.0",
+        "redux-saga": "^0.9.3",
+        "socket.io-client": "^0.9.17",
         "uuid": "^2.0.1",
-        "whatwg-fetch": "^0.11.0",
-        "loglevel": "^1.4.0"
+        "whatwg-fetch": "^0.11.0"
     }
 }
