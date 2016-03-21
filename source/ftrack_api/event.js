@@ -72,7 +72,11 @@ export class EventHub {
         return this._socketIo && this._socketIo.socket.connected;
     }
 
-    /** Handle on connect event. */
+    /**
+     * Handle on connect event.
+     *
+     * Subscribe to replies and send any queued events.
+     */
     _onSocketConnected() {
         this.logger.debug('Connected to event server.');
 
@@ -92,7 +96,16 @@ export class EventHub {
         }
     }
 
-    /** Publish event and return promise. */
+    /**
+     * Publish event and return promise.
+     *
+     * If *reply* is true, the promise will wait for a response and resolve
+     * with the reply event. Otherwise, the promise will be resolved once the
+     * event has been sent.
+     *
+     * If timeout is non-zero, the promise will be rejected if the timeout is
+     * reached before it is resolved.
+     */
     publish(event, { reply = false, timeout = 10 }) {
         event.addSource(
             {
