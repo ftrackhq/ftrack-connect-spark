@@ -156,7 +156,7 @@ export function* publishLoadSaga() {
     yield takeEvery(actions.PUBLISH_LOAD, preparePublish);
 }
 
-/** Prepare publish on PUBLISH_LOAD */
+/** Submit publish form on PUBLISH_SUBMIT */
 export function* publishSubmitSaga() {
     yield takeEvery(actions.PUBLISH_SUBMIT, submitPublish);
 }
