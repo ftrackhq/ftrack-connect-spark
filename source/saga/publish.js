@@ -102,7 +102,7 @@ function* createComponents(versionId, media) {
 
     logger.info('Creating components', components);
     return session.eventHub.publish(
-        new Event('ftrack.spark.publish-components', { components }),
+        new Event('ftrack.connect.publish-components', { components }),
         { reply: true, timeout: 240 }
     );
 }
