@@ -20,7 +20,7 @@ import style from './style.scss';
 /** Validate form values and return error object. */
 const validateForm = (values) => {
     const errors = {};
-    const requiredFields = ['name', 'context', 'type'];
+    const requiredFields = ['name', 'parent', 'type'];
     for (const field of requiredFields) {
         if (isEmptyString(values[field])) {
             errors[field] = 'Required';
@@ -40,7 +40,7 @@ class PublishView extends React.Component {
         this._onCancelClick = this._onCancelClick.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
         this._isSubmitDisabled = this._isSubmitDisabled.bind(this);
-        this._link = 'Nothing selected.'
+        this._link = '';
 
         this._contexts = session._query(
             'select id, full_name from Project'
@@ -69,7 +69,7 @@ class PublishView extends React.Component {
             this._contextId = this.props.params.contextId;
 
             session._query(
-                'select link from Context where id is ' +
+                'select link, parent.id from Context where id is ' +
                 `${this.props.params.contextId}`
             ).then((data) => {
                 if (data && data.length === 1) {
@@ -78,9 +78,19 @@ class PublishView extends React.Component {
                         names.push(item.name);
                     }
 
-                    this.props.fields.context.onChange(
-                        this.props.params.contextId
-                    );
+                    if (data[0].__entity_type__ === 'Task') {
+                        this.props.fields.parent.onChange(
+                            data[0].parent.id
+                        );
+                        this.props.fields.task.onChange(
+                            data[0].id
+                        );
+                    } else {
+                        this.props.fields.parent.onChange(
+                            data[0].id
+                        );
+                    }
+
                     this.setState({ link: names.join(' / ') });
                 }
             });
@@ -121,7 +131,7 @@ class PublishView extends React.Component {
     render() {
         const {
             fields: {
-                context, name, type, description,
+                name, type, description,
             },
         } = this.props;
 
@@ -133,20 +143,12 @@ class PublishView extends React.Component {
                 onCancel={this._onCancelClick}
                 submitDisabled={this._isSubmitDisabled()}
             >
-                <div>
-                    <Input
-                        type="text"
-                        label="Linked to"
-                        disabled
-                        value={ this.state.link }
-                    />
-                    <Button
-                        label="Browse"
-                        flat
-                        onClick={ this._onBrowse }
-                        type="button"
-                    />
-                </div>
+                <Input
+                    type="text"
+                    label="Linked to"
+                    onFocus={ this._onBrowse }
+                    value={ this.state.link }
+                />
                 <div className={style.asset}>
                     <Input
                         type="text"
@@ -192,13 +194,15 @@ PublishView.propTypes = {
 };
 
 PublishView.defaultProps = {
-    params: {},
+    params: {
+        task: null,
+    },
 };
 
 const formOptions = {
     form: 'publish',
     fields: [
-        'name', 'context', 'type', 'description',
+        'name', 'parent', 'task', 'type', 'description',
     ],
     validateForm,
 };
