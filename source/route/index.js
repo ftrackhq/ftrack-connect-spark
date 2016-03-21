@@ -17,7 +17,7 @@ export default () => (
     <Route path="/" component={RootLayout}>
         <IndexRoute component={HomeView} />
         <Route path="/example" component={ExampleView} />
-        <Route path="/context/:callback/:parentId" component={ListContext} />
+        <Route path="/context/:parentId/:callback" component={ListContext} />
         <Route
             path="/quick-review"
             component={QuickReviewView}

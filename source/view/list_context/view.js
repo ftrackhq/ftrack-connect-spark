@@ -15,21 +15,27 @@ class ListContext extends React.Component {
     constructor() {
         super();
 
+        this._limit = 25;
+        this._offset = 0;
         this._loadItems = this._loadItems.bind(this);
         this._renderItem = this._renderItem.bind(this);
 
-        this._setQuery(this.props);
+        this._resetQuery('projects');
     }
 
     componentWillReceiveProps(newProps) {
-        this._setQuery(newProps);
+        if (newProps && newProps.params && newProps.params.parentId) {
+            this._resetQuery(newProps.params.parentId);
+        }
     }
 
-    _setQuery(props) {
-        if (props && props.params.parentId !== 'projects') {
+    _resetQuery(parentId) {
+        this._offset = 0;
+
+        if (parentId !== 'projects') {
             this._baseQuery = (
                 'select id, name, thumbnail_id from TypedContext where ' +
-                `parent_id is ${props.params.parentId} order by name, id`
+                `parent_id is ${parentId} order by name, id`
             );
         } else {
             this._baseQuery = (
@@ -39,10 +45,26 @@ class ListContext extends React.Component {
     }
 
     /** Load more items. */
-    _loadItems(offset, limit) {
-        const query = session._query(
-            `${this._baseQuery} offset ${offset} limit ${limit}`
+    _loadItems() {
+        let query = session._query(
+            `${this._baseQuery} offset ${this._offset} limit ${this._limit}`,
+            true
         );
+
+        // Calculate new offset.
+        query = query.then((result) => {
+            if (
+                result.metadata &&
+                result.metadata.next &&
+                result.metadata.next.offset
+            ) {
+                this._offset = result.metadata.next.offset;
+            } else {
+                this._offset += this._limit;
+            }
+
+            return result.data;
+        });
 
         return query;
     }
@@ -52,7 +74,7 @@ class ListContext extends React.Component {
             const path = `/${this.props.params.callback}/${item.id}`;
             browserHistory.push(path);
         } else {
-            const path = `/context/${this.props.params.callback}/${item.id}`;
+            const path = `/context/${item.id}/${this.props.params.callback}`;
             browserHistory.push(path);
         }
     }

@@ -106,10 +106,15 @@ class Session {
      * Returns a promise which will be resolved with an array of matched
      * entities.
      */
-    _query(expression) {
+    _query(expression, fullResponse) {
         const operation = queryOperation(expression);
         let request = this._call([operation]);
-        request = request.then((responses) => responses[0].data);
+
+        if (!fullResponse) {
+            request = request.then((responses) => responses[0].data);
+        } else {
+            request = request.then((responses) => responses[0]);
+        }
 
         return request;
     }

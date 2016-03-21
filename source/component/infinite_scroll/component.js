@@ -13,7 +13,7 @@ class InfiniteScroll extends React.Component {
 
     constructor() {
         super();
-        this.state = { items: [], offset: 0, finished: false };
+        this.state = { items: [], finished: false };
         this._renderItems = this._renderItems.bind(this);
         this._loadMoreItems = this._loadMoreItems.bind(this);
         this._renderWaypoint = this._renderWaypoint.bind(this);
@@ -22,9 +22,7 @@ class InfiniteScroll extends React.Component {
     _loadMoreItems() {
         this.setState({ loading: true });
 
-        const result = this.props.loadItems(
-            this.state.offset, this.props.limit
-        );
+        const result = this.props.loadItems();
 
         result.then((data) => {
             if (!data.length) {
@@ -34,7 +32,6 @@ class InfiniteScroll extends React.Component {
 
             this.setState({
                 items: this.state.items.concat(data),
-                offset: this.state.offset + this.props.limit,
                 loading: false,
             });
         });
@@ -83,11 +80,6 @@ class InfiniteScroll extends React.Component {
 InfiniteScroll.propTypes = {
     renderItem: React.PropTypes.func,
     loadItems: React.PropTypes.func,
-    limit: React.PropTypes.number,
-};
-
-InfiniteScroll.defaultProps = {
-    limit: 25,
 };
 
 export default InfiniteScroll;
