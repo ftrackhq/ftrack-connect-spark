@@ -2,7 +2,7 @@
 
 import { call, put } from 'redux-saga/effects';
 
-import { configureSharedApiSession, session } from '../ftrack_api';
+import { session, configureSharedApiSession } from '../ftrack_api';
 import {
     ftrackApiUserAuthenticated,
     ftrackApiAuthenticationFailed,

@@ -1,7 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
-import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 
 import Input from 'react-toolbox/lib/input';
@@ -12,7 +11,7 @@ import { session } from '../../ftrack_api';
 import { isEmptyString } from '../../util/validation';
 
 import Reveal from 'component/reveal';
-import { quickReviewSubmit } from 'action/quick_review';
+import { publishSubmit } from 'action/publish';
 
 import style from './style.scss';
 
@@ -61,10 +60,10 @@ class PublishView extends React.Component {
         this.context.router.goBack();
     }
 
-    /** Trigger handleSubmit with values on submission. */
+    /** Trigger onSubmit with values on submission. */
     _onSubmit(e) {
         e.preventDefault();
-        this.props.handleSubmit(this.props.values);
+        this.props.submitForm(this.props.values);
     }
 
     /** Return if submit should be disabled */
@@ -139,31 +138,43 @@ PublishView.contextTypes = {
 PublishView.propTypes = {
     values: React.PropTypes.object.isRequired,
     fields: React.PropTypes.object.isRequired,
-    handleSubmit: React.PropTypes.func.isRequired,
+    submitForm: React.PropTypes.func.isRequired,
     resetForm: React.PropTypes.func.isRequired,
     submitting: React.PropTypes.bool.isRequired,
     contexts: React.PropTypes.object,
 };
 
-function mapDispatchToProps(dispatch) {
-    return {
-        handleSubmit(values) {
-            dispatch(quickReviewSubmit(values));
-        },
-    };
-}
-
-PublishView = connect(
-    null,
-    mapDispatchToProps
-)(PublishView);
-
-PublishView = reduxForm({
+const formOptions = {
     form: 'publish',
     fields: [
         'name', 'context', 'type', 'description',
     ],
     validateForm,
-})(PublishView);
+};
+
+function mapStateToProps(state) {
+    const publish = state.screen.publish || {};
+    // This is the `Upload` asset type, which is guaranteed to exist.
+    const assetTypeId = '8f4144e0-a8e6-11e2-9e96-0800200c9a66';
+
+    return {
+        initialValues: {
+            name: publish.name || '',
+            type: publish.type || assetTypeId,
+        },
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        submitForm(values) {
+            dispatch(publishSubmit(values));
+        },
+    };
+}
+
+PublishView = reduxForm(
+    formOptions, mapStateToProps, mapDispatchToProps
+)(PublishView);
 
 export default PublishView;
