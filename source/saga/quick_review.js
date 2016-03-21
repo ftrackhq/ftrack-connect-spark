@@ -4,14 +4,19 @@ import moment from 'moment';
 import uuid from 'uuid';
 
 import { takeEvery } from 'redux-saga';
-import { call, put, take } from 'redux-saga/effects';
+import { call } from 'redux-saga/effects';
 import { browserHistory } from 'react-router';
 
+import { session } from '../ftrack_api';
 import {
-    session, createOperation, updateOperation, queryOperation,
-} from '../ftrack_api';
+    createOperation, queryOperation,
+} from '../ftrack_api/operation';
 import actions from 'action/quick_review';
-import overlayActions, { overlayShow } from 'action/overlay';
+
+import { showProgress, showCompletion, showFailure } from './lib/overlay';
+import {
+    getUploadMetadata, uploadMedia, finalizeUpload, updateComponentVersions,
+} from './lib/share';
 
 import { mediator } from '../application';
 
@@ -104,7 +109,7 @@ function gatherAssets(contextId, media) {
  * Also update all components in *media* to be children of the created versions.
  */
 function* createQuickReview(values, media) {
-    let operations = [];
+    const operations = [];
     const oneYear = moment().add(1, 'year');
 
     // Get existing or create new assets for media.
@@ -171,7 +176,7 @@ function* createQuickReview(values, media) {
     }
 
     logger.debug('Create Quick Review operations', operations);
-    let responses = yield call(
+    const responses = yield call(
         [session, session._call],
         operations
     );
@@ -181,21 +186,7 @@ function* createQuickReview(values, media) {
     // has been resolved.
     // Update file components seperatly as it causes integrity errors
     // due to a bug in the API backend.
-    operations = [];
-    for (const componentVersion of componentVersions) {
-        // TODO: Update this once components are being encoded.
-        operations.push(updateOperation(
-            'FileComponent', [componentVersion.componentId], {
-                version_id: componentVersion.versionId,
-            }
-        ));
-    }
-    logger.debug('Update component operations', operations);
-    responses = yield call(
-        [session, session._call],
-        operations
-    );
-    logger.debug('Update component responses', responses);
+    yield updateComponentVersions(componentVersions);
 
     return reviewSessionInviteeIds;
 }
@@ -218,133 +209,6 @@ function* sendInvites(reviewSessionInviteeIds) {
     logger.debug('Send invites responses', responses);
 }
 
-/** Dispatch a show overlay action with *header* and a progress-style layout. */
-function* showProgress(header) {
-    yield put(overlayShow({
-        header,
-        message: 'This may take a few minutes. Please keep this window open until finished.',
-        loader: true,
-    }));
-}
-
-/**
- * Create file components and retrieve upload meta data for array of *media*.
- *
- * Return object mapping component ids to component and upload data.
- */
-function* getUploadMetadata(media) {
-    const operations = [];
-
-    const result = {};
-    for (const file of media) {
-        const componentId = uuid.v4();
-        result[componentId] = Object.assign({}, file);
-        operations.push(
-            createOperation('FileComponent', {
-                id: componentId,
-                name: file.name,
-                size: file.size,
-                file_type: file.extension,
-            })
-        );
-        operations.push({
-            action: 'get_upload_metadata',
-            component_id: componentId,
-        });
-    }
-    const responses = yield call(
-        [session, session._call], operations
-    );
-
-    logger.debug('Get upload metadata responses', responses);
-    for (let i = 0; i < responses.length; i += 2) {
-        const componentResult = responses[i].data;
-        const uploadMetadataResult = responses[i + 1];
-        result[uploadMetadataResult.component_id].component = componentResult;
-        result[uploadMetadataResult.component_id].upload = uploadMetadataResult;
-    }
-    logger.debug('Get upload metadata result', result);
-    return result;
-}
-
-/** Upload component data through mediator for each item in *uploadMeta*. */
-function* uploadMedia(uploadMeta) {
-    const promises = [];
-    Object.keys(uploadMeta).forEach((componentId) => {
-        const path = uploadMeta[componentId].path;
-        const url = uploadMeta[componentId].upload.url;
-        const headers = uploadMeta[componentId].upload.headers;
-
-        logger.debug('Uploading media', path, url, headers);
-        promises.push(
-            mediator.uploadMedia({ path, url, headers })
-        );
-    });
-    yield Promise.all(promises);
-}
-
-/** Show completed overlay and redirect to root once closed. */
-function* showCompletion() {
-    yield put(overlayShow({
-        header: 'Completed',
-        message: 'The review session has now been created.',
-        dissmissable: true,
-    }));
-    yield take(overlayActions.OVERLAY_HIDE);
-    browserHistory.replace('/');
-}
-
-/** Show completed overlay and redirect to root once closed. */
-function* showFailure(error) {
-    yield put(overlayShow({
-        header: 'Failed to create review',
-        message: 'Please try again or contact support with the following details',
-        error: error && error.message || '',
-        dissmissable: true,
-    }));
-    yield take(overlayActions.OVERLAY_HIDE);
-}
-
-/**
- * Finalize uploaded component data.
- *
- * Create ComponentLocation objects.
- * Create review-specific Metadata.
- */
-function* finalizeUpload(uploadMeta) {
-    const operations = [];
-    const serverLocationId = '3a372bde-05bc-11e4-8908-20c9d081909b';
-
-    for (const componentId of Object.keys(uploadMeta)) {
-        operations.push(
-            createOperation('ComponentLocation', {
-                component_id: componentId,
-                location_id: serverLocationId,
-                resource_identifier: componentId,
-            })
-        );
-
-        // TODO: Update this if components are being encoded.
-        operations.push(updateOperation(
-            'FileComponent', [componentId], {
-                name: 'ftrackreview-image',
-            }
-        ));
-        operations.push(
-            createOperation('Metadata', {
-                parent_id: componentId,
-                parent_type: 'FileComponent',
-                key: 'ftr_meta',
-                value: '{"format": "image"}',
-            })
-        );
-    }
-
-    yield call(
-        [session, session._call], operations
-    );
-}
-
 /**
  * Handle submit quick review action.
  *
@@ -359,7 +223,10 @@ function* submitQuickReview(action) {
         logger.debug('submitQuickReview', values);
 
         yield showProgress('Gathering media...');
-        const media = yield call([mediator, mediator.exportReviewableMedia], {});
+        const media = yield call([mediator, mediator.exportMedia], {
+            review: true,
+            delivery: false,
+        });
         logger.debug('Gathered media', media);
 
         yield showProgress('Preparing upload...');
@@ -371,7 +238,10 @@ function* submitQuickReview(action) {
         logger.debug('Uploaded', responses);
 
         yield showProgress('Finalizing upload...');
-        responses = yield call(finalizeUpload, uploadMeta);
+        const componentIds = Object.keys(uploadMeta);
+        responses = yield call(
+            finalizeUpload, componentIds, { name: 'ftrackreview-image' }
+        );
         logger.debug('Finalized upload', responses);
 
         yield showProgress('Creating review session...');
@@ -384,9 +254,14 @@ function* submitQuickReview(action) {
         responses = yield sendInvites(reviewSessionInviteeIds);
         logger.debug('Sent invites', responses);
 
-        yield call(showCompletion);
+        yield call(showCompletion, {
+            header: 'Completed',
+            message: 'The review session has now been created.',
+        }, () => {
+            browserHistory.replace('/');
+        });
     } catch (error) {
-        yield call(showFailure, error);
+        yield call(showFailure, { header: 'Failed to create review session', error });
     }
 }
 

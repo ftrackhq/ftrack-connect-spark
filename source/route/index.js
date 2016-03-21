@@ -11,9 +11,15 @@ import QuickReviewView from 'view/quick_review';
 import CreateProjectView from 'view/create_project';
 import ContextBrowser from 'view/context_browser';
 import PublishView from 'view/publish';
+import { publishLoad } from 'action/publish';
 
 
-export default () => (
+function dispatchOnEnter(dispatch, actionCreator) {
+    return () => { dispatch(actionCreator()); };
+}
+
+
+export default (store) => (
     <Route path="/" component={RootLayout}>
         <IndexRoute component={HomeView} />
         <Route path="/example" component={ExampleView} />
@@ -26,8 +32,16 @@ export default () => (
             path="/create-project"
             component={CreateProjectView}
         />
-        <Route path="/publish" component={PublishView} />
-        <Route path="/publish/:contextId" component={PublishView} />
+        <Route
+            path="/publish"
+            component={PublishView}
+            onEnter={dispatchOnEnter(store.dispatch, publishLoad)}
+        />
+        <Route
+            path="/publish/:contextId"
+            component={PublishView}
+            onEnter={dispatchOnEnter(store.dispatch, publishLoad)}
+        />
         <Redirect from="*.html" to="/" />
         <Route path="/404" component={NotFoundView} />
         <Redirect from="*" to="/404" />

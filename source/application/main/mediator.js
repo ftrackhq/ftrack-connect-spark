@@ -11,7 +11,7 @@ export const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
  *
  * *min* and *max* should be specified in milliseconds.
  */
-export function delayedResponse(result, min = 200, max = 600) {
+export function delayedResponse(result, min = 500, max = 750) {
     const timeout = min + (max - min) * Math.random();
     const promise = new Promise((resolve) => {
         delay(timeout).then(resolve(result));
@@ -26,14 +26,35 @@ export function delayedResponse(result, min = 200, max = 600) {
  */
 export class MainMediator {
 
-    exportReviewableMedia(options) {
-        logger.info('[MainMediator]', 'Exporting media', options);
-        return delayedResponse([{
+    getPublishOptions() {
+        logger.info('[MainMediator]', 'Get publish options');
+        return delayedResponse({
             name: 'image',
-            path: '/Users/Shared/ftrack/media/image.jpg',
-            extension: '.jpg',
-            size: 10403354,
-        }]);
+        });
+    }
+
+    exportMedia(options) {
+        logger.info('[MainMediator]', 'Exporting media', options);
+        const media = [];
+        if (options.reviewable) {
+            media.push({
+                use: 'review',
+                name: 'image',
+                path: '/Users/Shared/ftrack/media/image.jpg',
+                extension: '.jpg',
+                size: 10403354,
+            });
+        }
+        if (options.deliverable) {
+            media.push({
+                use: 'delivery',
+                name: 'photoshop-document',
+                path: '/Users/Shared/ftrack/media/image.psd',
+                extension: '.psd',
+                size: 20800042,
+            });
+        }
+        return delayedResponse(media);
     }
 
     uploadMedia(options) {
