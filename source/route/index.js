@@ -9,7 +9,7 @@ import HomeView from 'view/home';
 import ExampleView from 'view/example';
 import QuickReviewView from 'view/quick_review';
 import CreateProjectView from 'view/create_project';
-import ListContext from 'view/list_context';
+import ContextBrowser from 'view/context_browser';
 import PublishView from 'view/publish';
 
 
@@ -17,7 +17,7 @@ export default () => (
     <Route path="/" component={RootLayout}>
         <IndexRoute component={HomeView} />
         <Route path="/example" component={ExampleView} />
-        <Route path="/context/:parentId/:callback" component={ListContext} />
+        <Route path="/context/:parentId/:callback" component={ContextBrowser} />
         <Route
             path="/quick-review"
             component={QuickReviewView}

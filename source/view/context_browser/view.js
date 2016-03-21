@@ -9,9 +9,11 @@ import { ListItem, List } from 'react-toolbox';
 import { session } from '../../ftrack_api';
 
 
-/** Quick review view */
+/** Context browser. */
 /* eslint-disable react/prefer-stateless-function */
-class ListContext extends React.Component {
+class ContextBrowser extends React.Component {
+
+    /** Constructor. */
     constructor() {
         super();
 
@@ -23,12 +25,14 @@ class ListContext extends React.Component {
         this._resetQuery('projects');
     }
 
+    /** Listen to changes. */
     componentWillReceiveProps(newProps) {
         if (newProps && newProps.params && newProps.params.parentId) {
             this._resetQuery(newProps.params.parentId);
         }
     }
 
+    /** Reset the query. */
     _resetQuery(parentId) {
         this._offset = 0;
 
@@ -69,6 +73,7 @@ class ListContext extends React.Component {
         return query;
     }
 
+    /* handle click. */
     _onClick(item) {
         if (item.__entity_type__ === 'Task') {
             const path = `/${this.props.params.callback}/${item.id}`;
@@ -96,6 +101,7 @@ class ListContext extends React.Component {
         );
     }
 
+    /** Render. */
     render() {
         return (
             <List
@@ -110,12 +116,12 @@ class ListContext extends React.Component {
     }
 }
 
-ListContext.propTypes = {
+ContextBrowser.propTypes = {
     params: React.PropTypes.object,
 };
 
-ListContext.defaultProps = {
+ContextBrowser.defaultProps = {
     params: {},
 };
 
-export default ListContext;
+export default ContextBrowser;

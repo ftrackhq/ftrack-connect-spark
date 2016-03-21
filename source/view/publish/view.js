@@ -115,7 +115,7 @@ class PublishView extends React.Component {
     }
 
     _onBrowse() {
-        const path = '/context/publish/projects';
+        const path = '/context/projects/publish';
         browserHistory.push(path);
     }
 
