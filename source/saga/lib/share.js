@@ -2,9 +2,10 @@
 import uuid from 'uuid';
 import { call } from 'redux-saga/effects';
 
+import { session } from '../../ftrack_api';
 import {
-    session, createOperation, queryOperation, updateOperation,
-} from '../../ftrack_api';
+    createOperation, queryOperation, updateOperation,
+} from '../../ftrack_api/operation';
 import { mediator } from '../../application';
 
 import loglevel from 'loglevel';

@@ -10,7 +10,9 @@ import {
     showProgress, hideOverlay, showCompletion, showFailure,
 } from './lib/overlay';
 import { gatherAssets, uploadReviewMedia, updateComponentVersions } from './lib/share';
-import { session, createOperation, Event } from '../ftrack_api';
+import { session } from '../ftrack_api';
+import Event from '../ftrack_api/event';
+import { createOperation } from '../ftrack_api/operation';
 
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('saga:publish');

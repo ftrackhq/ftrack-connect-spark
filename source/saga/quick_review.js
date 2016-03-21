@@ -7,9 +7,10 @@ import { takeEvery } from 'redux-saga';
 import { call } from 'redux-saga/effects';
 import { browserHistory } from 'react-router';
 
+import { session } from '../ftrack_api';
 import {
-    session, createOperation, queryOperation,
-} from '../ftrack_api';
+    createOperation, queryOperation,
+} from '../ftrack_api/operation';
 import actions from 'action/quick_review';
 
 import { showProgress, showCompletion, showFailure } from './lib/overlay';
