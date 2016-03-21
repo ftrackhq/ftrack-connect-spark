@@ -18,6 +18,8 @@ export let session = null;
 export function configureSharedApiSession(
     serverUrl, apiUser, apiKey
 ) {
-    session = new Session(serverUrl, apiUser, apiKey, true);
+    session = new Session(
+        serverUrl, apiUser, apiKey, { autoConnectEventHub: true }
+    );
     return session.initialize();
 }

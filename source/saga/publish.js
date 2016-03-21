@@ -28,7 +28,7 @@ function* preparePublish() {
     try {
         const isConnectRunning = yield session.eventHub.publish(
             new Event('ftrack.connect.discover', {}),
-            true, 10
+            { reply: true, timeout: 15 }
         );
         logger.debug('Connect discover: ', isConnectRunning);
     } catch (error) {
@@ -103,7 +103,7 @@ function* createComponents(versionId, media) {
     logger.info('Creating components', components);
     return session.eventHub.publish(
         new Event('ftrack.spark.publish-components', { components }),
-        true, 10
+        { reply: true, timeout: 240 }
     );
 }
 

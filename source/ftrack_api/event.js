@@ -93,7 +93,7 @@ export class EventHub {
     }
 
     /** Publish event and return promise. */
-    publish(event, reply = false, timeout = 5) {
+    publish(event, { reply = false, timeout = 10 }) {
         event.addSource(
             {
                 id: this._id,

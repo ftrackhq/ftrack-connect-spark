@@ -10,7 +10,7 @@ import { queryOperation } from './operation';
 export class Session {
 
     /** Construct Session instance with API credentials. */
-    constructor(serverUrl, apiUser, apiKey, autoConnectEventHub = false) {
+    constructor(serverUrl, apiUser, apiKey, { autoConnectEventHub = false }) {
         this._apiUser = apiUser;
         this._apiKey = apiKey;
         this._serverUrl = serverUrl;
