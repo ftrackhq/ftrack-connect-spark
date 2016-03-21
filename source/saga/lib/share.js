@@ -158,6 +158,12 @@ export function* finalizeUpload(componentIds, updateData = null) {
     );
 }
 
+/**
+ * Upload *media* for review.
+ *
+ * .. note::
+ *      Currently assumes that the media is  pre-encoded images.
+ */
 export function* uploadReviewMedia(media) {
     const uploadMeta = yield call(getUploadMetadata, media);
     logger.debug('Prepared upload', uploadMeta);
@@ -174,6 +180,12 @@ export function* uploadReviewMedia(media) {
 }
 
 
+/**
+ * Update components to be part of versions.
+ *
+ * *componentVersions* should be array of objects with componentId and
+ * versionId keys.
+ */
 export function* updateComponentVersions(componentVersions) {
     // TODO: Move this logic to previous batch once the issues in API backend
     // has been resolved.
