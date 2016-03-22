@@ -51,7 +51,7 @@ class QuickReviewView extends React.Component {
 
         this._projects = _projects.then((data) => {
             const result = {};
-            for (const project of data) {
+            for (const project of data.data) {
                 result[project.id] = project.full_name;
             }
             return result;

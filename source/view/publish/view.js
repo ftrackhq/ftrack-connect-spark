@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { reduxForm } from 'redux-form';
+import { browserHistory } from 'react-router';
 
 import Input from 'react-toolbox/lib/input';
 
@@ -18,7 +19,7 @@ import style from './style.scss';
 /** Validate form values and return error object. */
 const validateForm = (values) => {
     const errors = {};
-    const requiredFields = ['name', 'context', 'type'];
+    const requiredFields = ['name', 'parent', 'type'];
     for (const field of requiredFields) {
         if (isEmptyString(values[field])) {
             errors[field] = 'Required';
@@ -33,13 +34,16 @@ const validateForm = (values) => {
 class PublishView extends React.Component {
     constructor() {
         super();
+        this._contextId = null;
+        this.state = { link: '' };
         this._onCancelClick = this._onCancelClick.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
         this._isSubmitDisabled = this._isSubmitDisabled.bind(this);
+        this._link = '';
 
         this._contexts = session._query(
             'select id, full_name from Project'
-        ).then((data) => data.reduce(
+        ).then((data) => data.data.reduce(
             (accumulator, item) => (
                 Object.assign({}, accumulator, { [item.id]: item.full_name })
             ), {}
@@ -47,11 +51,51 @@ class PublishView extends React.Component {
 
         this._assetTypes = session._query(
             'select id, name from AssetType'
-        ).then((data) => data.reduce(
+        ).then((data) => data.data.reduce(
             (accumulator, item) => (
                 Object.assign({}, accumulator, { [item.id]: item.name })
             ), {}
         ));
+    }
+
+    componentWillUpdate() {
+        // TODO: Props are not passed in correctly. Investigate why and remove
+        // the need to store contextId on this.
+        if (
+            this.props.params.contextId &&
+            this.props.params.contextId !== this._contextId
+        ) {
+            this._contextId = this.props.params.contextId;
+
+            session._query(
+                'select link, parent.id from Context where id is ' +
+                `${this.props.params.contextId}`
+            ).then((result) => {
+                const data = result.data;
+
+                if (data && data.length === 1) {
+                    const names = [];
+                    for (const item of data[0].link) {
+                        names.push(item.name);
+                    }
+
+                    if (data[0].__entity_type__ === 'Task') {
+                        this.props.fields.parent.onChange(
+                            data[0].parent.id
+                        );
+                        this.props.fields.task.onChange(
+                            data[0].id
+                        );
+                    } else {
+                        this.props.fields.parent.onChange(
+                            data[0].id
+                        );
+                    }
+
+                    this.setState({ link: names.join(' / ') });
+                }
+            });
+        }
     }
 
     /** Navigate back on cancel clicked */
@@ -80,11 +124,15 @@ class PublishView extends React.Component {
         return field.touched && field.error || null;
     }
 
+    _onBrowse() {
+        const path = '/context/projects/publish';
+        browserHistory.push(path);
+    }
 
     render() {
         const {
             fields: {
-                context, name, type, description,
+                name, type, description,
             },
         } = this.props;
 
@@ -96,10 +144,11 @@ class PublishView extends React.Component {
                 onCancel={this._onCancelClick}
                 submitDisabled={this._isSubmitDisabled()}
             >
-                <Selector
-                    label="Select context"
-                    query={this._contexts}
-                    {...context}
+                <Input
+                    type="text"
+                    label="Linked to"
+                    onFocus={ this._onBrowse }
+                    value={ this.state.link }
                 />
                 <div className={style.asset}>
                     <Input
@@ -142,12 +191,19 @@ PublishView.propTypes = {
     resetForm: React.PropTypes.func.isRequired,
     submitting: React.PropTypes.bool.isRequired,
     contexts: React.PropTypes.object,
+    params: React.PropTypes.object,
+};
+
+PublishView.defaultProps = {
+    params: {
+        task: null,
+    },
 };
 
 const formOptions = {
     form: 'publish',
     fields: [
-        'name', 'context', 'type', 'description',
+        'name', 'parent', 'task', 'type', 'description',
     ],
     validateForm,
 };
