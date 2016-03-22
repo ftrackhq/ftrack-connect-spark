@@ -36,6 +36,7 @@ module.exports = {
         },
     },
     module: {},
+    toolbox: { theme: `${defaultSettings.srcPath}/style/_ftrack_dark_theme.scss` },
     postcss: () => [autoprefixer({
         browsers: [
             '> 1%',
