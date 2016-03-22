@@ -78,8 +78,8 @@ class InfiniteScroll extends React.Component {
 }
 
 InfiniteScroll.propTypes = {
-    renderItem: React.PropTypes.func,
-    loadItems: React.PropTypes.func,
+    renderItem: React.PropTypes.func.isRequired,
+    loadItems: React.PropTypes.func.isRequired,
 };
 
 export default InfiniteScroll;

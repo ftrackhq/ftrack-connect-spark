@@ -5,7 +5,6 @@ import { reduxForm } from 'redux-form';
 import { browserHistory } from 'react-router';
 
 import Input from 'react-toolbox/lib/input';
-import Button from 'react-toolbox/lib/button';
 
 import Form from 'component/form';
 import Selector from 'component/selector';
