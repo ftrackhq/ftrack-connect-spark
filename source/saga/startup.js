@@ -56,7 +56,7 @@ function* startupSaga() {
             [session, session._query],
             queryUserExpression(credentials.apiUser)
         );
-        yield put(ftrackApiUserAuthenticated(users[0]));
+        yield put(ftrackApiUserAuthenticated(users.data[0]));
     } catch (error) {
         yield put(ftrackApiAuthenticationFailed(error));
     }
