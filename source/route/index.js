@@ -11,6 +11,7 @@ import QuickReviewView from 'view/quick_review';
 import CreateProjectView from 'view/create_project';
 import ContextBrowser from 'view/context_browser';
 import PublishView from 'view/publish';
+import ContextView from 'view/context';
 import { publishLoad } from 'action/publish';
 
 
@@ -21,7 +22,8 @@ function dispatchOnEnter(dispatch, actionCreator) {
 
 export default (store) => (
     <Route path="/" component={RootLayout}>
-        <IndexRoute component={HomeView} />
+        <Route path="/home" component={HomeView} />
+        <Route path="/context-view/:context" component={ContextView} />
         <Route path="/example" component={ExampleView} />
         <Route path="/context/:parentId/:callback" component={ContextBrowser} />
         <Route

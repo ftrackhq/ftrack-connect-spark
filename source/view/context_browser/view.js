@@ -17,6 +17,7 @@ class ContextBrowser extends React.Component {
     constructor() {
         super();
 
+        this.state = { parentId: 'projects' };
         this._limit = 25;
         this._offset = 0;
         this._loadItems = this._loadItems.bind(this);
@@ -35,6 +36,7 @@ class ContextBrowser extends React.Component {
     /** Reset the query. */
     _resetQuery(parentId) {
         this._offset = 0;
+        this.setState({ parentId });
 
         if (parentId !== 'projects') {
             this._baseQuery = (
@@ -75,12 +77,16 @@ class ContextBrowser extends React.Component {
 
     /* handle click. */
     _onClick(item) {
-        if (item.__entity_type__ === 'Task') {
-            const path = `/${this.props.params.callback}/${item.id}`;
-            browserHistory.push(path);
+        if (this.props.inline) {
+            this._resetQuery(item.id);
         } else {
-            const path = `/context/${item.id}/${this.props.params.callback}`;
-            browserHistory.push(path);
+            if (item.__entity_type__ === 'Task') {
+                const path = `/${this.props.params.callback}/${item.id}`;
+                browserHistory.push(path);
+            } else {
+                const path = `/context/${item.id}/${this.props.params.callback}`;
+                browserHistory.push(path);
+            }
         }
     }
 
@@ -105,7 +111,7 @@ class ContextBrowser extends React.Component {
     render() {
         return (
             <List
-                key={ this.props.params.parentId }
+                key={ this.state.parentId }
             >
                 <InfiniteScroll
                     loadItems={ this._loadItems }
@@ -118,10 +124,12 @@ class ContextBrowser extends React.Component {
 
 ContextBrowser.propTypes = {
     params: React.PropTypes.object,
+    inline: React.PropTypes.boolean,
 };
 
 ContextBrowser.defaultProps = {
     params: {},
+    inline: 0,
 };
 
 export default ContextBrowser;

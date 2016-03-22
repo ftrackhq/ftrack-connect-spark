@@ -3,12 +3,9 @@
 import React from 'react';
 import { Tab, Tabs } from 'react-toolbox';
 
-import ContextBrowser from 'view/context_browser';
-import MyTasks from 'container/my_tasks';
-
 
 /** Home view */
-class HomeView extends React.Component {
+class ContextView extends React.Component {
 
     constructor() {
         super();
@@ -22,22 +19,31 @@ class HomeView extends React.Component {
 
     render() {
         return (
+            <div>
+            { this.props.params.context }
             <Tabs index={this.state.index} onChange={this._handleTabChange}>
-                <Tab label="My tasks">
+                <Tab label="Notes">
                     <div>
-                        <MyTasks />
+                        Notes on the context.
                     </div>
                 </Tab>
-                <Tab label="Browse all">
+                <Tab label="Versions">
                     <div>
-                        <ContextBrowser
-                            inline={ 1 }
-                        />
+                        Versions on the contex.
                     </div>
                 </Tab>
             </Tabs>
+            </div>
         );
     }
 }
 
-export default HomeView;
+ContextView.propTypes = {
+    params: React.PropTypes.object,
+};
+
+ContextView.defaultProps = {
+    params: {},
+};
+
+export default ContextView;

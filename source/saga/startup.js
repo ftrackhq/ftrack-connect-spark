@@ -1,6 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import { call, put } from 'redux-saga/effects';
+import { browserHistory } from 'react-router';
 
 import { session, configureSharedApiSession } from '../ftrack_api';
 import {
@@ -57,6 +58,7 @@ function* startupSaga() {
             queryUserExpression(credentials.apiUser)
         );
         yield put(ftrackApiUserAuthenticated(users[0]));
+        browserHistory.push('/home');
     } catch (error) {
         yield put(ftrackApiAuthenticationFailed(error));
     }
