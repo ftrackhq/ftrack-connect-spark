@@ -10,7 +10,7 @@ $color-dark-300: #303030;
 $color-dark-400: $palette-grey-800; // rgb(66,66,66) / #424242
 
 
-$color-background: $color-dark-100 !default;
+$color-background: $color-dark-200 !default;
 
 $color-divider: rgba($color-white, 0.30) !default;
 
@@ -88,7 +88,7 @@ $autocomplete-color-primary: $color-primary;
 $autocomplete-overflow-max-height: 45vh;
 $autocomplete-suggestion-active-background: rgba($color-black, 0.20);
 $autocomplete-suggestion-padding: $unit;
-$autocomplete-suggestions-background: $color-dark-300;
+$autocomplete-suggestions-background: $color-dark-400;
 $autocomplete-value-border-radius: .2 * $unit;
 $autocomplete-value-margin: $unit * .25 $unit * .5 $unit * .25 0;
 $autocomplete-value-padding: $unit * .5 $unit * .75;
@@ -174,7 +174,7 @@ $calendar-total-height: $calendar-row-height * 7 + $calendar-title-height + $cal
 
 $dialog-border-radius: .2 * $unit;
 $dialog-color-title: $color-white !default;
-$dialog-color-white: $color-dark-300 !default;
+$dialog-color-white: $color-dark-400 !default;
 $dialog-content-padding: 2.4 * $unit;
 $dialog-navigation-padding: .8 * $unit;
 $dialog-translate-y: 4 * $unit;
@@ -184,7 +184,7 @@ $drawer-border-color: $color-dark-100 !default;
 $drawer-text-color: $color-text-secondary !default;
 $drawer-width: 24 * $unit;
 
-$dropdown-color-white: $color-dark-300;
+$dropdown-color-white: $color-dark-400;
 $dropdown-color-primary: $color-primary;
 $dropdown-color-primary-contrast: $color-primary-contrast;
 $dropdown-value-hover-background: $color-dark-200;
@@ -232,7 +232,7 @@ $list-item-child-margin: .8 * $unit;
 $menu-expand-duration: .3s !default;
 $menu-fade-duration: .2s !default;
 $menu-ripple-delay: .3s !default;
-$menu-background-color: $color-dark-300;
+$menu-background-color: $color-dark-400;
 $menu-padding: .8 * $unit 0;
 $menu-outline-border-radius: .2 * $unit;
 $menu-item-hover-background: rgba($color-black, 0.20);
