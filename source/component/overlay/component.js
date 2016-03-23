@@ -16,7 +16,7 @@ import style from './style';
 function Overlay(props) {
     const {
         className, active, fixed, loader, header, message, error,
-        dissmissable, onDismss,
+        dissmissable, onDismss, dismissLabel,
     } = props;
 
     const _classNames = classNames(
@@ -33,11 +33,11 @@ function Overlay(props) {
     }
 
     if (header) {
-        children.push(<h2>{header}</h2>);
+        children.push(<h3>{header}</h3>);
     }
 
     if (message) {
-        children.push(<p className={style.message}>{message}</p>);
+        children.push(<h6 className={style.message}>{message}</h6>);
     }
 
     if (error) {
@@ -45,7 +45,7 @@ function Overlay(props) {
     }
 
     if (dissmissable) {
-        children.push(<Button label="Close" onClick={onDismss} raised />);
+        children.push(<Button label={dismissLabel} onClick={onDismss} raised />);
     }
 
     return (
@@ -67,6 +67,7 @@ Overlay.propTypes = {
     error: React.PropTypes.node,
     dissmissable: React.PropTypes.bool,
     onDismss: React.PropTypes.func,
+    dismissLabel: React.PropTypes.node,
 };
 
 Overlay.defaultProps = {
@@ -79,6 +80,7 @@ Overlay.defaultProps = {
     error: null,
     dissmissable: false,
     onDismss: null,
+    dismissLabel: 'Close',
 };
 
 export default Overlay;
