@@ -56,7 +56,7 @@ function* preparePublish() {
 /** Create version */
 function* createVersion(values, thumbnailId) {
     const assetData = {
-        context_id: values.context, name: values.name, type_id: values.type,
+        context_id: values.parent, name: values.name, type_id: values.type,
     };
     const [assets, createAssetsOperations] = yield call(
         gatherAssets, [assetData]
@@ -64,8 +64,7 @@ function* createVersion(values, thumbnailId) {
 
     const assetId = assets[0].id;
     const versionId = uuid.v4();
-    // TODO: Update this once you can select task in spark.
-    const taskId = null;
+    const taskId = values.task;
 
     const operations = [
         ...createAssetsOperations,

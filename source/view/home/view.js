@@ -56,6 +56,7 @@ class HomeView extends React.Component {
                 <div className={style.home}>
                     <h2 className={style.title}>ftrack connect spark</h2>
                     <p><Link to="/example">To example view</Link></p>
+                    <p><Link to="/context/projects/context">Browse</Link></p>
                 </div>
             </div>
         );

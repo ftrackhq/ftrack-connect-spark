@@ -83,15 +83,27 @@ export class Session {
     /**
      * Perform a single query operation with *expression*.
      *
-     * Returns a promise which will be resolved with an array of matched
-     * entities.
+     * Returns a promise which will be resolved with an object containing data
+     * and metadata.
      */
     _query(expression) {
         const operation = queryOperation(expression);
         let request = this._call([operation]);
-        request = request.then((responses) => responses[0].data);
+        request = request.then((responses) => responses[0]);
 
         return request;
+    }
+
+    /** Return thumbnail URL for *componentId* with *size*. */
+    thumbnail(componentId, size) {
+        if (!componentId) {
+            return `${this._serverUrl}/img/thumbnail2.png`;
+        }
+
+        return (
+            `${this._serverUrl}/component/thumbnail?id=${componentId}` +
+            `&size=${size}&username=${this._apiUser}&apiKey=${this._apiKey}`
+        );
     }
 }
 

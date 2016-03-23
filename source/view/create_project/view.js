@@ -55,7 +55,7 @@ class CreateProjectView extends React.Component {
 
         this._workflows = _workflows.then((data) => {
             const result = {};
-            for (const workflow of data) {
+            for (const workflow of data.data) {
                 result[workflow.id] = workflow.name;
             }
             return result;

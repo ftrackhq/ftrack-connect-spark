@@ -6,7 +6,6 @@ import Session from './session';
 export { Event, EventHub } from './event';
 export { Session } from './session';
 
-
 /** Shared API session instance. */
 export let session = null;
 
