@@ -99,6 +99,7 @@ class CreateProjectView extends React.Component {
         return (
             <Form
                 header="Create project"
+                headerColor="orange"
                 submitLabel="Create"
                 onSubmit={this._onSubmit}
                 onCancel={this._onCancelClick}

@@ -95,6 +95,7 @@ class QuickReviewView extends React.Component {
         return (
             <Form
                 header="Share a quick review"
+                headerColor="cyan"
                 submitLabel="Share"
                 onSubmit={this._onSubmit}
                 onCancel={this._onCancelClick}

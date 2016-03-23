@@ -1,10 +1,12 @@
 // :copyright: Copyright (c) 2016 ftrack
+@import "../../style/_theme.scss";
+@import "../../style/core.scss";
 
 body {
-    background: #fff;
-    color: #333;
+    background: $color-background;
+    color: $color-text;
 }
 
-.main {
-    padding: 2rem;
+a {
+    color: $color-primary;
 }
