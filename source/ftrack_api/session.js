@@ -1,8 +1,64 @@
 // :copyright: Copyright (c) 2016 ftrack
 
+import { forIn } from 'lodash';
+
 import { EventHub } from './event';
 import { queryOperation } from './operation';
 
+
+function _gatherCache(data, cache) {
+    data.forEach(
+        (item) => {
+            if (!item.__entity_type__) {
+                return;
+            }
+            const identifier = `${item.id}, ${item.__entity_type__}`;
+            for (const key in item) {
+                // skip loop if the property is from prototype
+                if (!item.hasOwnProperty(key)) continue;
+
+                // console.log(key);
+                if (item[key] && item[key].constructor === Array) {
+                    _gatherCache(item[key], cache);
+                }
+
+                if (item[key] && item[key].constructor === Object) {
+                    _gatherCache([item[key]], cache);
+                }
+            }
+
+            if (!cache[identifier]) {
+                cache[identifier] = [];
+            }
+
+            cache[identifier].push(item);
+        }
+    );
+}
+
+function merge(data) {
+    const cache = {};
+
+    _gatherCache(data, cache);
+
+    // Now merge all objects with the same identifier.
+    forIn(cache, (objects) => {
+        const map = {};
+        forIn(objects, (item) => {
+            forIn(item, (value, key) => {
+                if (value && value.constructor !== Array && value.constructor !== Object) {
+                    map[key] = value;
+                }
+            });
+        });
+
+        forIn(objects, (item) => {
+            Object.assign(item, map);
+        });
+    });
+
+    return data;
+}
 
 /**
  * ftrack API session
@@ -89,7 +145,13 @@ export class Session {
     _query(expression) {
         const operation = queryOperation(expression);
         let request = this._call([operation]);
-        request = request.then((responses) => responses[0]);
+        request = request.then(
+            (responses) => {
+                const response = responses[0];
+                response.data = merge(response.data);
+                return response;
+            }
+        );
 
         return request;
     }

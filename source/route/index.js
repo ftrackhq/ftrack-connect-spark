@@ -11,7 +11,9 @@ import QuickReviewView from 'view/quick_review';
 import CreateProjectView from 'view/create_project';
 import ContextBrowser from 'view/context_browser';
 import PublishView from 'view/publish';
+import NotesListView from 'view/note';
 import { publishLoad } from 'action/publish';
+import { notesLoad } from 'action/note';
 
 
 function dispatchOnEnter(dispatch, actionCreator) {
@@ -36,6 +38,11 @@ export default (store) => (
             path="/publish"
             component={PublishView}
             onEnter={dispatchOnEnter(store.dispatch, publishLoad)}
+        />
+        <Route
+            path="/notes"
+            component={NotesListView}
+            onEnter={dispatchOnEnter(store.dispatch, notesLoad)}
         />
         <Route
             path="/publish/:contextId"

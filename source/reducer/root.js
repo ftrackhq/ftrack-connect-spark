@@ -7,6 +7,7 @@ import { reducer as formReducer } from 'redux-form';
 import userReducer from './user';
 import applicationOverlayReducer from './screen/application_overlay';
 import publishReducer from './screen/publish';
+import notesReducer from './screen/note';
 
 export default combineReducers({
     routing: routerReducer,
@@ -15,5 +16,6 @@ export default combineReducers({
     screen: combineReducers({
         overlay: applicationOverlayReducer,
         publish: publishReducer,
+        notes: notesReducer,
     }),
 });
