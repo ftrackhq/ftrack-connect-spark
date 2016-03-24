@@ -1,1 +1,11 @@
 // :copyright: Copyright (c) 2016 ftrack
+
+.cardRow {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    .media {
+        width: 150px;
+        height: 150px;
+    }
+}

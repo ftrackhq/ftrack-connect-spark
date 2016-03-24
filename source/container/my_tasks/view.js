@@ -3,10 +3,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { browserHistory } from 'react-router';
+import style from './style';
 
 import InfiniteScroll from 'component/infinite_scroll';
-import { Card, CardMedia, CardTitle, CardText, CardActions } from 'react-toolbox/lib/card';
+import { Card, CardActions, CardTitle, CardMedia, CardText } from 'react-toolbox/lib/card';
 import Button from 'react-toolbox/lib/button';
+import Reveal from 'component/reveal';
 
 import { session } from '../../ftrack_api';
 
@@ -25,6 +27,7 @@ class MyTasks extends React.Component {
         this._renderItem = this._renderItem.bind(this);
     }
 
+    /** Navigate to the task. */
     _showDetails(item) {
         browserHistory.push(`/context-view/${item.id}`);
     }
@@ -40,7 +43,8 @@ class MyTasks extends React.Component {
         ];
         let queryString = (
             `select ${select.join(', ')} from Task where ` +
-            `assignments.resource_id=${this.props.user.id}`
+            `assignments.resource_id=${this.props.user.id} ` +
+            'and project.status is active'
         );
 
         if (this._hideDoneTasks) {
@@ -70,6 +74,16 @@ class MyTasks extends React.Component {
         return query;
     }
 
+    _getLink(link) {
+        const path = [];
+
+        for (let index = 0; index < link.length; index++) {
+            path.push(link[index].name);
+        }
+
+        return path.join(' / ');
+    }
+
     /** Render item. */
     _renderItem(item) {
         const showDetails = this._showDetails.bind(this, item);
@@ -78,11 +92,20 @@ class MyTasks extends React.Component {
             <Card
                 key={ item.id }
             >
-                <CardTitle
-                    title={ item.name }
-                    subtitle={ item.__entity_type__ }
-                />
-                <CardText>{ item.description }</CardText>
+                <div className={style.cardRow}>
+                    <CardTitle>
+                        <p>{ item.__entity_type__ }</p>
+                        <p>{ item.name }</p>
+                        <p>{ this._getLink(item.link.slice(-2, -1)) }</p>
+                        <p>{ this._getLink(item.link.slice(0, -2)) }</p>
+                    </CardTitle>
+                    <CardMedia
+                        className={ style.media }
+                        image={ session.thumbnail(item.thumbnail_id, 300) }
+                    />
+                </div>
+
+
                 <CardActions>
                     <Button
                         label="Details"
@@ -91,6 +114,11 @@ class MyTasks extends React.Component {
                         type="button"
                     />
                 </CardActions>
+                <CardText>
+                    <Reveal label="description">
+                        { item.description }
+                    </Reveal>
+                </CardText>
             </Card>
         );
     }
@@ -105,6 +133,11 @@ class MyTasks extends React.Component {
         );
     }
 }
+
+
+MyTasks.propTypes = {
+    user: React.PropTypes.object,
+};
 
 
 function mapStateToProps(state) {

@@ -1,7 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
-import { Route, Redirect, IndexRoute } from 'react-router';
+import { Route, Redirect } from 'react-router';
 
 import RootLayout from 'layout/root';
 import NotFoundView from 'view/not_found';
