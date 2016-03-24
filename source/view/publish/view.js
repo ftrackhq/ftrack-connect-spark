@@ -58,46 +58,6 @@ class PublishView extends React.Component {
         ));
     }
 
-    componentWillUpdate() {
-        // TODO: Props are not passed in correctly. Investigate why and remove
-        // the need to store contextId on this.
-        if (
-            this.props.params.contextId &&
-            this.props.params.contextId !== this._contextId
-        ) {
-            this._contextId = this.props.params.contextId;
-
-            session._query(
-                'select link, parent.id from Context where id is ' +
-                `${this.props.params.contextId}`
-            ).then((result) => {
-                const data = result.data;
-
-                if (data && data.length === 1) {
-                    const names = [];
-                    for (const item of data[0].link) {
-                        names.push(item.name);
-                    }
-
-                    if (data[0].__entity_type__ === 'Task') {
-                        this.props.fields.parent.onChange(
-                            data[0].parent.id
-                        );
-                        this.props.fields.task.onChange(
-                            data[0].id
-                        );
-                    } else {
-                        this.props.fields.parent.onChange(
-                            data[0].id
-                        );
-                    }
-
-                    this.setState({ link: names.join(' / ') });
-                }
-            });
-        }
-    }
-
     /** Navigate back on cancel clicked */
     _onCancelClick(e) {
         e.preventDefault();
@@ -125,7 +85,7 @@ class PublishView extends React.Component {
     }
 
     _onBrowse() {
-        const path = '/context/projects/publish';
+        const path = '/publish-context';
         browserHistory.push(path);
     }
 
@@ -148,7 +108,7 @@ class PublishView extends React.Component {
                     type="text"
                     label="Linked to"
                     onFocus={ this._onBrowse }
-                    value={ this.state.link }
+                    value={ this.props.link.join(' / ') }
                 />
                 <div className={style.asset}>
                     <Input
@@ -192,6 +152,7 @@ PublishView.propTypes = {
     submitting: React.PropTypes.bool.isRequired,
     contexts: React.PropTypes.object,
     params: React.PropTypes.object,
+    link: React.PropTypes.array,
 };
 
 PublishView.defaultProps = {
@@ -217,7 +178,10 @@ function mapStateToProps(state) {
         initialValues: {
             name: publish.name || '',
             type: publish.type || assetTypeId,
+            parent: publish.parent || null,
+            task: publish.task || null,
         },
+        link: publish.link || [],
     };
 }
 

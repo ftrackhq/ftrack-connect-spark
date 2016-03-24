@@ -29,7 +29,7 @@ class MyTasks extends React.Component {
 
     /** Navigate to the task. */
     _showDetails(item) {
-        browserHistory.push(`/context-view/${item.id}`);
+        browserHistory.push(`/context/${item.id}`);
     }
 
     /** Load more items. */

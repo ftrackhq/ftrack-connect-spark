@@ -1,7 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
-import { browserHistory } from 'react-router';
 
 import InfiniteScroll from 'component/infinite_scroll';
 import { ListItem, List } from 'react-toolbox';
@@ -26,17 +25,9 @@ class ContextBrowser extends React.Component {
         this._resetQuery('projects');
     }
 
-    /** Listen to changes. */
-    componentWillReceiveProps(newProps) {
-        if (newProps && newProps.params && newProps.params.parentId) {
-            this._resetQuery(newProps.params.parentId);
-        }
-    }
-
     /** Reset the query. */
     _resetQuery(parentId) {
         this._offset = 0;
-        this.setState({ parentId });
 
         if (parentId !== 'projects') {
             this._baseQuery = (
@@ -76,16 +67,11 @@ class ContextBrowser extends React.Component {
 
     /* handle click. */
     _onClick(item) {
-        if (this.props.inline) {
-            this._resetQuery(item.id);
+        if (item.__entity_type__ === 'Task') {
+            this.props.onSelectContext(item.id);
         } else {
-            if (item.__entity_type__ === 'Task') {
-                const path = `/${this.props.params.callback}/${item.id}`;
-                browserHistory.push(path);
-            } else {
-                const path = `/context/${item.id}/${this.props.params.callback}`;
-                browserHistory.push(path);
-            }
+            this.setState({ parentId: item.id });
+            this._resetQuery(item.id);
         }
     }
 
@@ -122,13 +108,7 @@ class ContextBrowser extends React.Component {
 }
 
 ContextBrowser.propTypes = {
-    params: React.PropTypes.object,
-    inline: React.PropTypes.boolean,
-};
-
-ContextBrowser.defaultProps = {
-    params: {},
-    inline: 0,
+    onSelectContext: React.PropTypes.func,
 };
 
 export default ContextBrowser;

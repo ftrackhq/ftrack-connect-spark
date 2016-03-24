@@ -9,7 +9,7 @@ import HomeView from 'view/home';
 import ExampleView from 'view/example';
 import QuickReviewView from 'view/quick_review';
 import CreateProjectView from 'view/create_project';
-import ContextBrowser from 'view/context_browser';
+import PublishContextBrowser from 'container/publish_context_browser';
 import PublishView from 'view/publish';
 import ContextView from 'view/context';
 import { publishLoad } from 'action/publish';
@@ -23,9 +23,9 @@ function dispatchOnEnter(dispatch, actionCreator) {
 export default (store) => (
     <Route path="/" component={RootLayout}>
         <Route path="/home" component={HomeView} />
-        <Route path="/context-view/:context" component={ContextView} />
+        <Route path="/context/:context" component={ContextView} />
         <Route path="/example" component={ExampleView} />
-        <Route path="/context/:parentId/:callback" component={ContextBrowser} />
+        <Route path="/publish-context" component={PublishContextBrowser} />
         <Route
             path="/quick-review"
             component={QuickReviewView}
@@ -36,11 +36,6 @@ export default (store) => (
         />
         <Route
             path="/publish"
-            component={PublishView}
-            onEnter={dispatchOnEnter(store.dispatch, publishLoad)}
-        />
-        <Route
-            path="/publish/:contextId"
             component={PublishView}
             onEnter={dispatchOnEnter(store.dispatch, publishLoad)}
         />
