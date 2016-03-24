@@ -5,7 +5,6 @@ import { reduxForm } from 'redux-form';
 import { browserHistory } from 'react-router';
 
 import Input from 'react-toolbox/lib/input';
-import Button from 'react-toolbox/lib/button';
 
 import Form from 'component/form';
 import Selector from 'component/selector';
@@ -44,7 +43,7 @@ class PublishView extends React.Component {
 
         this._contexts = session._query(
             'select id, full_name from Project'
-        ).then((data) => data.reduce(
+        ).then((data) => data.data.reduce(
             (accumulator, item) => (
                 Object.assign({}, accumulator, { [item.id]: item.full_name })
             ), {}
@@ -52,7 +51,7 @@ class PublishView extends React.Component {
 
         this._assetTypes = session._query(
             'select id, name from AssetType'
-        ).then((data) => data.reduce(
+        ).then((data) => data.data.reduce(
             (accumulator, item) => (
                 Object.assign({}, accumulator, { [item.id]: item.name })
             ), {}
@@ -71,7 +70,9 @@ class PublishView extends React.Component {
             session._query(
                 'select link, parent.id from Context where id is ' +
                 `${this.props.params.contextId}`
-            ).then((data) => {
+            ).then((result) => {
+                const data = result.data;
+
                 if (data && data.length === 1) {
                     const names = [];
                     for (const item of data[0].link) {

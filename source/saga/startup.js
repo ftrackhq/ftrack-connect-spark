@@ -57,7 +57,7 @@ function* startupSaga() {
             [session, session._query],
             queryUserExpression(credentials.apiUser)
         );
-        yield put(ftrackApiUserAuthenticated(users[0]));
+        yield put(ftrackApiUserAuthenticated(users.data[0]));
         browserHistory.push('/home');
     } catch (error) {
         yield put(ftrackApiAuthenticationFailed(error));

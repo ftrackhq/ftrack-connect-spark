@@ -2,6 +2,8 @@
 import React from 'react';
 import Waypoint from 'react-waypoint';
 
+import ProgressBar from 'react-toolbox/lib/progress_bar';
+
 import style from './style.scss';
 
 /**
@@ -11,6 +13,7 @@ import style from './style.scss';
  */
 class InfiniteScroll extends React.Component {
 
+    /** Initiate component. */
     constructor() {
         super();
         this.state = { items: [], finished: false };
@@ -19,6 +22,7 @@ class InfiniteScroll extends React.Component {
         this._renderWaypoint = this._renderWaypoint.bind(this);
     }
 
+    /** Load more items into the component. */
     _loadMoreItems() {
         this.setState({ loading: true });
 
@@ -37,22 +41,27 @@ class InfiniteScroll extends React.Component {
         });
     }
 
+    /** Render the items using custom renderer. */
     _renderItems() {
         return this.state.items.map(this.props.renderItem);
     }
 
+    /** Render a loading indicator. */
     _renderLoadingMessage() {
         if (this.state.loading && !this.state.finished) {
             return (
-                <p className={style.loading}>
-                    Loading...
-                </p>
+                <ProgressBar
+                    type="circular"
+                    mode="indeterminate"
+                    className={ style.loading }
+                />
             );
         }
 
         return null;
     }
 
+    /** Render the waypoint. */
     _renderWaypoint() {
         if (!this.state.loading) {
             return (
@@ -78,8 +87,8 @@ class InfiniteScroll extends React.Component {
 }
 
 InfiniteScroll.propTypes = {
-    renderItem: React.PropTypes.func,
-    loadItems: React.PropTypes.func,
+    renderItem: React.PropTypes.func.isRequired,
+    loadItems: React.PropTypes.func.isRequired,
 };
 
 export default InfiniteScroll;

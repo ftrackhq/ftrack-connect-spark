@@ -53,8 +53,7 @@ class ContextBrowser extends React.Component {
     /** Load more items. */
     _loadItems() {
         let query = session._query(
-            `${this._baseQuery} offset ${this._offset} limit ${this._limit}`,
-            true
+            `${this._baseQuery} offset ${this._offset} limit ${this._limit}`
         );
 
         // Calculate new offset.

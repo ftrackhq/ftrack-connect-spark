@@ -83,18 +83,13 @@ export class Session {
     /**
      * Perform a single query operation with *expression*.
      *
-     * Returns a promise which will be resolved with an array of matched
-     * entities.
+     * Returns a promise which will be resolved with an object containing data
+     * and metadata.
      */
-    _query(expression, fullResponse) {
+    _query(expression) {
         const operation = queryOperation(expression);
         let request = this._call([operation]);
-
-        if (!fullResponse) {
-            request = request.then((responses) => responses[0].data);
-        } else {
-            request = request.then((responses) => responses[0]);
-        }
+        request = request.then((responses) => responses[0]);
 
         return request;
     }
