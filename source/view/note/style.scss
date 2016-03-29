@@ -2,7 +2,7 @@
 
 .note-item {
     display: flex;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 
     .avatar-column {
         width: 60px;
@@ -14,21 +14,21 @@
         .top {
             display: flex;
             justify-content: space-between;
-
-            .user {
-                font-weight: bold;
-            }
-        }
-
-        .category {
-            color: gray;
-            font-style: italic;
         }
 
         .replies {
-            margin-top: 5px;
+            margin-top: 8px;
         }
     }
+}
+
+.category {
+    color: gray;
+    font-style: italic;
+}
+
+.user {
+    font-weight: bold;
 }
 
 .note-list {
