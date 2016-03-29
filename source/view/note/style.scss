@@ -1,0 +1,37 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+.note-item {
+    display: flex;
+    margin-bottom: 5px;
+
+    .avatar-column {
+        width: 60px;
+    }
+
+    .body-column {
+        flex: 1;
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+
+            .user {
+                font-weight: bold;
+            }
+        }
+
+        .category {
+            color: gray;
+            font-style: italic;
+        }
+
+        .replies {
+            margin-top: 5px;
+        }
+    }
+}
+
+.note-list {
+    display: flex;
+    flex-direction: column;
+}

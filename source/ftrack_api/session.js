@@ -17,7 +17,6 @@ function _gatherCache(data, cache) {
                 // skip loop if the property is from prototype
                 if (!item.hasOwnProperty(key)) continue;
 
-                // console.log(key);
                 if (item[key] && item[key].constructor === Array) {
                     _gatherCache(item[key], cache);
                 }
