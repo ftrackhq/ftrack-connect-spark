@@ -3,7 +3,6 @@
 import React, { PropTypes } from 'react';
 import ToolboxApp from 'react-toolbox/lib/app';
 
-import HeaderContainer from 'container/header';
 import ApplicationOverlay from 'container/application_overlay';
 
 import 'react-toolbox/components/commons.scss';
@@ -14,7 +13,6 @@ import style from './style.scss';
 function RootLayout({ children }) {
     return (
         <ToolboxApp>
-            <HeaderContainer />
             <div className={style.main}>
                 {children}
             </div>

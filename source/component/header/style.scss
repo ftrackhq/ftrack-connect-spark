@@ -1,11 +1,14 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-.appbar {
+.root {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    transition: background-color 0.2s ease;
 }
 
 .title {
 
 }
+

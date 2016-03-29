@@ -5,7 +5,7 @@
 }
 
 .link > abbr {
-    text-transform: uppercase;
-    color: $palette-light-green-500;
     margin: 1rem 0;
+    color: $input-text-label-color;
+    border-bottom: 2px dotted $input-text-bottom-border-color;
 }
