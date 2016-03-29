@@ -6,26 +6,46 @@ const logger = loglevel.getLogger('cinema4d:mediator');
 import { session } from '../../ftrack_api';
 import Event from '../../ftrack_api/event';
 
+import AbstractMediator from '../abstract_mediator';
+
 /**
  * Cinema 4D Mediator
  *
  * Provides cinema-4d-specific logic by calling methods in
  * `ftrack-connect-cinema-4d` via events.
  */
-export class Cinema4dMediator {
-    _getOption(name, defaultValue = null) {
+export class Cinema4dMediator extends AbstractMediator {
+    constructor() {
+        super();
+        this._options = {};
+
         try {
-            return window.__FTRACK_C4D.options[name];
+            this._options = this._loadOptions();
         } catch (err) {
-            return defaultValue;
+            logger.error(err);
         }
     }
 
-    _getTarget() {
-        const c4dEventHubId = this._getOption('event_hub_id');
-        return c4dEventHubId ? `id=${c4dEventHubId}` : '';
+    /** Load encoded options in query parameters. */
+    _loadOptions() {
+        const encodedValue = window.location.search.split('=')[1];
+        const decodedValue = JSON.parse(window.atob(encodedValue));
+        return decodedValue;
     }
 
+    /** Return event target string. */
+    _getTarget() {
+        const c4dSubscriptionId = this._options.subscription_id || null;
+        return c4dSubscriptionId ? `id=${c4dSubscriptionId}` : '';
+    }
+
+    /**
+     * Send RPC event executing *method* in `ftrack-connect-cinema-4d`.
+     *
+     * *data* should be an object of event data.
+     *
+     * Returns promise which will be resolved with event reply.
+     */
     _rpcEvent(method, data = {}) {
         const event = new Event(
             `ftrack.connect-cinema-4d.${method}`,
@@ -46,16 +66,19 @@ export class Cinema4dMediator {
         return promise;
     }
 
+    /** Return publish options */
     getPublishOptions(options) {
         logger.info('Get publish options', options);
         return this._rpcEvent('get_publish_options', options);
     }
 
+    /** Exported media and resolve with array of files. */
     exportMedia(options) {
         logger.info('Export media', options);
         return this._rpcEvent('export_media', options);
     }
 
+    /** Upload media. */
     uploadMedia(options) {
         logger.info('Upload media', options);
         return this._rpcEvent('upload_media', options);
@@ -63,5 +86,4 @@ export class Cinema4dMediator {
 }
 
 const cinema4dMediator = new Cinema4dMediator();
-
 export default cinema4dMediator;

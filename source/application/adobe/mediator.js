@@ -3,13 +3,15 @@
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('adobe:mediator');
 
+import AbstractMediator from '../abstract_mediator';
+
 /**
  * Adobe Mediator
  *
  * Provides adobe-specific logic by calling methods in
  * `ftrack-connect-spark-adobe` exposed on the `window` object.
  */
-export class AdobeMediator {
+export class AdobeMediator extends AbstractMediator {
 
 
     getPublishOptions(options) {

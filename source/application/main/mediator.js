@@ -3,6 +3,8 @@
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('main:mediator');
 
+import AbstractMediator from '../abstract_mediator';
+
 /** Return promise which is resolved after *ms* delay. */
 export const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -24,7 +26,7 @@ export function delayedResponse(result, min = 500, max = 750) {
  *
  * Used for development purposes only.
  */
-export class MainMediator {
+export class MainMediator extends AbstractMediator {
 
     getPublishOptions() {
         logger.info('[MainMediator]', 'Get publish options');
