@@ -9,15 +9,15 @@ import loglevel from 'loglevel';
 export class Event {
 
     /** Construct EventHub instance with API credentials. */
-    constructor(topic, data) {
-        this._data = {
+    constructor(topic, data, options = {}) {
+        this._data = Object.assign({
             topic,
             data,
             id: uuid.v4(),
             sent: null,
             target: '',
             inReplyToEvent: null,
-        };
+        }, options);
     }
 
     /** Return event data. */
