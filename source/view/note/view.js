@@ -13,7 +13,7 @@ const logger = loglevel.getLogger('view:note');
 
 function ParentNote({ data }) {
     const replies = (data.replies || []).map(
-        (reply) => <Note data={reply} />
+        (reply) => <Note data={reply} key={reply.id} />
     );
     return (
         <div className={style['parent-note-item']}>
@@ -41,10 +41,10 @@ function AttachmentArea({ components }) {
                     component.file_type.slice(1)
                 )
             ) {
-                images.push(<img src={session.thumbnail(component.id, 100)} />);
+                images.push(<img key={component.id} src={session.thumbnail(component.id, 100)} />);
             } else {
                 other.push(
-                    <p>{`${component.name}${component.file_type}`}</p>
+                    <p key={component.id}>{`${component.name}${component.file_type}`}</p>
                 );
             }
         }
@@ -67,7 +67,6 @@ AttachmentArea.propTypes = {
 };
 
 function Note({ data, replies, reply, category }) {
-    logger.debug('Note item to render: ', data);
     const replyButton = (
         (reply !== true) ?
         '' :
@@ -112,23 +111,24 @@ function Note({ data, replies, reply, category }) {
 
 Note.propTypes = {
     data: React.PropTypes.object.isRequired,
-    replies: React.PropTypes.array.isRequired,
-    reply: React.PropTypes.bool.isRequired,
-    category: React.PropTypes.bool.isRequired,
+    replies: React.PropTypes.array,
+    reply: React.PropTypes.bool,
+    category: React.PropTypes.bool,
 };
 
 function NotesList({ items }) {
+    logger.debug('Rendering notes', items);
     return (
         <div className={style['note-list']}>
             {
-                items.map((item) => <ParentNote data={item} />)
+                items.map((item) => <ParentNote data={item} key={item.id} />)
             }
         </div>
     );
 }
 
 NotesList.propTypes = {
-    items: React.PropTypes.object.isRequired,
+    items: React.PropTypes.array.isRequired,
 };
 
 
