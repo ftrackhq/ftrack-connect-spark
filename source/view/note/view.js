@@ -3,6 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Avatar, Button } from 'react-toolbox';
 import loglevel from 'loglevel';
+import TimeAgo from 'react-timeago';
 
 import { session } from '../../ftrack_api';
 
@@ -45,7 +46,7 @@ function Note({ data, replies, reply, category }) {
                     <div className={style.user}>
                         {`${data.author.first_name} ${data.author.last_name}`}
                     </div>
-                    <div>{data.date.value}</div>
+                    <TimeAgo date={data.date.toDate()} />
                 </div>
                 {categoryItem}
                 <div>{data.content}</div>
@@ -60,7 +61,7 @@ function Note({ data, replies, reply, category }) {
 
 Note.propTypes = {
     data: React.PropTypes.object.isRequired,
-    replies: React.PropTypes.object.isRequired,
+    replies: React.PropTypes.array.isRequired,
     reply: React.PropTypes.bool.isRequired,
     category: React.PropTypes.bool.isRequired,
 };
