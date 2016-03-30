@@ -1,17 +1,12 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
-import { Link } from 'react-router';
 import Header from 'component/header';
 import { Button, Menu, MenuItem } from 'react-toolbox';
 import { Tab, Tabs } from 'react-toolbox';
 import { browserHistory } from 'react-router';
 
-import ContextBrowser from 'container/context_browser';
-import MyTasks from 'container/my_tasks';
-
 import style from './style.scss';
-
 
 /** Push new route on item selected. */
 const navigateToMenu = (value) => {
@@ -23,9 +18,28 @@ class HomeView extends React.Component {
     /** Instantiate home view. */
     constructor() {
         super();
+        this._tabs = [
+            { route: 'my-tasks', label: 'My tasks' },
+            { route: 'browse-all', label: 'Browse all' },
+        ];
         this.state = { index: 0 };
         this._onShareClick = this._onShareClick.bind(this);
         this._handleTabChange = this._handleTabChange.bind(this);
+    }
+
+    componentWillMount() {
+        this.setState({ index: this._getActiveIndexFromRoute() });
+    }
+
+    componentWillReceiveProps() {
+        this.setState({ index: this._getActiveIndexFromRoute() });
+    }
+
+    _getActiveIndexFromRoute() {
+        const index = this._tabs.findIndex(
+            (tab) => this.context.router.isActive(`/home/${tab.route}`)
+        ) || 0;
+        return index;
     }
 
     _onShareClick() {
@@ -35,6 +49,7 @@ class HomeView extends React.Component {
     /** Handle tab change. */
     _handleTabChange(index) {
         this.setState({ index });
+        browserHistory.replace(`/home/${this._tabs[index].route}`);
     }
 
     /** Handle selecting a context. */
@@ -69,30 +84,24 @@ class HomeView extends React.Component {
         );
 
         return (
-            <div>
+            <div className={style.root}>
                 <Header title="" rightButton={shareButton} color="dark-100" />
-                <div className={style.home}>
-                    <h2 className={style.title}>ftrack connect spark</h2>
-                    <p><Link to="/example">To example view</Link></p>
-                </div>
-
                 <Tabs index={this.state.index} onChange={this._handleTabChange}>
-                    <Tab label="My tasks">
-                        <div>
-                            <MyTasks />
-                        </div>
-                    </Tab>
-                    <Tab label="Browse all">
-                        <div>
-                            <ContextBrowser
-                                onSelectContext={ this._onSelectContext }
-                            />
-                        </div>
-                    </Tab>
+                    <Tab label="My tasks" onClick={this._onMyTasksClicked} />
+                    <Tab label="Browse all" onClick={this._onBrowseAllClicked} />
                 </Tabs>
+                {this.props.children}
             </div>
         );
     }
 }
+
+HomeView.contextTypes = {
+    router: React.PropTypes.object.isRequired,
+};
+
+HomeView.propTypes = {
+    children: React.PropTypes.element.isRequired,
+};
 
 export default HomeView;
