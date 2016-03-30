@@ -16,7 +16,7 @@ function* loadNotes(action) {
         'id', 'content', 'author.first_name', 'author.last_name',
         'author.thumbnail_id', 'category.name', 'date',
         'note_components.component.file_type', 'note_components.component.name',
-        'note_components.component.id',
+        'note_components.component.id, metadata.key, metadata.value',
     ];
 
     // Add same attributes but with replies prefix to load the same data on
@@ -42,9 +42,22 @@ function* loadNotes(action) {
         'Notes query result: ', response
     );
 
-    // Order replies since there is garantuee that the they are ordered.
+    const reviewSessionInviteeAuthors = {};
+
     response.data.forEach(
         note => {
+            note.metadata.forEach(
+                item => {
+                    if (item.key === 'inviteeId') {
+                        if (!reviewSessionInviteeAuthors[item.value]) {
+                            reviewSessionInviteeAuthors[item.value] = [];
+                        }
+                        reviewSessionInviteeAuthors[item.value].push(note);
+                    }
+                }
+            );
+
+            // Order replies since there is garantuee that the they are ordered.
             note.replies.sort(
                 (a, b) => {
                     if (a.date.toDate() === b.date.toDate()) {
@@ -60,6 +73,29 @@ function* loadNotes(action) {
             );
         }
     );
+
+    if (reviewSessionInviteeAuthors) {
+        const inviteeQuery = (
+            'select id, name from ReviewSessionInvitee where id in ' +
+            `(${Object.keys(reviewSessionInviteeAuthors).join(', ')})`
+        );
+
+        const inviteeResponse = yield call(
+            [session, session._query],
+            inviteeQuery
+        );
+        logger.debug('Invitee query result: ', inviteeResponse);
+
+        inviteeResponse.data.forEach(
+            invitee => {
+                reviewSessionInviteeAuthors[invitee.id].forEach(
+                    note => {
+                        note.author = Object.assign({}, invitee);
+                    }
+                );
+            }
+        );
+    }
 
     yield put(notesLoaded(action.payload.parentId, response.data, response.metadata));
 }

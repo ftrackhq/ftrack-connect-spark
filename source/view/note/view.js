@@ -11,6 +11,45 @@ import style from './style.scss';
 
 const logger = loglevel.getLogger('view:note');
 
+function User({ data }) {
+    return (
+        <span className={style.user}>
+            {`${data.first_name} ${data.last_name}`}
+        </span>
+    );
+}
+
+User.propTypes = {
+    data: React.PropTypes.object.isRequired,
+};
+
+function ReviewSessionInvitee({ data }) {
+    return <span>{data.name}</span>;
+}
+
+ReviewSessionInvitee.propTypes = {
+    data: React.PropTypes.object.isRequired,
+};
+
+function Author({ data }) {
+    if (data.__entity_type__ === 'User') {
+        return <User data={data} />;
+    } else if (data.__entity_type__ === 'ReviewSessionInvitee') {
+        return <ReviewSessionInvitee data={data} />;
+    }
+
+    const title = (
+        'This note is posted by an unknown user. Most likely this is a user ' +
+        'or invitee that has been removed from ftrack.'
+    );
+
+    return <span title={title}>Unknown</span>;
+}
+
+Author.propTypes = {
+    data: React.PropTypes.object.isRequired,
+};
+
 function ParentNote({ data }) {
     const replies = (data.replies || []).map(
         (reply) => <Note data={reply} key={reply.id} />
@@ -78,18 +117,22 @@ function Note({ data, replies, reply, category }) {
         </span>
     );
 
+    const displayAvatar = data.author && data.author.__entity_type__ === 'user';
+
     return (
         <div className={style['note-item']}>
             <div className={style['avatar-column']}>
-                <Avatar>
-                    <img src={session.thumbnail(data.author.thumbnail_id, 100)} />
-                </Avatar>
+                {
+                    displayAvatar ? (
+                        <Avatar>
+                            <img src={session.thumbnail(data.author.thumbnail_id, 100)} />
+                        </Avatar>
+                    ) : ''
+                }
             </div>
             <div className={style['body-column']}>
                 <span className={style.top}>
-                    <span className={style.user}>
-                        {`${data.author.first_name} ${data.author.last_name}`}
-                    </span>
+                    <Author data={data.author} />
                     <TimeAgo className={style.datetime} date={data.date.toDate()} />
                 </span>
                 {categoryItem}
