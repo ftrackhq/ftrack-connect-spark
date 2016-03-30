@@ -10,13 +10,41 @@ import { queryOperation } from './operation';
 
 const logger = loglevel.getLogger('ftrack_api');
 
+const COMBINED_PRIMARY_KEY_MAP = {
+    NoteComponent: ['note_id', 'component_id'],
+    Metadata: ['parent_id', 'key'],
+};
+
+function identity(item) {
+    if (COMBINED_PRIMARY_KEY_MAP[item.__entity_type__]) {
+        const combinedKey = COMBINED_PRIMARY_KEY_MAP[item.__entity_type__].map(
+            key => item[key]
+        );
+        return combinedKey.join(',');
+    }
+
+    return item.id;
+}
+
+
 function _gatherCache(data, cache) {
     data.forEach(
         (item) => {
             if (!item.__entity_type__) {
                 return;
             }
-            const identifier = `${item.id}, ${item.__entity_type__}`;
+
+            const primaryKey = identity(item);
+
+            if (!primaryKey) {
+                // This happens for combined primary keys if the do not exist
+                // in COMBINED_PRIMARY_KEY_MAP.
+                logger.warn('Key could not be determined for: ', item);
+                return;
+            }
+
+            const identifier = `${primaryKey},${item.__entity_type__}`;
+
             for (const key in item) {
                 // skip loop if the property is from prototype
                 if (!item.hasOwnProperty(key)) continue;
