@@ -16,7 +16,9 @@ function ParentNote({ data }) {
         (reply) => <Note data={reply} />
     );
     return (
-        <Note data={data} replies={replies} reply category />
+        <div className={style['parent-note-item']}>
+            <Note data={data} replies={replies} reply category />
+        </div>
     );
 }
 
@@ -27,11 +29,15 @@ ParentNote.propTypes = {
 
 function Note({ data, replies, reply, category }) {
     logger.debug('Note item to render: ', data);
-    const replyButton = (reply !== true) ? '' : <Button label="Reply" />;
+    const replyButton = (
+        (reply !== true) ?
+        '' :
+        <Button primary mini className={style['reply-button']} label="Reply" />
+    );
     const categoryItem = (category !== true) ? '' : (
-        <div className={style.category}>
+        <span className={style.category}>
             {data.category && data.category.name}
-        </div>
+        </span>
     );
 
     return (
@@ -42,14 +48,14 @@ function Note({ data, replies, reply, category }) {
                 </Avatar>
             </div>
             <div className={style['body-column']}>
-                <div className={style.top}>
-                    <div className={style.user}>
+                <span className={style.top}>
+                    <span className={style.user}>
                         {`${data.author.first_name} ${data.author.last_name}`}
-                    </div>
-                    <TimeAgo date={data.date.toDate()} />
-                </div>
+                    </span>
+                    <TimeAgo className={style.datetime} date={data.date.toDate()} />
+                </span>
                 {categoryItem}
-                <div>{data.content}</div>
+                <span>{data.content}</span>
                 <div className={style.replies}>
                     {replies || []}
                 </div>
@@ -69,7 +75,6 @@ Note.propTypes = {
 function NotesList({ items }) {
     return (
         <div className={style['note-list']}>
-            <div>Notes:</div>
             {
                 items.map((item) => <ParentNote data={item} />)
             }

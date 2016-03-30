@@ -2,7 +2,7 @@
 
 .note-item {
     display: flex;
-    margin-bottom: 10px;
+    margin-bottom: 2px;
 
     .avatar-column {
         width: 60px;
@@ -17,21 +17,37 @@
         }
 
         .replies {
-            margin-top: 8px;
+            margin-top: 20px;
         }
     }
 }
 
+.parent-note-item {
+    margin-bottom: 30px;
+}
+
 .category {
-    color: gray;
+    color: #aaa;
     font-style: italic;
+    display: block;
 }
 
 .user {
     font-weight: bold;
 }
 
+.datetime {
+    color: #aaa;
+}
+
+.reply-button {
+    margin: -1.2rem;
+    min-width: 0px;
+}
+
 .note-list {
     display: flex;
     flex-direction: column;
+    font-size: small;
+    padding: 5px;
 }
