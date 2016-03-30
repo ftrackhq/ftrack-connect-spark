@@ -1,7 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-import { takeEvery } from 'redux-saga';
-import { call } from 'redux-saga/effects';
+import { takeEvery, takeLatest } from 'redux-saga';
+import { call, take, put } from 'redux-saga/effects';
 import { browserHistory } from 'react-router';
 
 import { session } from '../ftrack_api';
@@ -13,8 +13,9 @@ import { showProgress, showCompletion, showFailure } from './lib/overlay';
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('saga:create_project');
 
+
 /** Create project from *action*. */
-function* createProject(action) {
+function* createProjectSubmit(action) {
     try {
         const values = action.payload;
         logger.debug('createProject', values);
@@ -42,14 +43,29 @@ function* createProject(action) {
             header: 'Completed',
             message: 'Project created successfully.',
         }, () => {
-            browserHistory.goBack();
+
         });
+        yield put({ type: actions.CREATE_PROJECT_COMPLETED, payload: project });
     } catch (error) {
         yield call(showFailure, { header: 'Failed to create project.', error });
     }
 }
 
+function* createProject(action) {
+    browserHistory.push('/create-project');
+
+    const completedAction = yield take(actions.CREATE_PROJECT_COMPLETED);
+
+    browserHistory.goBack();
+    action.payload(completedAction.payload);
+}
+
+/** Run createProjectSaga on CREATE_PROJECT_SUBMIT */
+export function* createProjectSubmitSaga() {
+    yield takeEvery(actions.CREATE_PROJECT_SUBMIT, createProjectSubmit);
+}
+
 /** Run createProjectSaga on CREATE_PROJECT_SUBMIT */
 export function* createProjectSaga() {
-    yield takeEvery(actions.CREATE_PROJECT_SUBMIT, createProject);
+    yield takeLatest(actions.CREATE_PROJECT, createProject);
 }
