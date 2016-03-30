@@ -26,6 +26,45 @@ ParentNote.propTypes = {
     data: React.PropTypes.object.isRequired,
 };
 
+const SUPPORTED_IMG_FILE_TYPES = [
+    'png', 'gif', 'jpeg', 'jpg', 'bmp',
+];
+
+function AttachmentArea({ components }) {
+    const images = [];
+    const other = [];
+
+    components.forEach(
+        component => {
+            if (
+                SUPPORTED_IMG_FILE_TYPES.includes(
+                    component.file_type.slice(1)
+                )
+            ) {
+                images.push(<img src={session.thumbnail(component.id, 100)} />);
+            } else {
+                other.push(
+                    <p>{`${component.name}${component.file_type}`}</p>
+                );
+            }
+        }
+    );
+
+    return (
+        <div className={style['attachments-area']}>
+            <div className={style.images}>
+                {images}
+            </div>
+            <div className={style.other}>
+                {other}
+            </div>
+        </div>
+    );
+}
+
+AttachmentArea.propTypes = {
+    components: React.PropTypes.array.isRequired,
+};
 
 function Note({ data, replies, reply, category }) {
     logger.debug('Note item to render: ', data);
@@ -56,6 +95,12 @@ function Note({ data, replies, reply, category }) {
                 </span>
                 {categoryItem}
                 <span>{data.content}</span>
+                <AttachmentArea components={
+                        data.note_components.map(
+                            noteComponent => noteComponent.component
+                        )
+                    }
+                />
                 <div className={style.replies}>
                     {replies || []}
                 </div>

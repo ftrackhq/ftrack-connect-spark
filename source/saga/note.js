@@ -14,11 +14,19 @@ function* loadNotes(action) {
     // logger.debug('loadNotes', action);
     const select = [
         'id', 'content', 'author.first_name', 'author.last_name',
-        'author.thumbnail_id', 'category.name', 'date', 'replies.id',
-        'replies.content', 'replies.author.first_name',
-        'replies.author.last_name', 'replies.author.thumbnail_id',
-        'replies.category.name', 'replies.date'
+        'author.thumbnail_id', 'category.name', 'date',
+        'note_components.component.file_type', 'note_components.component.name',
+        'note_components.component.id'
     ];
+
+    // Add same attributes but with replies prefix to load the same data on
+    // replies.
+    select.push(
+        ...select.map(
+            attribute => `replies.${attribute}`
+        )
+    );
+
     const query = (
         `select ${select.join(', ')} from Note where parent_id is ` +
         `"${action.payload.parentId}" and not in_reply_to has () order by date desc`

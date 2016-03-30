@@ -20,6 +20,10 @@
             margin-top: 20px;
         }
     }
+
+    .attachments-area {
+        margin-top: 10px;
+    }
 }
 
 .parent-note-item {
@@ -48,6 +52,18 @@
 .note-list {
     display: flex;
     flex-direction: column;
-    font-size: small;
+    font-size: $font-size-small;
     padding: 5px;
+}
+
+.attachments-area {
+
+    .images > img {
+        padding: 4px;
+    }
+
+    .other {
+
+    }
+
 }
