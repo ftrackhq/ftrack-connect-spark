@@ -16,7 +16,7 @@ function* loadNotes(action) {
         'id', 'content', 'author.first_name', 'author.last_name',
         'author.thumbnail_id', 'category.name', 'date',
         'note_components.component.file_type', 'note_components.component.name',
-        'note_components.component.id'
+        'note_components.component.id',
     ];
 
     // Add same attributes but with replies prefix to load the same data on
@@ -40,6 +40,25 @@ function* loadNotes(action) {
 
     logger.debug(
         'Notes query result: ', response
+    );
+
+    // Order replies since there is garantuee that the they are ordered.
+    response.data.forEach(
+        note => {
+            note.replies.sort(
+                (a, b) => {
+                    if (a.date.toDate() === b.date.toDate()) {
+                        return 0;
+                    }
+
+                    if (a.date.toDate() < b.date.toDate()) {
+                        return -1;
+                    }
+
+                    return 1;
+                }
+            );
+        }
     );
 
     yield put(notesLoaded(action.payload.parentId, response.data, response.metadata));
