@@ -139,6 +139,7 @@ class PublishView extends React.Component {
         return (
             <Form
                 header="Publish your work"
+                headerColor="green"
                 submitLabel="Publish"
                 onSubmit={this._onSubmit}
                 onCancel={this._onCancelClick}
@@ -152,6 +153,7 @@ class PublishView extends React.Component {
                 />
                 <div className={style.asset}>
                     <Input
+                        className={style['asset-name']}
                         type="text"
                         label="Name"
                         name="name"
@@ -159,6 +161,7 @@ class PublishView extends React.Component {
                         error={this._errorMessage(name)}
                     />
                     <Selector
+                        className={style['asset-type']}
                         label="Type"
                         query={this._assetTypes}
                         {...type}

@@ -36,6 +36,7 @@ module.exports = {
         },
     },
     module: {},
+    toolbox: { theme: `${defaultSettings.srcPath}/style/_theme.scss` },
     postcss: () => [autoprefixer({
         browsers: [
             '> 1%',
