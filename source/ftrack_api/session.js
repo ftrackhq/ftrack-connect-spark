@@ -1,10 +1,14 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import { forIn } from 'lodash';
+import moment from 'moment';
+import loglevel from 'loglevel';
 
 import { EventHub } from './event';
 import { queryOperation } from './operation';
 
+
+const logger = loglevel.getLogger('ftrack_api');
 
 function _gatherCache(data, cache) {
     data.forEach(
@@ -55,6 +59,27 @@ function merge(data) {
             Object.assign(item, map);
         });
     });
+
+    return data;
+}
+
+function decode(data) {
+    if (data && data.constructor === Array) {
+        return data.map(item => decode(item));
+    }
+
+    if (data && data.constructor === Object) {
+        if (data.__type__ === 'datetime') {
+            return moment(data.value);
+        }
+
+        const out = {};
+        forIn(data, (value, key) => {
+            out[key] = decode(value);
+        });
+
+        return out;
+    }
 
     return data;
 }
@@ -122,6 +147,12 @@ export class Session {
             (response) => response.json()
         );
 
+        request = request.then((data) => {
+            const result = decode(data);
+            logger.debug('Decode ', result);
+            return Promise.resolve(result);
+        });
+
         // Reject promise on API exception.
         request = request.then((response) => {
             if (response.exception) {
@@ -142,6 +173,8 @@ export class Session {
      * and metadata.
      */
     _query(expression) {
+        logger.debug('Query ', expression);
+
         const operation = queryOperation(expression);
         let request = this._call([operation]);
         request = request.then(
