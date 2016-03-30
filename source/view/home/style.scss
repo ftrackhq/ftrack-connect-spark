@@ -1,1 +1,31 @@
 // :copyright: Copyright (c) 2016 ftrack
+
+.home {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    margin: 2rem;
+}
+
+.share {
+    position: relative;
+    display: inline-block;
+    text-align: center;
+}
+
+.menu[data-react-toolbox="menu"] {
+    top: 100%;
+}
+
+.title {
+    margin: $spacing-large;
+    animation: colorchange 10s infinite;
+}
+
+@keyframes colorchange {
+  0%  { color: white; }
+  25% { color: $color-primary; }
+  50% { color: white; }
+  75% { color: $color-accent; }
+}

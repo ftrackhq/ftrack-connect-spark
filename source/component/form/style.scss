@@ -3,11 +3,16 @@
 .root {
     display: flex;
     flex-direction: column;
+    padding: 2rem;
 }
 
 .actions {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: flex-end;
     margin-top: 2rem;
+
+    > button {
+        margin-left: 2rem;
+    }
 }

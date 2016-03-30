@@ -8,8 +8,10 @@ import actions, { overlayShow, overlayHide } from 'action/overlay';
 export function* showProgress(header) {
     yield put(overlayShow({
         header,
-        message: 'This may take a few minutes. Please keep this window open until finished.',
+        message: 'This may take a few minutes, please keep this window open until finished.',
         loader: true,
+        dissmissable: true,
+        dismissLabel: 'Cancel',
     }));
 }
 

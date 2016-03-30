@@ -1,6 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-@import "../../style/_color.scss";
+@import "../../style/_theme.scss";
 
 .outer {
     position: absolute;
@@ -33,6 +33,7 @@
 
 .message {
     margin: 2rem;
+    color: $color-text-secondary;
 }
 
 .error-message {

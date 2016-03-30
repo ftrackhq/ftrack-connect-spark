@@ -6,14 +6,17 @@
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
+}
+.asset-name {
+    width: calc(8/12 * 100% - 2rem);
+}
 
-    > div {
-        width: calc(1/2 * 100% - 2rem);
-    }
+.asset-type {
+    width: calc(4/12 * 100% - 2rem);
 }
 
 @media (max-width: 400px) {
     .asset > div {
-        width: calc(2/2 * 100%);
+        width: calc(12/12 * 100%);
     }
 }
