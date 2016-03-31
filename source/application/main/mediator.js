@@ -61,6 +61,18 @@ export class MainMediator {
         logger.info('[MainMediator]', 'Uploading media', options);
         return delayedResponse(true);
     }
+
+    /** Return ftrack API credentials. */
+    getCredentials() {
+        let credentials = null;
+        try {
+            credentials = require('../../ftrack_api_credentials.json');
+        } catch (error) {
+            console.log(error); // eslint-disable-line no-console
+        }
+        return credentials;
+    }
+
 }
 
 /** Export *MainMediator* instance. */
