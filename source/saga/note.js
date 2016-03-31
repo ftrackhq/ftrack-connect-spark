@@ -2,21 +2,21 @@
 
 import { call, put } from 'redux-saga/effects';
 import { takeEvery } from 'redux-saga';
-import actions, { notesLoaded } from 'action/note';
+import actions, { notesLoaded, noteSubmitted } from 'action/note';
 import { session } from '../ftrack_api';
+import { createOperation } from '../ftrack_api/operation';
 
 
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('saga:note');
 
 
-function* loadNotes(action) {
-    // logger.debug('loadNotes', action);
+function noteSelect() {
     const select = [
-        'id', 'content', 'author.first_name', 'author.last_name',
-        'author.thumbnail_id', 'category.name', 'date',
+        'id', 'content', 'author.first_name', 'author.last_name', 'parent_id',
+        'parent_type', 'author.thumbnail_id', 'category.name', 'date',
         'note_components.component.file_type', 'note_components.component.name',
-        'note_components.component.id, metadata.key, metadata.value',
+        'note_components.component.id', 'metadata.key', 'metadata.value',
     ];
 
     // Add same attributes but with replies prefix to load the same data on
@@ -27,8 +27,42 @@ function* loadNotes(action) {
         )
     );
 
+    return `select ${select.join(', ')} from Note`;
+}
+
+function* submitNote(action) {
+    const createNoteOperation = createOperation(
+        'Note',
+        {
+            content: action.payload.content,
+            parent_id: action.payload.parentId,
+            parent_type: action.payload.parentType,
+            in_reply_to_id: action.payload.parentNoteId,
+            user_id: action.payload.userId,
+        }
+    );
+    const submitResponse = yield call(
+        [session, session._call],
+        [createNoteOperation]
+    );
+
+    const noteId = submitResponse[0].data.id;
+
+    const query = `${noteSelect()} where id is "${noteId}"`;
+
+    const response = yield call(
+        [session, session._query],
+        query
+    );
+
+    yield put(noteSubmitted(action.payload.parentNoteId, response.data[0]));
+}
+
+function* loadNotes(action) {
+    // logger.debug('loadNotes', action);
+
     const query = (
-        `select ${select.join(', ')} from Note where parent_id is ` +
+        `${noteSelect()} where parent_id is ` +
         `"${action.payload.parentId}" and not in_reply_to has () order by date desc`
     );
 
@@ -74,7 +108,7 @@ function* loadNotes(action) {
         }
     );
 
-    if (reviewSessionInviteeAuthors) {
+    if (Object.keys(reviewSessionInviteeAuthors).length) {
         const inviteeQuery = (
             'select id, name from ReviewSessionInvitee where id in ' +
             `(${Object.keys(reviewSessionInviteeAuthors).join(', ')})`
@@ -97,10 +131,24 @@ function* loadNotes(action) {
         );
     }
 
-    yield put(notesLoaded(action.payload.parentId, response.data, response.metadata));
+    yield put(
+        notesLoaded(
+            {
+                id: action.payload.parentId,
+                type: action.payload.parentType,
+            },
+            response.data,
+            response.metadata
+        )
+    );
 }
 
 /** Prepare publish on NOTES_LOAD */
 export function* notesLoadSaga() {
     yield takeEvery(actions.NOTES_LOAD, loadNotes);
+}
+
+/** Prepare publish on NOTES_LOAD */
+export function* noteSubmitSaga() {
+    yield takeEvery(actions.SUBMIT_NOTE, submitNote);
 }

@@ -3,7 +3,7 @@
 import startupSaga from './startup';
 import { quickReviewSubmitSaga } from './quick_review';
 import { publishLoadSaga, publishSubmitSaga } from './publish';
-import { notesLoadSaga } from './note';
+import { notesLoadSaga, noteSubmitSaga } from './note';
 
 export default [
     startupSaga,
@@ -11,4 +11,5 @@ export default [
     publishLoadSaga,
     publishSubmitSaga,
     notesLoadSaga,
+    noteSubmitSaga,
 ];
