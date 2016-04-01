@@ -223,103 +223,127 @@ _NoteForm.propTypes = {
 
 const NoteForm = clickOutSide(_NoteForm);
 
-function NotesList({
-    items, onNoteFormOpen, onNoteFormHide, onNoteFormSubmit,
-    entity, forms = {}, user = {},
-}) {
 
-    if (entity === null) {
+
+class NotesList extends React.Component {
+
+    getForm(formKey, parentNote) {
+        const parentNoteId = parentNote && parentNote.id || undefined;
+        const formData = this.props.forms[formKey];
+
+        const pending = formData && formData.state === 'pending';
+
+        // Treat as collapsed if hidden or no form state exists. 
+        const collapsed = !formData || formData.state === 'hidden';
+
+        // Hide content if form is collapsed.
+        const content = collapsed ? '' : formData && formData.content;
+
         return (
-            <div >
-                Empty
-            </div>
-        )
-    }
-    logger.debug('Rendering notes', items);
-    const notes = [];
-
-    const onSubmit = (formKey, parentNoteId, noteForm) => {
-        onNoteFormSubmit(
-            formKey, parentNoteId, entity.id, entity.type,
-            user.id, noteForm.getContent()
-        );
-    };
-    const onClick = (formKey) => onNoteFormOpen(formKey);
-    const onNoteFormClickOutside = (formKey, noteForm) => {
-        const content = noteForm.getContent();
-        onNoteFormHide(formKey, content);
-    };
-
-    items.forEach(
-        note => {
-            const replies = (note.replies || []).map(
-                reply => <Note data={reply} />
-            );
-
-            const formKey = `${note.id}-reply`;
-            const formData = forms[formKey];
-            const pending = formData && formData.state === 'pending';
-
-            notes.push(
-                <div className={style['parent-note-item']}>
-                    <Note data={note} key={note.id} category />
-                    <div className={style['parent-note-tail']} >
-                        <div className={style.replies}>
-                            {replies}
-                        </div>
-                        {
-                            formData && formData.state !== 'hidden' ?
-                            <NoteForm
-                                content={formData.content}
-                                onClickOutside={onNoteFormClickOutside.bind(this, formKey)}
-                                onSubmit={
-                                    onSubmit.bind(this, formKey, note.id)
-                                }
-                                key={formKey}
-                                pending={pending}
-                            /> :
-                            <Button
-                                primary mini className={style['reply-button']}
-                                label="Reply"
-                                onClick={onClick.bind(this, formKey)}
-                            />
-                        }
-                    </div>
-                </div>
-            );
-        }
-    );
-
-    const formKey = `${entity.id}-new`;
-    const formData = forms[formKey];
-    const pending = formData && formData.state === 'pending';
-
-    // Treat as collapsed if hidden or no form state exists. 
-    const collapsed = !formData || formData.state === 'hidden';
-
-    // Hide content if form is collapsed.
-    const content = collapsed ? '' : formData && formData.content;
-
-    return (
-        <div className={style['note-list']}>
             <NoteForm
-                key={formKey}
                 content={content}
                 onClickOutside={
-                    // Do not emit hide form action if form is already
-                    // collpased. Otherwise new hide form events would emit
-                    // for each click.
-                    !collapsed ?
-                    onNoteFormClickOutside.bind(this, formKey) : null
+                    !collapsed ? this.onNoteFormClickOutside.bind(this, formKey) : undefined
                 }
-                onSubmit={onSubmit.bind(this, formKey, undefined)}
-                onExpand={onClick.bind(this, formKey)}
+                onSubmit={
+                    this.onSubmit.bind(this, formKey, parentNoteId)
+                }
+                onExpand={
+                    () => {
+                        if (collapsed) {
+                            this.openForm(formKey);
+                        }
+                    }
+                }
                 collapsed={collapsed}
+                key={formKey}
                 pending={pending}
             />
-            {notes}
-        </div>
-    );
+        );
+    }
+
+    onSubmit(formKey, parentNoteId, noteForm) {
+        this.props.onNoteFormSubmit(
+            formKey, parentNoteId, this.props.entity.id, this.props.entity.type,
+            this.props.user.id, noteForm.getContent()
+        );
+    }
+
+    onNoteFormClickOutside(formKey, noteForm) {
+        const content = noteForm.getContent();
+        this.props.onNoteFormHide(formKey, content);
+    }
+
+    getReplyFormOrButton(note) {
+        const formKey = `${note.id}-reply`;
+        const formData = this.props.forms[formKey];
+
+        if (
+            formData && formData.state !== 'hidden'
+        ) {
+            return this.getForm(formKey, note);
+        }
+
+        return (
+            <Button
+                primary mini className={style['reply-button']}
+                label="Reply"
+                onClick={this.openForm.bind(this, formKey)}
+            />
+        );
+    }
+
+    openForm(formKey) {
+        this.props.onNoteFormOpen(formKey);
+    }
+
+    render() {
+        const {
+            items, onNoteFormOpen, onNoteFormHide, onNoteFormSubmit,
+            entity, forms = {}, user = {},
+        } = this.props;
+
+        if (entity === null) {
+            return (
+                <div >
+                    Empty
+                </div>
+            )
+        }
+        logger.debug('Rendering notes', items);
+        const notes = [];
+
+
+        items.forEach(
+            note => {
+                const replies = (note.replies || []).map(
+                    reply => <Note data={reply} />
+                );
+
+                notes.push(
+                    <div className={style['parent-note-item']}>
+                        <Note data={note} key={note.id} category />
+                        <div className={style['parent-note-tail']} >
+                            <div className={style.replies}>
+                                {replies}
+                            </div>
+                            {
+                                this.getReplyFormOrButton(note)
+                            }
+                        </div>
+                    </div>
+                );
+            }
+        );
+
+        const formKey = `${entity.id}-new`;
+        return (
+            <div className={style['note-list']}>
+                {this.getForm(formKey)}
+                {notes}
+            </div>
+        );
+    }
 }
 
 NotesList.propTypes = {
