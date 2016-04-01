@@ -150,7 +150,7 @@ class _NoteForm extends React.Component {
     }
 
     getContent() {
-        return this.refs.content.refs.input.value;
+        return this.state.content;
     }
 
     handleClickOutside() {
