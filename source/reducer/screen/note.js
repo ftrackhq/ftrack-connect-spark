@@ -16,11 +16,11 @@ export default function notesReducer(state = {}, action) {
                 items: action.payload.items,
             }
         );
-    } else if (action.type === types.START_NOTE_REPLY) {
-        const noteReply = Object.assign({}, state.noteReply);
-        noteReply[action.payload.parentNoteId] = Object.assign(
+    } else if (action.type === types.OPEN_NOTE_FORM) {
+        const replyForms = Object.assign({}, state.replyForms);
+        replyForms[action.payload.parentNoteId] = Object.assign(
             {},
-            noteReply[action.payload.parentNoteId],
+            replyForms[action.payload.parentNoteId],
             {
                 state: 'visible',
                 parentNoteId: action.payload.parentNoteId,
@@ -32,13 +32,13 @@ export default function notesReducer(state = {}, action) {
             {},
             state,
             {
-                noteReply,
+                replyForms,
             }
         );
-    } else if (action.type === types.HIDE_NOTE_REPLY) {
-        const noteReply = Object.assign({}, state.noteReply);
-        noteReply[action.payload.parentNoteId] = Object.assign(
-            {}, state.noteReply[action.payload.parentNoteId], {
+    } else if (action.type === types.HIDE_NOTE_FORM) {
+        const replyForms = Object.assign({}, state.replyForms);
+        replyForms[action.payload.parentNoteId] = Object.assign(
+            {}, state.replyForms[action.payload.parentNoteId], {
                 state: 'hidden',
                 content: action.payload.content,
             }
@@ -48,15 +48,15 @@ export default function notesReducer(state = {}, action) {
             {},
             state,
             {
-                noteReply,
+                replyForms,
             }
         );
     } else if (
-        action.type === types.SUBMIT_NOTE && action.payload.parentNoteId
+        action.type === types.SUBMIT_NOTE_FORM && action.payload.parentNoteId
     ) {
-        const noteReply = Object.assign({}, state.noteReply);
-        noteReply[action.payload.parentNoteId] = Object.assign(
-            {}, state.noteReply[action.payload.parentNoteId], {
+        const replyForms = Object.assign({}, state.replyForms);
+        replyForms[action.payload.parentNoteId] = Object.assign(
+            {}, state.replyForms[action.payload.parentNoteId], {
                 state: 'pending',
             }
         );
@@ -65,15 +65,15 @@ export default function notesReducer(state = {}, action) {
             {},
             state,
             {
-                noteReply,
+                replyForms,
             }
         );
     } else if (action.type === types.NOTE_SUBMITTED) {
         let items;
-        let noteReply;
+        let replyForms;
 
         if (action.payload.parentNoteId) {
-            noteReply = Object.assign({}, state.noteReply);
+            replyForms = Object.assign({}, state.replyForms);
             items = state.items.map(
                 (note) => {
                     if (note.id === action.payload.parentNoteId) {
@@ -85,9 +85,9 @@ export default function notesReducer(state = {}, action) {
                 }
             );
 
-            delete noteReply[action.payload.parentNoteId];
+            delete replyForms[action.payload.parentNoteId];
         } else {
-            noteReply = state.noteReply;
+            replyForms = state.replyForms;
             items = [action.payload.note, ...state.items];
         }
 
@@ -96,7 +96,7 @@ export default function notesReducer(state = {}, action) {
             state,
             {
                 items,
-                noteReply,
+                replyForms,
             }
         );
     }

@@ -7,7 +7,7 @@ import TimeAgo from 'react-timeago';
 import clickOutSide from 'react-click-outside';
 
 import { session } from '../../ftrack_api';
-import { startNoteReply, hideNoteReply, submitNoteForm } from 'action/note';
+import { openNoteForm, hideNoteForm, submitNoteForm } from 'action/note';
 
 import style from './style.scss';
 
@@ -290,7 +290,7 @@ NotesList.propTypes = {
 const mapStateToProps = (state) => {
     const items = state.screen.notes && state.screen.notes.items || [];
     const activeNoteReplies = (
-        state.screen.notes && state.screen.notes.noteReply || {}
+        state.screen.notes && state.screen.notes.replyForms || {}
     );
     const entity = state.screen.notes && state.screen.notes.entity || null;
     return {
@@ -304,10 +304,10 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => (
     {
         onNoteFormOpen: (...args) => dispatch(
-            startNoteReply(...args)
+            openNoteForm(...args)
         ),
         onNoteFormHide: (...args) => dispatch(
-            hideNoteReply(...args)
+            hideNoteForm(...args)
         ),
         onNoteFormSubmit: (...args) => dispatch(
             submitNoteForm(...args)

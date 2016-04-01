@@ -150,5 +150,5 @@ export function* notesLoadSaga() {
 
 /** Prepare publish on NOTES_LOAD */
 export function* noteSubmitSaga() {
-    yield takeEvery(actions.SUBMIT_NOTE, submitNote);
+    yield takeEvery(actions.SUBMIT_NOTE_FORM, submitNote);
 }

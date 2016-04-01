@@ -2,9 +2,11 @@
 
 const NOTES_LOAD = 'NOTES_LOAD';
 const NOTES_LOADED = 'NOTES_LOADED';
-const START_NOTE_REPLY = 'START_NOTE_REPLY';
-const HIDE_NOTE_REPLY = 'HIDE_NOTE_REPLY';
-const SUBMIT_NOTE = 'SUBMIT_NOTE';
+
+const OPEN_NOTE_FORM = 'OPEN_NOTE_FORM';
+const HIDE_NOTE_FORM = 'HIDE_NOTE_FORM';
+const SUBMIT_NOTE_FORM = 'SUBMIT_NOTE_FORM';
+
 const NOTE_SUBMITTED = 'NOTE_SUBMITTED';
 
 export function notesLoad() {
@@ -18,9 +20,9 @@ export function notesLoad() {
     };
 }
 
-export function startNoteReply(parentNoteId, parentId, parentType) {
+export function openNoteForm(parentNoteId, parentId, parentType) {
     return {
-        type: START_NOTE_REPLY,
+        type: OPEN_NOTE_FORM,
         payload: {
             parentNoteId,
             parentId,
@@ -29,9 +31,9 @@ export function startNoteReply(parentNoteId, parentId, parentType) {
     };
 }
 
-export function hideNoteReply(parentNoteId, content) {
+export function hideNoteForm(parentNoteId, content) {
     return {
-        type: HIDE_NOTE_REPLY,
+        type: HIDE_NOTE_FORM,
         payload: {
             parentNoteId,
             content,
@@ -54,7 +56,7 @@ export function submitNoteForm(
     parentNoteId, parentId, parentType, userId, content
 ) {
     return {
-        type: SUBMIT_NOTE,
+        type: SUBMIT_NOTE_FORM,
         payload: {
             parentNoteId,
             parentId,
@@ -78,8 +80,8 @@ export function noteSubmitted(parentNoteId, note) {
 export default {
     NOTES_LOAD,
     NOTES_LOADED,
-    START_NOTE_REPLY,
-    HIDE_NOTE_REPLY,
-    SUBMIT_NOTE,
+    OPEN_NOTE_FORM,
+    HIDE_NOTE_FORM,
+    SUBMIT_NOTE_FORM,
     NOTE_SUBMITTED,
 };
