@@ -17,28 +17,25 @@ export default function notesReducer(state = {}, action) {
             }
         );
     } else if (action.type === types.OPEN_NOTE_FORM) {
-        const replyForms = Object.assign({}, state.replyForms);
-        replyForms[action.payload.parentNoteId] = Object.assign(
+        const forms = Object.assign({}, state.forms);
+        forms[action.payload.formKey] = Object.assign(
             {},
-            replyForms[action.payload.parentNoteId],
+            forms[action.payload.formKey],
             {
                 state: 'visible',
-                parentNoteId: action.payload.parentNoteId,
-                parentId: action.payload.parentId,
-                parentType: action.payload.parentType,
             }
         );
         nextState = Object.assign(
             {},
             state,
             {
-                replyForms,
+                forms,
             }
         );
     } else if (action.type === types.HIDE_NOTE_FORM) {
-        const replyForms = Object.assign({}, state.replyForms);
-        replyForms[action.payload.parentNoteId] = Object.assign(
-            {}, state.replyForms[action.payload.parentNoteId], {
+        const forms = Object.assign({}, state.forms);
+        forms[action.payload.formKey] = Object.assign(
+            {}, state.forms[action.payload.formKey], {
                 state: 'hidden',
                 content: action.payload.content,
             }
@@ -48,15 +45,15 @@ export default function notesReducer(state = {}, action) {
             {},
             state,
             {
-                replyForms,
+                forms,
             }
         );
     } else if (
-        action.type === types.SUBMIT_NOTE_FORM && action.payload.parentNoteId
+        action.type === types.SUBMIT_NOTE_FORM
     ) {
-        const replyForms = Object.assign({}, state.replyForms);
-        replyForms[action.payload.parentNoteId] = Object.assign(
-            {}, state.replyForms[action.payload.parentNoteId], {
+        const forms = Object.assign({}, state.forms);
+        forms[action.payload.formKey] = Object.assign(
+            {}, state.forms[action.payload.formKey], {
                 state: 'pending',
             }
         );
@@ -65,18 +62,18 @@ export default function notesReducer(state = {}, action) {
             {},
             state,
             {
-                replyForms,
+                forms,
             }
         );
     } else if (action.type === types.NOTE_SUBMITTED) {
         let items;
-        let replyForms;
+        let forms;
 
-        if (action.payload.parentNoteId) {
-            replyForms = Object.assign({}, state.replyForms);
+        if (action.payload.note.in_reply_to_id) {
+            forms = Object.assign({}, state.forms);
             items = state.items.map(
                 (note) => {
-                    if (note.id === action.payload.parentNoteId) {
+                    if (note.id === action.payload.note.in_reply_to_id) {
                         const replies = [...note.replies, action.payload.note];
                         return Object.assign({}, note, { replies });
                     }
@@ -85,9 +82,9 @@ export default function notesReducer(state = {}, action) {
                 }
             );
 
-            delete replyForms[action.payload.parentNoteId];
+            delete forms[action.payload.formKey];
         } else {
-            replyForms = state.replyForms;
+            forms = state.forms;
             items = [action.payload.note, ...state.items];
         }
 
@@ -96,7 +93,7 @@ export default function notesReducer(state = {}, action) {
             state,
             {
                 items,
-                replyForms,
+                forms,
             }
         );
     }

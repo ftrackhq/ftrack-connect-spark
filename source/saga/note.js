@@ -55,7 +55,7 @@ function* submitNote(action) {
         query
     );
 
-    yield put(noteSubmitted(action.payload.parentNoteId, response.data[0]));
+    yield put(noteSubmitted(action.payload.formKey, response.data[0]));
 }
 
 function* loadNotes(action) {

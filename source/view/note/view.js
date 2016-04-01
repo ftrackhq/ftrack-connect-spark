@@ -159,6 +159,13 @@ class _NoteForm extends React.Component {
         }
     }
 
+    expand() {
+        this.setState({ collapsed: false });
+        if (this.props.onExpand) {
+            this.props.onExpand(this);
+        }
+    }
+
     render() {
         const content = this.state.content;
         const collapsed = this.state.collapsed;
@@ -175,7 +182,13 @@ class _NoteForm extends React.Component {
                         (value) => this.setState({content: value})
                     }
                     onFocus={
-                        () => this.setState({ collapsed: false })
+                        () => {
+                            {
+                                if (this.state.collapsed) {
+                                    this.expand();
+                                }
+                            }
+                        }
                     }
                 />
                 {
@@ -212,14 +225,28 @@ function NotesList({
     items, onNoteFormOpen, onNoteFormHide, onNoteFormSubmit,
     entity, forms = {}, user = {},
 }) {
+
+    if (entity === null) {
+        return (
+            <div >
+                Empty
+            </div>
+        )
+    }
     logger.debug('Rendering notes', items);
     const notes = [];
 
-    const onSubmit = (parentNoteId, noteForm) => {
+    const onSubmit = (formKey, parentNoteId, noteForm) => {
         onNoteFormSubmit(
-            parentNoteId, entity.id, entity.type,
+            formKey, parentNoteId, entity.id, entity.type,
             user.id, noteForm.getContent()
         );
+    };
+    const onClick = (formKey) => onNoteFormOpen(formKey);
+
+    const onNoteFormClickOutside = (formKey, noteForm) => {
+        const content = noteForm.getContent();
+        onNoteFormHide(formKey, content);
     };
 
     items.forEach(
@@ -227,13 +254,10 @@ function NotesList({
             const replies = (note.replies || []).map(
                 reply => <Note data={reply} />
             );
-            const onClick = () => onNoteFormOpen(note.id, note.parent_id, note.parent_type);
-            const onNoteFormClickOutside = (noteForm) => {
-                const content = noteForm.getContent();
-                onNoteFormHide(note.id, content);
-            };
 
-            const activeNoteReply = forms.reply[note.id];
+            const formKey = `${note.id}-reply`;
+            const activeNoteReply = forms[formKey];
+            logger.debug('activeNoteReply', activeNoteReply);
             const pending = activeNoteReply && activeNoteReply.state === 'pending';
 
             notes.push(
@@ -246,14 +270,17 @@ function NotesList({
                             activeNoteReply && activeNoteReply.state !== 'hidden' ?
                             <NoteForm
                                 defaultContent={activeNoteReply.content}
-                                onClickOutside={onNoteFormClickOutside}
+                                onClickOutside={onNoteFormClickOutside.bind(this, formKey)}
                                 onSubmit={
-                                    onSubmit.bind(this, note.id)
+                                    onSubmit.bind(this, formKey, note.id)
                                 }
+                                key={formKey}
                                 pending={pending}
                             /> :
-                            <Button primary mini className={style['reply-button']}
-                                label="Reply" onClick={onClick}
+                            <Button
+                                primary mini className={style['reply-button']}
+                                label="Reply"
+                                onClick={onClick.bind(this, formKey)}
                             />
                         }
                     </Note>
@@ -265,9 +292,16 @@ function NotesList({
         }
     );
 
+    const formKey = `${entity.id}-new`;
+
     return (
         <div className={style['note-list']}>
-            <NoteForm onSubmit={onSubmit.bind(this, undefined)} defaultCollapsed />
+            <NoteForm
+                key={formKey}
+                onSubmit={onSubmit.bind(this, formKey, undefined)}
+                onExpand={onClick.bind(this, formKey)}
+                defaultCollapsed
+            />
             {notes}
         </div>
     );
@@ -285,9 +319,8 @@ NotesList.propTypes = {
 
 const mapStateToProps = (state) => {
     const items = state.screen.notes && state.screen.notes.items || [];
-    const forms = {};
-    forms.reply = (
-        state.screen.notes && state.screen.notes.replyForms || {}
+    const forms = (
+        state.screen.notes && state.screen.notes.forms || {}
     );
     const entity = state.screen.notes && state.screen.notes.entity || null;
     return {
