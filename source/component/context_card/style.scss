@@ -1,0 +1,56 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+@import '~style/_mixin.scss';
+
+
+.main {
+    flex: 1;
+    cursor: pointer;
+    padding-top: $spacing-small;
+
+    &:hover {
+        background-color: lighten($card-background-color, 5%);
+    }
+}
+
+.entity-type,
+.entity-link {
+    padding: 0 $spacing;
+}
+
+.entity-link {
+    min-height: 5rem;
+}
+
+.side {
+    display: flex;
+    flex-direction: row;
+    height: 12rem;
+}
+
+.expand-button {
+    margin-left: auto !important;
+}
+
+.contents {
+    display: flex;
+    flex-direction: column;
+}
+
+@include breakpoint(small) {
+    .contents {
+        display: flex;
+        flex-direction: row;
+        align-items: space-between;
+    }
+
+    .main {
+        order: 1;
+    }
+
+    .side {
+        order: 2;
+        width: 17.5rem;
+        height: auto;
+    }
+}
