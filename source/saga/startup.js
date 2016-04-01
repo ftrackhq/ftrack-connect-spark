@@ -3,6 +3,7 @@
 import { call, put } from 'redux-saga/effects';
 import { browserHistory } from 'react-router';
 
+import { mediator } from '../application';
 import { session, configureSharedApiSession } from '../ftrack_api';
 import {
     ftrackApiUserAuthenticated,
@@ -24,17 +25,6 @@ function queryUserExpression(apiUser) {
     `;
 }
 
-/** Return ftrack API credentials. */
-function getCredentials() {
-    let credentials = null;
-    try {
-        credentials = require('../ftrack_api_credentials.json');
-    } catch (error) {
-        console.log(error); // eslint-disable-line no-console
-    }
-    return credentials;
-}
-
 /**
  * Startup saga
  *
@@ -50,7 +40,7 @@ function getCredentials() {
 function* startupSaga() {
     try {
         yield showProgress('Authenticating...', { dismissable: false });
-        const credentials = yield call(getCredentials);
+        const credentials = yield call(mediator.getCredentials);
         yield configureSharedApiSession(
             credentials.serverUrl,
             credentials.apiUser,

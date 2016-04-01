@@ -78,6 +78,25 @@ export class AdobeMediator {
 
         return promise;
     }
+
+    /** Return ftrack API credentials. */
+    getCredentials() {
+        const util = window.top.FT.util;
+        logger.info('Reading credentials from adobe mediator.');
+
+        const promise = new Promise((resolve, reject) => {
+            util.getCredentials((error, credentials) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(credentials);
+                }
+            });
+        });
+
+        return promise;
+    }
+
 }
 
 const adobeMediator = new AdobeMediator();
