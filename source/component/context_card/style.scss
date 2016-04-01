@@ -5,11 +5,15 @@
 
 .main {
     flex: 1;
-    cursor: pointer;
     padding-top: $spacing-small;
+}
 
-    &:hover {
-        background-color: lighten($card-background-color, 5%);
+.clickable {
+    .main {
+        cursor: pointer;
+        &:hover {
+            background-color: lighten($card-background-color, 5%);
+        }
     }
 }
 

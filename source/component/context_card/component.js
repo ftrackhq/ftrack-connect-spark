@@ -29,7 +29,9 @@ class ContextCard extends React.Component {
 
     render() {
         const _classNames = classNames(
-            style.root, this.props.className
+            style.root, {
+                [style.clickable]: !!this.props.onClick,
+            }, this.props.className
         );
         const entity = this.props.entity;
         const expandIcon = this.state.expanded ? 'expand_less' : 'expand_more';
@@ -46,36 +48,36 @@ class ContextCard extends React.Component {
             );
         }
 
-        return (
-            <Card
-                className={_classNames}
-                raised
-            >
-                <div className={style.contents}>
-                    <div className={style.side}>
-                        <EntityThumbnail thumbnailId={entity.thumbnail_id} />
-                        <StatusBar color={statusColor} />
-                    </div>
-                    <div
-                        className={style.main}
-                        onClick={this.props.onClick}
-                    >
-                        <EntityType entity={entity} className={style['entity-type']} />
-                        <EntityLink
-                            link={entity.link}
-                            size="large"
-                            className={style['entity-link']}
-                        />
-                        <CardActions>
-                            {actions}
-                        </CardActions>
-                    </div>
+        const contents = [
+            <div className={style.contents}>
+                <div className={style.side}>
+                    <EntityThumbnail thumbnailId={entity.thumbnail_id} />
+                    <StatusBar color={statusColor} />
                 </div>
-                <Reveal active={this.state.expanded}>
-                    <p>{entity.description}</p>
-                </Reveal>
-            </Card>
-        );
+                <div
+                    className={style.main}
+                    onClick={this.props.onClick}
+                >
+                    <EntityType entity={entity} className={style['entity-type']} />
+                    <EntityLink
+                        link={entity.link}
+                        size="large"
+                        className={style['entity-link']}
+                    />
+                    <CardActions>
+                        {actions}
+                    </CardActions>
+                </div>
+            </div>,
+            <Reveal active={this.state.expanded}>
+                <p>{entity.description}</p>
+            </Reveal>,
+        ];
+
+        return React.createElement(this.props.flat ? 'div' : Card, {
+            className: _classNames,
+            raised: !this.props.flat,
+        }, contents);
     }
 }
 
@@ -83,12 +85,14 @@ class ContextCard extends React.Component {
 ContextCard.propTypes = {
     className: React.PropTypes.string,
     entity: React.PropTypes.object.isRequired,
+    flat: React.PropTypes.bool,
     onClick: React.PropTypes.func,
     actions: React.PropTypes.node,
 };
 
 ContextCard.defaultProps = {
     className: '',
+    flat: false,
     actions: [],
 };
 
