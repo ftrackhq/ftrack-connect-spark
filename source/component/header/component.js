@@ -3,19 +3,33 @@
 import React from 'react';
 import AppBar from 'react-toolbox/lib/app_bar';
 import classNames from 'classnames';
+import { Button } from 'react-toolbox/lib/button';
+import { browserHistory } from 'react-router';
 
 import style from './style';
 
+/** Go back. */
+const navigateBack = () => {
+    browserHistory.goBack();
+};
 
-/** Header container containing share menu */
-/* eslint-disable react/prefer-stateless-function */
+/** Header component containing back button, title and right button */
 function Header(props) {
     const _classNames = classNames(
         style.root, `background-${props.color}`, props.className
     );
 
+    const backButton = (
+        <Button
+            label="Back"
+            icon="chevron_left"
+            onClick={navigateBack}
+        />
+    );
+
     return (
         <AppBar flat className={_classNames}>
+            {props.back ? backButton : null}
             <h4 className={style.title}>{props.title}</h4>
             {props.rightButton}
         </AppBar>
@@ -31,13 +45,15 @@ Header.propTypes = {
     color: React.PropTypes.string,
     title: React.PropTypes.node,
     rightButton: React.PropTypes.node,
+    back: React.PropTypes.bool,
 };
 
 Header.defaultProps = {
     color: 'primary',
     className: '',
-    title: '',
-    rightButton: '',
+    title: null,
+    rightButton: null,
+    back: false,
 };
 
 export default Header;

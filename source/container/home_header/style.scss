@@ -1,0 +1,11 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+.share {
+    position: relative;
+    display: inline-block;
+    text-align: center;
+}
+
+.menu[data-react-toolbox="menu"] {
+    top: 100%;
+}
