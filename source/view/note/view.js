@@ -210,10 +210,17 @@ const NoteForm = clickOutSide(_NoteForm);
 
 function NotesList({
     items, onNoteFormOpen, onNoteFormHide, onNoteFormSubmit,
-    entity, activeNoteReplies = {}, user = {},
+    entity, forms = {}, user = {},
 }) {
     logger.debug('Rendering notes', items);
     const notes = [];
+
+    const onSubmit = (parentNoteId, noteForm) => {
+        onNoteFormSubmit(
+            parentNoteId, entity.id, entity.type,
+            user.id, noteForm.getContent()
+        );
+    };
 
     items.forEach(
         note => {
@@ -221,18 +228,12 @@ function NotesList({
                 reply => <Note data={reply} />
             );
             const onClick = () => onNoteFormOpen(note.id, note.parent_id, note.parent_type);
-            const onSubmit = (noteForm) => {
-                onNoteFormSubmit(
-                    note.id, note.parent_id, note.parent_type,
-                    user.id, noteForm.getContent()
-                );
-            };
             const onNoteFormClickOutside = (noteForm) => {
                 const content = noteForm.getContent();
                 onNoteFormHide(note.id, content);
             };
 
-            const activeNoteReply = activeNoteReplies[note.id];
+            const activeNoteReply = forms.reply[note.id];
             const pending = activeNoteReply && activeNoteReply.state === 'pending';
 
             notes.push(
@@ -246,7 +247,9 @@ function NotesList({
                             <NoteForm
                                 defaultContent={activeNoteReply.content}
                                 onClickOutside={onNoteFormClickOutside}
-                                onSubmit={onSubmit}
+                                onSubmit={
+                                    onSubmit.bind(this, note.id)
+                                }
                                 pending={pending}
                             /> :
                             <Button primary mini className={style['reply-button']}
@@ -262,16 +265,9 @@ function NotesList({
         }
     );
 
-    const onSubmit = (noteForm) => {
-        onNoteFormSubmit(
-            null, entity.id, entity.type,
-            user.id, noteForm.getContent()
-        );
-    };
-
     return (
         <div className={style['note-list']}>
-            <NoteForm onSubmit={onSubmit} defaultCollapsed />
+            <NoteForm onSubmit={onSubmit.bind(this, undefined)} defaultCollapsed />
             {notes}
         </div>
     );
@@ -279,7 +275,7 @@ function NotesList({
 
 NotesList.propTypes = {
     items: React.PropTypes.array.isRequired,
-    activeNoteReplies: React.PropTypes.object,
+    forms: React.PropTypes.object,
     entity: React.PropTypes.object,
     onNoteFormOpen: React.PropTypes.func.isRequired,
     onNoteFormHide: React.PropTypes.func.isRequired,
@@ -289,14 +285,15 @@ NotesList.propTypes = {
 
 const mapStateToProps = (state) => {
     const items = state.screen.notes && state.screen.notes.items || [];
-    const activeNoteReplies = (
+    const forms = {};
+    forms.reply = (
         state.screen.notes && state.screen.notes.replyForms || {}
     );
     const entity = state.screen.notes && state.screen.notes.entity || null;
     return {
         items,
         entity,
-        activeNoteReplies,
+        forms,
         user: state.user,
     };
 };
