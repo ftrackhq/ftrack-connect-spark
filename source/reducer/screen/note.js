@@ -81,12 +81,12 @@ export default function notesReducer(state = {}, action) {
                     return note;
                 }
             );
-
-            delete forms[action.payload.formKey];
         } else {
             forms = state.forms;
             items = [action.payload.note, ...state.items];
         }
+
+        delete forms[action.payload.formKey];
 
         nextState = Object.assign(
             {},

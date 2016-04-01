@@ -144,8 +144,7 @@ class _NoteForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            collapsed: props.defaultCollapsed || false,
-            content: props.defaultContent || undefined,
+            content: props.content || undefined,
         };
     }
 
@@ -160,16 +159,18 @@ class _NoteForm extends React.Component {
     }
 
     expand() {
-        this.setState({ collapsed: false });
         if (this.props.onExpand) {
             this.props.onExpand(this);
         }
     }
 
+    componentWillReceiveProps (nextProps) {
+        this.setState({ content: nextProps.content });
+    }
+
     render() {
         const content = this.state.content;
-        const collapsed = this.state.collapsed;
-        const expanded = this.state.expanded;
+        const collapsed = this.props.collapsed;
         const pending = this.props.pending;
 
         return (
@@ -178,13 +179,14 @@ class _NoteForm extends React.Component {
                     value={content} ref="content" label="Write a comment..."
                     disabled={pending}
                     name="content"
+                    multiline
                     onChange={
                         (value) => this.setState({content: value})
                     }
                     onFocus={
                         () => {
                             {
-                                if (this.state.collapsed) {
+                                if (collapsed) {
                                     this.expand();
                                 }
                             }
@@ -256,9 +258,8 @@ function NotesList({
             );
 
             const formKey = `${note.id}-reply`;
-            const activeNoteReply = forms[formKey];
-            logger.debug('activeNoteReply', activeNoteReply);
-            const pending = activeNoteReply && activeNoteReply.state === 'pending';
+            const formData = forms[formKey];
+            const pending = formData && formData.state === 'pending';
 
             notes.push(
                 <div className={style['parent-note-item']}>
@@ -267,9 +268,9 @@ function NotesList({
                             {replies}
                         </div>
                         {
-                            activeNoteReply && activeNoteReply.state !== 'hidden' ?
+                            formData && formData.state !== 'hidden' ?
                             <NoteForm
-                                defaultContent={activeNoteReply.content}
+                                content={formData.content}
                                 onClickOutside={onNoteFormClickOutside.bind(this, formKey)}
                                 onSubmit={
                                     onSubmit.bind(this, formKey, note.id)
@@ -293,14 +294,31 @@ function NotesList({
     );
 
     const formKey = `${entity.id}-new`;
+    const formData = forms[formKey];
+    const pending = formData && formData.state === 'pending';
+
+    // Treat as collapsed if hidden or no form state exists. 
+    const collapsed = !formData || formData.state === 'hidden';
+
+    // Hide content if form is collapsed.
+    const content = collapsed ? '' : formData && formData.content;
 
     return (
         <div className={style['note-list']}>
             <NoteForm
                 key={formKey}
+                content={content}
+                onClickOutside={
+                    // Do not emit hide form action if form is already
+                    // collpased. Otherwise new hide form events would emit
+                    // for each click.
+                    !collapsed ?
+                    onNoteFormClickOutside.bind(this, formKey) : null
+                }
                 onSubmit={onSubmit.bind(this, formKey, undefined)}
                 onExpand={onClick.bind(this, formKey)}
-                defaultCollapsed
+                collapsed={collapsed}
+                pending={pending}
             />
             {notes}
         </div>
