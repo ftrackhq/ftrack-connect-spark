@@ -50,11 +50,14 @@
 
     .main {
         order: 1;
+        flex: 1;
+        min-width: 0;
     }
 
     .side {
         order: 2;
         width: 17.5rem;
         height: auto;
+        flex-shrink: 0;
     }
 }
