@@ -8,7 +8,9 @@ import {
     ftrackApiUserAuthenticated,
     ftrackApiAuthenticationFailed,
 } from 'action/ftrack_api';
-
+import {
+    showProgress, hideOverlay, showFailure,
+} from './lib/overlay';
 
 /** Return API operation to query user details. */
 function queryUserExpression(apiUser) {
@@ -47,6 +49,7 @@ function getCredentials() {
  */
 function* startupSaga() {
     try {
+        yield showProgress('Authenticating...', { dismissable: false });
         const credentials = yield call(getCredentials);
         yield configureSharedApiSession(
             credentials.serverUrl,
@@ -58,10 +61,15 @@ function* startupSaga() {
             queryUserExpression(credentials.apiUser)
         );
         yield put(ftrackApiUserAuthenticated(users.data[0]));
-        browserHistory.push('/home');
+        yield hideOverlay();
     } catch (error) {
         yield put(ftrackApiAuthenticationFailed(error));
+        yield call(showFailure, {
+            header: 'Authentication failed',
+            error,
+        });
     }
+    browserHistory.push('/home');
 }
 
 export default startupSaga;
