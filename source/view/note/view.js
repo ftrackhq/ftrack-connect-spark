@@ -245,7 +245,6 @@ function NotesList({
         );
     };
     const onClick = (formKey) => onNoteFormOpen(formKey);
-
     const onNoteFormClickOutside = (formKey, noteForm) => {
         const content = noteForm.getContent();
         onNoteFormHide(formKey, content);
@@ -263,7 +262,8 @@ function NotesList({
 
             notes.push(
                 <div className={style['parent-note-item']}>
-                    <Note data={note} key={note.id}>
+                    <Note data={note} key={note.id} />
+                    <div className={style['parent-note-tail']} >
                         <div className={style.replies}>
                             {replies}
                         </div>
@@ -284,10 +284,7 @@ function NotesList({
                                 onClick={onClick.bind(this, formKey)}
                             />
                         }
-                    </Note>
-                    <IconMenu icon='more_vert' position='top-left'>
-                        <MenuItem caption="Edit" />
-                    </IconMenu>
+                    </div>
                 </div>
             );
         }
