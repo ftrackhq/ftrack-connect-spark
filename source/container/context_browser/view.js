@@ -3,10 +3,8 @@
 import React from 'react';
 
 import InfiniteScroll from 'component/infinite_scroll';
-import { List } from 'react-toolbox';
-import { Card, CardActions, CardTitle, CardMedia, CardText } from 'react-toolbox/lib/card';
 import Button from 'react-toolbox/lib/button';
-import Reveal from 'component/reveal';
+import ContextCard from 'component/context_card';
 
 import style from './style';
 import { session } from '../../ftrack_api';
@@ -25,17 +23,24 @@ class ContextBrowser extends React.Component {
         this._offset = 0;
         this._loadItems = this._loadItems.bind(this);
         this._renderItem = this._renderItem.bind(this);
+        this._onBackClick = this._onBackClick.bind(this);
 
+        this._history = [this.state.parentId];
         this._resetQuery('projects');
     }
 
     /** Reset the query. */
     _resetQuery(parentId) {
+        const lastItem = this._history[this._history.length - 1];
+        if (parentId !== lastItem) {
+            this._history.push(parentId);
+        }
+
         this._offset = 0;
 
         if (parentId !== 'projects') {
             this._baseQuery = (
-                'select id, name, thumbnail_id, link from TypedContext where ' +
+                'select id, name, thumbnail_id, link, object_type.name from TypedContext where ' +
                 `parent_id is ${parentId} order by name, id`
             );
         } else {
@@ -69,8 +74,19 @@ class ContextBrowser extends React.Component {
         return query;
     }
 
+    _onBackClick() {
+        const history = this._history;
+        if (history.length > 1) {
+            history.pop();
+            const parentId = history.pop();
+            this.setState({ parentId });
+            this._resetQuery(parentId);
+        }
+    }
+
     /* handle click. */
-    _onClick(item) {
+    _onContextCardClick(item, event) {
+        event.stopPropagation();
         if (item.__entity_type__ === 'Task') {
             this.props.onSelectContext(item.id);
         } else {
@@ -79,61 +95,51 @@ class ContextBrowser extends React.Component {
         }
     }
 
-    _getLink(link) {
-        const path = [];
-
-        for (let index = 0; index < link.length; index++) {
-            path.push(link[index].name);
-        }
-
-        return path.join(' / ');
+    _onSelectContextClick(item, event) {
+        event.stopPropagation();
+        this.props.onSelectContext(item.id);
     }
 
     /** Render item. */
     _renderItem(item) {
-        const onClick = this._onClick.bind(this, item);
+        const onClick = this._onContextCardClick.bind(this, item);
+        const onSelectClick = this._onSelectContextClick.bind(this, item);
+        const actions = [
+            <Button
+                label="Select"
+                onClick={onSelectClick}
+                type="button"
+            />,
+        ];
 
         return (
-            <Card
-                key={ item.id }
-            >
-                <div className={style.cardRow}>
-                    <CardTitle>
-                        <p>{ item.__entity_type__ }</p>
-                        <p>{ item.name }</p>
-                        <p>{ this._getLink(item.link.slice(-2, -1)) }</p>
-                        <p>{ this._getLink(item.link.slice(0, -2)) }</p>
-                    </CardTitle>
-                    <CardMedia
-                        className={ style.media }
-                        image={ session.thumbnail(item.thumbnail_id, 300) }
-                    />
-                </div>
-
-
-                <CardActions>
-                    <Button
-                        label="Details"
-                        flat
-                        onClick={ onClick }
-                        type="button"
-                    />
-                </CardActions>
-            </Card>
+            <ContextCard
+                entity={item}
+                className={style.item}
+                onClick={onClick}
+                actions={actions}
+            />
         );
     }
 
     /** Render. */
     render() {
         return (
-            <List
-                key={ this.state.parentId }
-            >
+            <div>
+                <Button
+                    label="Back"
+                    icon="chevron_left"
+                    disabled={this._history.length <= 1}
+                    onClick={this._onBackClick}
+                    type="button"
+                />
                 <InfiniteScroll
+                    key={this.state.parentId}
+                    className={style['context-list']}
                     loadItems={ this._loadItems }
                     renderItem={ this._renderItem }
                 />
-            </List>
+            </div>
         );
     }
 }
