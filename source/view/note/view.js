@@ -144,8 +144,8 @@ class _NoteForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            expanded: false,
-            content: props.defaultContent,
+            collapsed: props.defaultCollapsed || false,
+            content: props.defaultContent || undefined,
         };
     }
 
@@ -160,37 +160,39 @@ class _NoteForm extends React.Component {
     }
 
     render() {
-        const content = this.state.content || undefined;
-        const state = this.props.state;
+        const content = this.state.content;
+        const collapsed = this.state.collapsed;
         const expanded = this.state.expanded;
+        const pending = this.props.pending;
 
         return (
             <div className={style['note-form']}>
                 <Input
                     value={content} ref="content" label="Write a comment..."
-                    disabled={state === 'pending'}
+                    disabled={pending}
                     name="content"
                     onChange={
                         (value) => this.setState({content: value})
                     }
                     onFocus={
-                        () => this.setState({ expanded: true })
+                        () => this.setState({ collapsed: false })
                     }
                 />
                 {
-                    expanded ?
-                    <div className={style.toolbar}>
-                        {
-                            state === 'pending' ?
-                            <div className={style.progressbar}>
-                                <ProgressBar type="circular" mode="indeterminate" />
-                            </div> :
-                            <Button onClick={
-                                    () => this.props.onSubmit(this)
-                                } label="Comment"
-                            />
-                        }
-                    </div> : []
+                    collapsed ? [] : (
+                        <div className={style.toolbar}>
+                            {
+                                pending ?
+                                <div className={style.progressbar}>
+                                    <ProgressBar type="circular" mode="indeterminate" />
+                                </div> :
+                                <Button onClick={
+                                        () => this.props.onSubmit(this)
+                                    } label="Comment"
+                                />
+                            }
+                        </div>
+                    )
                 }
             </div>
         );
@@ -231,6 +233,7 @@ function NotesList({
             };
 
             const activeNoteReply = activeNoteReplies[note.id];
+            const pending = activeNoteReply && activeNoteReply.state === 'pending';
 
             notes.push(
                 <div className={style['parent-note-item']}>
@@ -244,7 +247,7 @@ function NotesList({
                                 defaultContent={activeNoteReply.content}
                                 onClickOutside={onNoteFormClickOutside}
                                 onSubmit={onSubmit}
-                                state={activeNoteReply.state}
+                                pending={pending}
                             /> :
                             <Button primary mini className={style['reply-button']}
                                 label="Reply" onClick={onClick}
@@ -268,7 +271,7 @@ function NotesList({
 
     return (
         <div className={style['note-list']}>
-            <NoteForm onSubmit={onSubmit} />
+            <NoteForm onSubmit={onSubmit} defaultCollapsed />
             {notes}
         </div>
     );
