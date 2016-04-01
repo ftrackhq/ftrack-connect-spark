@@ -5,9 +5,9 @@ import ToolboxApp from 'react-toolbox/lib/app';
 
 import ApplicationOverlay from 'container/application_overlay';
 
+// Include global application styles
 import 'react-toolbox/components/commons.scss';
-import style from './style.scss';
-
+import './style.scss';
 
 /** A root layout. */
 function RootLayout({ children }) {
