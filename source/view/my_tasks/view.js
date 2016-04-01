@@ -6,9 +6,7 @@ import { browserHistory } from 'react-router';
 import style from './style';
 
 import InfiniteScroll from 'component/infinite_scroll';
-import { Card, CardActions, CardTitle, CardMedia, CardText } from 'react-toolbox/lib/card';
-import Button from 'react-toolbox/lib/button';
-import Reveal from 'component/reveal';
+import ContextCard from 'component/context_card';
 
 import { session } from '../../ftrack_api';
 
@@ -28,7 +26,7 @@ class MyTasks extends React.Component {
     }
 
     /** Navigate to the task. */
-    _showDetails(item) {
+    _selectContext(item) {
         browserHistory.push(`/context/${item.id}`);
     }
 
@@ -74,52 +72,16 @@ class MyTasks extends React.Component {
         return query;
     }
 
-    _getLink(link) {
-        const path = [];
-
-        for (let index = 0; index < link.length; index++) {
-            path.push(link[index].name);
-        }
-
-        return path.join(' / ');
-    }
 
     /** Render item. */
     _renderItem(item) {
-        const showDetails = this._showDetails.bind(this, item);
-
+        const selectContext = this._selectContext.bind(this, item);
         return (
-            <Card
-                key={ item.id }
-            >
-                <div className={style.cardRow}>
-                    <CardTitle>
-                        <p>{ item.__entity_type__ }</p>
-                        <p>{ item.name }</p>
-                        <p>{ this._getLink(item.link.slice(-2, -1)) }</p>
-                        <p>{ this._getLink(item.link.slice(0, -2)) }</p>
-                    </CardTitle>
-                    <CardMedia
-                        className={ style.media }
-                        image={ session.thumbnail(item.thumbnail_id, 300) }
-                    />
-                </div>
-
-
-                <CardActions>
-                    <Button
-                        label="Details"
-                        flat
-                        onClick={ showDetails }
-                        type="button"
-                    />
-                </CardActions>
-                <CardText>
-                    <Reveal label="description">
-                        { item.description }
-                    </Reveal>
-                </CardText>
-            </Card>
+            <ContextCard
+                entity={item}
+                className={style.item}
+                onClick={selectContext}
+            />
         );
     }
 
@@ -127,6 +89,7 @@ class MyTasks extends React.Component {
     render() {
         return (
             <InfiniteScroll
+                className={style['task-list']}
                 loadItems={ this._loadItems }
                 renderItem={ this._renderItem }
             />

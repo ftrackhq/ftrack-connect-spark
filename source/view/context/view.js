@@ -3,6 +3,8 @@
 import React from 'react';
 import { Tab, Tabs } from 'react-toolbox';
 
+import HomeHeader from 'container/home_header';
+
 
 /** Home view */
 class ContextView extends React.Component {
@@ -18,21 +20,23 @@ class ContextView extends React.Component {
     }
 
     render() {
+        const context = this.props.params.context;
         return (
             <div>
-            { this.props.params.context }
-            <Tabs index={this.state.index} onChange={this._handleTabChange}>
-                <Tab label="Notes">
-                    <div>
-                        Notes on the context.
-                    </div>
-                </Tab>
-                <Tab label="Versions">
-                    <div>
-                        Versions on the contex.
-                    </div>
-                </Tab>
-            </Tabs>
+                <HomeHeader back context={context} />
+                <p>{context}</p>
+                <Tabs index={this.state.index} onChange={this._handleTabChange}>
+                    <Tab label="Notes">
+                        <div>
+                            Notes on the context.
+                        </div>
+                    </Tab>
+                    <Tab label="Versions">
+                        <div>
+                            Versions on the contex.
+                        </div>
+                    </Tab>
+                </Tabs>
             </div>
         );
     }

@@ -1,7 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
-import { Route, Redirect } from 'react-router';
+import { Route, Redirect, IndexRedirect } from 'react-router';
 
 import RootLayout from 'layout/root';
 import NotFoundView from 'view/not_found';
@@ -13,7 +13,8 @@ import PublishContextBrowser from 'container/publish_context_browser';
 import PublishView from 'view/publish';
 import ContextView from 'view/context';
 import { publishLoad } from 'action/publish';
-
+import BrowseAllView from 'view/browse_all';
+import MyTasksView from 'view/my_tasks';
 
 function dispatchOnEnter(dispatch, actionCreator) {
     return () => { dispatch(actionCreator()); };
@@ -22,7 +23,11 @@ function dispatchOnEnter(dispatch, actionCreator) {
 
 export default (store) => (
     <Route path="/" component={RootLayout}>
-        <Route path="/home" component={HomeView} />
+        <Route path="/home" component={HomeView}>
+            <IndexRedirect to="my-tasks" />
+            <Route path="my-tasks" component={MyTasksView} />
+            <Route path="browse-all" component={BrowseAllView} />
+        </Route>
         <Route path="/context/:context" component={ContextView} />
         <Route path="/example" component={ExampleView} />
         <Route path="/publish-context" component={PublishContextBrowser} />

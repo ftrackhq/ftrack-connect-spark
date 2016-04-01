@@ -13,9 +13,7 @@ import style from './style.scss';
 function RootLayout({ children }) {
     return (
         <ToolboxApp>
-            <div className={style.main}>
-                {children}
-            </div>
+            {children}
             <ApplicationOverlay />
         </ToolboxApp>
     );

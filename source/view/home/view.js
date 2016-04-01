@@ -1,17 +1,12 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
-import Header from 'component/header';
-import { Button, Menu, MenuItem } from 'react-toolbox';
+import HomeHeader from 'container/home_header';
 import { Tab, Tabs } from 'react-toolbox';
 import { browserHistory } from 'react-router';
 
 import style from './style.scss';
 
-/** Push new route on item selected. */
-const navigateToMenu = (value) => {
-    browserHistory.push(`/${value}`);
-};
 
 /** Home view */
 class HomeView extends React.Component {
@@ -23,7 +18,6 @@ class HomeView extends React.Component {
             { route: 'browse-all', label: 'Browse all' },
         ];
         this.state = { index: 0 };
-        this._onShareClick = this._onShareClick.bind(this);
         this._handleTabChange = this._handleTabChange.bind(this);
     }
 
@@ -42,10 +36,6 @@ class HomeView extends React.Component {
         return index;
     }
 
-    _onShareClick() {
-        this.refs.menu.show();
-    }
-
     /** Handle tab change. */
     _handleTabChange(index) {
         this.setState({ index });
@@ -59,33 +49,9 @@ class HomeView extends React.Component {
 
     /** Render component. */
     render() {
-        const shareButton = (
-            <div className={style.share}>
-                <Button primary label="Share" onClick={this._onShareClick} />
-                <Menu
-                    ref="menu"
-                    className={style.menu}
-                    position="auto"
-                    onSelect={navigateToMenu}
-                    menuRipple
-                >
-                    <MenuItem
-                        value="quick-review"
-                        icon="play_circle_outline"
-                        caption="Quick review"
-                    />
-                    <MenuItem
-                        value="publish"
-                        icon="file_upload"
-                        caption="Publish"
-                    />
-                </Menu>
-            </div>
-        );
-
         return (
             <div className={style.root}>
-                <Header title="" rightButton={shareButton} color="dark-100" />
+                <HomeHeader />
                 <Tabs index={this.state.index} onChange={this._handleTabChange}>
                     <Tab label="My tasks" onClick={this._onMyTasksClicked} />
                     <Tab label="Browse all" onClick={this._onBrowseAllClicked} />

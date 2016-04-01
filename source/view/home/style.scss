@@ -1,15 +1,5 @@
 // :copyright: Copyright (c) 2016 ftrack
-@import '~style/_mixins.scss';
-
-.share {
-    position: relative;
-    display: inline-block;
-    text-align: center;
-}
-
-.menu[data-react-toolbox="menu"] {
-    top: 100%;
-}
+@import '~style/_mixin.scss';
 
 .root {
     @include abs-pos(0,0,0,0);
