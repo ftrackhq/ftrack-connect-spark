@@ -262,7 +262,7 @@ function NotesList({
 
             notes.push(
                 <div className={style['parent-note-item']}>
-                    <Note data={note} key={note.id} />
+                    <Note data={note} key={note.id} category />
                     <div className={style['parent-note-tail']} >
                         <div className={style.replies}>
                             {replies}
