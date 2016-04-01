@@ -78,6 +78,7 @@ class MyTasks extends React.Component {
         const selectContext = this._selectContext.bind(this, item);
         return (
             <ContextCard
+                key={item.id}
                 entity={item}
                 className={style.item}
                 onClick={selectContext}

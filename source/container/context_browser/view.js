@@ -114,6 +114,7 @@ class ContextBrowser extends React.Component {
 
         return (
             <ContextCard
+                key={item.id}
                 entity={item}
                 className={style.item}
                 onClick={onClick}
