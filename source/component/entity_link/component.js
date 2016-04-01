@@ -1,3 +1,5 @@
+// :copyright: Copyright (c) 2016 ftrack
+
 import React from 'react';
 import classNames from 'classnames';
 
