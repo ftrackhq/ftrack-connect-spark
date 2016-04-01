@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { Avatar, Button, Input, ProgressBar } from 'react-toolbox';
+import { Avatar, Button, Input, ProgressBar, IconMenu, MenuItem } from 'react-toolbox';
 import loglevel from 'loglevel';
 import TimeAgo from 'react-timeago';
 import clickOutSide from 'react-click-outside';
@@ -141,10 +141,11 @@ Note.propTypes = {
 
 class _NoteForm extends React.Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             expanded: false,
+            content: props.defaultContent,
         };
     }
 
@@ -159,7 +160,7 @@ class _NoteForm extends React.Component {
     }
 
     render() {
-        const content = this.props.content || undefined;
+        const content = this.state.content || undefined;
         const state = this.props.state;
         const expanded = this.state.expanded;
 
@@ -168,6 +169,10 @@ class _NoteForm extends React.Component {
                 <Input
                     value={content} ref="content" label="Write a comment..."
                     disabled={state === 'pending'}
+                    name="content"
+                    onChange={
+                        (value) => this.setState({content: value})
+                    }
                     onFocus={
                         () => this.setState({ expanded: true })
                     }
@@ -202,7 +207,7 @@ _NoteForm.propTypes = {
 const NoteForm = clickOutSide(_NoteForm);
 
 function NotesList({
-    items, onNoteFormOpen, onNoteFormClose, onNoteFormSubmit,
+    items, onNoteFormOpen, onNoteFormHide, onNoteFormSubmit,
     entity, activeNoteReplies = {}, user = {},
 }) {
     logger.debug('Rendering notes', items);
@@ -222,7 +227,7 @@ function NotesList({
             };
             const onNoteFormClickOutside = (noteForm) => {
                 const content = noteForm.getContent();
-                onNoteFormClose(note.id, content);
+                onNoteFormHide(note.id, content);
             };
 
             const activeNoteReply = activeNoteReplies[note.id];
@@ -236,7 +241,7 @@ function NotesList({
                         {
                             activeNoteReply && activeNoteReply.state !== 'hidden' ?
                             <NoteForm
-                                content={activeNoteReply.content}
+                                defaultContent={activeNoteReply.content}
                                 onClickOutside={onNoteFormClickOutside}
                                 onSubmit={onSubmit}
                                 state={activeNoteReply.state}
@@ -246,6 +251,9 @@ function NotesList({
                             />
                         }
                     </Note>
+                    <IconMenu icon='more_vert' position='top-left'>
+                        <MenuItem caption="Edit" />
+                    </IconMenu>
                 </div>
             );
         }
@@ -271,7 +279,7 @@ NotesList.propTypes = {
     activeNoteReplies: React.PropTypes.object,
     entity: React.PropTypes.object,
     onNoteFormOpen: React.PropTypes.func.isRequired,
-    onNoteFormClose: React.PropTypes.func.isRequired,
+    onNoteFormHide: React.PropTypes.func.isRequired,
     onNoteFormSubmit: React.PropTypes.func.isRequired,
     user: React.PropTypes.user,
 };
@@ -295,7 +303,7 @@ const mapDispatchToProps = (dispatch) => (
         onNoteFormOpen: (...args) => dispatch(
             startNoteReply(...args)
         ),
-        onNoteFormClose: (...args) => dispatch(
+        onNoteFormHide: (...args) => dispatch(
             hideNoteReply(...args)
         ),
         onNoteFormSubmit: (...args) => dispatch(

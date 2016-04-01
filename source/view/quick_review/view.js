@@ -111,7 +111,6 @@ class QuickReviewView extends React.Component {
                     type="text"
                     label="Review session name"
                     name="name"
-                    value="TESTING"
                     {...name}
                     error={this._errorMessage(name)}
                 />
