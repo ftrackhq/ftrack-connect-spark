@@ -19,13 +19,13 @@ export default function notesReducer(state = {}, action) {
     } else if (action.type === types.OPEN_NOTE_FORM) {
         const forms = Object.assign({}, state.forms);
         const exists = forms[action.payload.formKey] !== undefined;
-        const initialState  = exists ? {} : action.payload.data;
+        const initialState = exists ? {} : action.payload.data;
 
         forms[action.payload.formKey] = Object.assign(
             {},
             forms[action.payload.formKey],
             {
-                state: 'visible'
+                state: 'visible',
             },
             initialState
         );
@@ -72,8 +72,6 @@ export default function notesReducer(state = {}, action) {
         );
     } else if (action.type === types.NOTE_SUBMITTED) {
         let items;
-        let forms;
-
 
         if (action.payload.isUpdate) {
             items = state.items.map(
@@ -114,7 +112,7 @@ export default function notesReducer(state = {}, action) {
             }
         }
 
-        forms = Object.assign({}, state.forms);
+        const forms = Object.assign({}, state.forms);
         delete forms[action.payload.formKey];
 
         nextState = Object.assign(

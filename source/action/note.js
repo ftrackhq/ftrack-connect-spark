@@ -52,7 +52,7 @@ export function notesLoaded(entity, notes, metadata) {
 }
 
 export function submitNoteForm(
-    formKey, data, content
+    formKey, data
 ) {
     return {
         type: SUBMIT_NOTE_FORM,

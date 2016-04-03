@@ -148,6 +148,10 @@ class _NoteForm extends React.Component {
         };
     }
 
+    componentWillReceiveProps(nextProps) {
+        this.setState({ content: nextProps.content });
+    }
+
     getContent() {
         return this.state.content;
     }
@@ -164,10 +168,6 @@ class _NoteForm extends React.Component {
         }
     }
 
-    componentWillReceiveProps (nextProps) {
-        this.setState({ content: nextProps.content });
-    }
-
     render() {
         const content = this.state.content;
         const collapsed = this.props.collapsed;
@@ -180,21 +180,19 @@ class _NoteForm extends React.Component {
                     value={content}
                     ref="content"
                     label={
-                        edit ? 
-                        "Update your note..." : "Write a comment..."
+                        edit ?
+                        'Update your note...' : 'Write a comment...'
                     }
                     disabled={pending}
                     name="content"
                     multiline
                     onChange={
-                        (value) => this.setState({content: value})
+                        (value) => this.setState({ content: value })
                     }
                     onFocus={
                         () => {
-                            {
-                                if (collapsed) {
-                                    this.expand();
-                                }
+                            if (collapsed) {
+                                this.expand();
                             }
                         }
                     }
@@ -212,7 +210,7 @@ class _NoteForm extends React.Component {
                                         () => this.props.onSubmit(this)
                                     }
                                     label={
-                                        edit ? "Update" : "Comment"
+                                        edit ? 'Update' : 'Comment'
                                     }
                                 />
                             }
@@ -228,223 +226,261 @@ _NoteForm.propTypes = {
     content: React.PropTypes.string,
     onClickOutside: React.PropTypes.func,
     onSubmit: React.PropTypes.func,
+    onExpand: React.PropTypes.func,
     state: React.PropTypes.string,
     edit: React.PropTypes.bool,
+    collapsed: React.PropTypes.bool,
+    pending: React.PropTypes.bool,
 };
 
 const NoteForm = clickOutSide(_NoteForm);
 
 
-
-class NotesList extends React.Component {
-
-    getForm(formKey, submitData, isEdit = false) {
-        const formData = this.props.forms[formKey];
-
-        const pending = formData && formData.state === 'pending';
-
-        // Treat as collapsed if hidden or no form state exists. 
-        const collapsed = !formData || formData.state === 'hidden';
-
-        // Hide content if form is collapsed.
-        const content = collapsed ? '' : formData && formData.content;
-
+function _EditableNote(
+    { note, collapsed, form, onShowForm, onHideForm, onSubmitForm }
+) {
+    if (!collapsed) {
         return (
             <NoteForm
-                content={content}
-                onClickOutside={
-                    !collapsed ? this.onNoteFormClickOutside.bind(this, formKey) : undefined
-                }
-                onSubmit={
-                    this.onSubmit.bind(this, formKey, submitData)
-                }
-                onExpand={
-                    () => {
-                        if (collapsed) {
-                            this.openForm(formKey, {});
-                        }
-                    }
-                }
-                collapsed={collapsed}
-                key={formKey}
-                pending={pending}
-                edit={isEdit}
+                {...form}
+                onClickOutside={(noteForm) => onHideForm(noteForm.getContent())}
+                onSubmit={(noteForm) => onSubmitForm(noteForm.getContent())}
+                edit
             />
         );
     }
 
-    onSubmit(formKey, submitData, noteForm) {
-        const data = Object.assign(
-            {}, submitData, {content: noteForm.getContent()}
+    return (
+        <div className={style['note-container']}>
+            <Note data={note} key={note.id} category />
+            <IconMenu icon="more_vert" position="top-left" menuRipple>
+                <MenuItem value="edit" icon="edit" caption="Edit"
+                    onClick={onShowForm}
+                />
+            </IconMenu>
+        </div>
+    );
+}
+
+_EditableNote.propTypes = {
+    note: React.PropTypes.object,
+    collapsed: React.PropTypes.bool,
+    form: React.PropTypes.object,
+    onShowForm: React.PropTypes.func,
+    onHideForm: React.PropTypes.func,
+    onSubmitForm: React.PropTypes.func,
+};
+
+
+function editableNoteStateToProps() {
+    return (state, props) => {
+        const forms = (
+            state.screen.notes && state.screen.notes.forms || {}
         );
-        this.props.onNoteFormSubmit(
-            formKey, data
+        const form = forms[`edit-${props.note.id}`] || {};
+
+        return {
+            form: {
+                content: form.content || props.note.content,
+                pending: form.state === 'pending',
+            },
+            collapsed: form.state === undefined || form.state === 'hidden',
+        };
+    };
+}
+
+function ediatbleNoteDispatchToProps() {
+    return (dispatch, props) => {
+        const formKey = `edit-${props.note.id}`;
+        return {
+            onShowForm: () => dispatch(openNoteForm(formKey, {})),
+            onHideForm: (content) => dispatch(hideNoteForm(formKey, content)),
+            onSubmitForm: (content) => {
+                const data = {
+                    content,
+                    id: props.note.id,
+                };
+                dispatch(submitNoteForm(formKey, data));
+            },
+        };
+    };
+}
+
+const EditableNote = connect(
+    editableNoteStateToProps,
+    ediatbleNoteDispatchToProps
+)(_EditableNote);
+
+
+function _ReplyForm({ form, collapsed, onSubmitForm, onHideForm, onShowForm }) {
+    if (!collapsed) {
+        return (
+            <NoteForm {...form} onClickOutside={onHideForm} onSubmit={onSubmitForm} />
         );
     }
 
-    onNoteFormClickOutside(formKey, noteForm) {
-        const content = noteForm.getContent();
-        this.props.onNoteFormHide(formKey, content);
-    }
+    return <Button label="Reply" primary mini onClick={onShowForm} />;
+}
 
-    getReplyFormOrButton(note) {
-        const formKey = `${note.id}-reply`;
-        const formData = this.props.forms[formKey];
+_ReplyForm.propTypes = {
+    parentNote: React.PropTypes.object,
+    user: React.PropTypes.object,
+    collapsed: React.PropTypes.bool,
+    form: React.PropTypes.object,
+    onShowForm: React.PropTypes.func,
+    onHideForm: React.PropTypes.func,
+    onSubmitForm: React.PropTypes.func,
+};
 
-        if (
-            formData && formData.state !== 'hidden'
-        ) {
-            return this.getForm(
-                formKey,
-                {
-                    in_reply_to_id: note.id,
-                    parent_id: this.props.entity.id,
-                    parent_type: this.props.entity.type,
-                    user_id: this.props.user.id,
+
+function replyDispatchToProps() {
+    return (dispatch, props) => {
+        const { user, parentNote } = props;
+        const formKey = `reply-${parentNote.id}`;
+        return {
+            onHideForm: (noteForm) => dispatch(hideNoteForm(formKey, noteForm.getContent())),
+            onShowForm: () => dispatch(openNoteForm(formKey, {})),
+            onSubmitForm: (noteForm) => {
+                const data = {
+                    content: noteForm.getContent(),
+                    user_id: user.id,
+                    in_reply_to_id: parentNote.id,
+                    parent_id: parentNote.parent_id,
+                    parent_type: parentNote.parent_type,
+                };
+                dispatch(submitNoteForm(formKey, data));
+            },
+        };
+    };
+}
+
+function replyStateToProps() {
+    return (state, props) => {
+        const forms = (
+            state.screen.notes && state.screen.notes.forms || {}
+        );
+        const form = forms[`reply-${props.parentNote.id}`] || {};
+        return {
+            form: {
+                content: form.content || '',
+                pending: form.state === 'pending',
+            },
+            collapsed: form.state === undefined || form.state === 'hidden',
+        };
+    };
+}
+
+const ReplyForm = connect(
+    replyStateToProps,
+    replyDispatchToProps
+)(_ReplyForm);
+
+
+function newNoteStateToProps() {
+    return (state, props) => {
+        const forms = (
+            state.screen.notes && state.screen.notes.forms || {}
+        );
+        const form = forms[`new-${props.entity.id}`] || {};
+        const collapsed = !form.state || form.state === 'hidden';
+
+        return {
+            content: collapsed ? '' : form.content,
+            pending: form.state === 'pending',
+            collapsed,
+        };
+    };
+}
+
+function newNoteDispatchToProps() {
+    return (dispatch, props) => {
+        const formKey = `new-${props.entity.id}`;
+        const { user, entity } = props;
+        return {
+            onExpand: () => dispatch(openNoteForm(formKey, {})),
+            onClickOutside: (noteForm) => {
+                if (!noteForm.props.collapsed) {
+                    dispatch(hideNoteForm(formKey, noteForm.getContent()));
                 }
-            );
-        }
+            },
+            onSubmit: (noteForm) => {
+                const data = {
+                    content: noteForm.getContent(),
+                    user_id: user.id,
+                    parent_id: entity.id,
+                    parent_type: entity.type,
+                };
+                dispatch(submitNoteForm(formKey, data));
+            },
+        };
+    };
+}
 
+const NewNoteForm = connect(
+    newNoteStateToProps,
+    newNoteDispatchToProps
+)(NoteForm);
+
+function NotesList({ items, entity, user }) {
+    logger.debug('Rendering notes');
+
+    if (entity === null) {
         return (
-            <Button
-                primary mini className={style['reply-button']}
-                label="Reply"
-                onClick={this.openForm.bind(this, formKey, {})}
-            />
-        );
-    }
-
-    openForm(formKey, data) {
-        this.props.onNoteFormOpen(formKey, data);
-    }
-
-    getNoteOrEditor(note) {
-        const formKey = `${note.id}-edit`;
-        const formData = this.props.forms[formKey];
-
-        if (
-            formData && formData.state !== 'hidden'
-        ) {
-            return this.getForm(
-                formKey,
-                {
-                    id: note.id
-                },
-                true
-            );
-        }
-
-        const content = formData && formData.content || note.content;
-
-        return (
-            <div className={style['note-container']}>
-                <Note data={note} key={note.id} category />
-                <IconMenu icon='more_vert' position='top-left' menuRipple>
-                    <MenuItem value='edit' icon='edit' caption='Edit'
-                        onClick={
-                            this.openForm.bind(this, formKey, { content, })
-                        }
-                    />
-                </IconMenu>
+            <div>
+                Empty
             </div>
         );
     }
 
-    render() {
-        const {
-            items, entity,
-        } = this.props;
+    const notes = [];
 
-        if (entity === null) {
-            return (
-                <div >
-                    Empty
-                </div>
-            )
-        }
-        logger.debug('Rendering notes', items);
-        const notes = [];
+    items.forEach(
+        note => {
+            const replies = (note.replies || []).map(
+                reply => <EditableNote note={reply} />
+            );
 
-
-        items.forEach(
-            note => {
-                const replies = (note.replies || []).map(
-                    reply => this.getNoteOrEditor(reply)
-                );
-
-                notes.push(
-                    <div className={style['parent-note-item']}>
-                        {this.getNoteOrEditor(note)}
-                        <div className={style['parent-note-tail']} >
-                            <div className={style.replies}>
-                                {replies}
-                            </div>
-                            {
-                                this.getReplyFormOrButton(note)
-                            }
+            notes.push(
+                <div className={style['parent-note-item']}>
+                    <EditableNote note={note} />
+                    <div className={style['parent-note-tail']} >
+                        <div className={style.replies}>
+                            {replies}
                         </div>
+                        <ReplyForm parentNote={note} user={user} />
                     </div>
-                );
-            }
-        );
+                </div>
+            );
+        }
+    );
 
-        const formKey = `${entity.id}-new`;
-        return (
-            <div className={style['note-list']}>
-                {
-                    this.getForm(formKey, {
-                        parent_id: this.props.entity.id,
-                        parent_type: this.props.entity.type,
-                        user_id: this.props.user.id,
-                    })
-                }
-                {notes}
-            </div>
-        );
-    }
+    return (
+        <div className={style['note-list']}>
+            <NewNoteForm entity={entity} user={user} />
+            {notes}
+        </div>
+    );
 }
 
 NotesList.propTypes = {
     items: React.PropTypes.array.isRequired,
-    forms: React.PropTypes.object,
     entity: React.PropTypes.object,
-    onNoteFormOpen: React.PropTypes.func.isRequired,
-    onNoteFormHide: React.PropTypes.func.isRequired,
-    onNoteFormSubmit: React.PropTypes.func.isRequired,
     user: React.PropTypes.user,
 };
 
 const mapStateToProps = (state) => {
     const items = state.screen.notes && state.screen.notes.items || [];
-    const forms = (
-        state.screen.notes && state.screen.notes.forms || {}
-    );
     const entity = state.screen.notes && state.screen.notes.entity || null;
     return {
         items,
         entity,
-        forms,
         user: state.user,
     };
 };
 
-const mapDispatchToProps = (dispatch) => (
-    {
-        onNoteFormOpen: (...args) => dispatch(
-            openNoteForm(...args)
-        ),
-        onNoteFormHide: (...args) => dispatch(
-            hideNoteForm(...args)
-        ),
-        onNoteFormSubmit: (...args) => dispatch(
-            submitNoteForm(...args)
-        ),
-    }
-);
-
 const NotesListView = connect(
     mapStateToProps,
-    mapDispatchToProps
+    null
 )(NotesList);
 
 export default NotesListView;

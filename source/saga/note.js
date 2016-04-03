@@ -31,7 +31,6 @@ function noteSelect() {
 }
 
 function* submitNote(action) {
-
     let operation;
     const isUpdate = !!action.payload.data.id;
 
@@ -76,8 +75,6 @@ function* submitNote(action) {
 }
 
 function* loadNotes(action) {
-    // logger.debug('loadNotes', action);
-
     const query = (
         `${noteSelect()} where parent_id is ` +
         `"${action.payload.parentId}" and not in_reply_to has () order by date desc`
