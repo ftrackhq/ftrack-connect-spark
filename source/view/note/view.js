@@ -172,11 +172,17 @@ class _NoteForm extends React.Component {
         const content = this.state.content;
         const collapsed = this.props.collapsed;
         const pending = this.props.pending;
+        const edit = this.props.edit;
 
         return (
             <div className={style['note-form']}>
                 <Input
-                    value={content} ref="content" label="Write a comment..."
+                    value={content}
+                    ref="content"
+                    label={
+                        edit ? 
+                        "Update your note..." : "Write a comment..."
+                    }
                     disabled={pending}
                     name="content"
                     multiline
@@ -201,9 +207,13 @@ class _NoteForm extends React.Component {
                                 <div className={style.progressbar}>
                                     <ProgressBar type="circular" mode="indeterminate" />
                                 </div> :
-                                <Button onClick={
+                                <Button
+                                    onClick={
                                         () => this.props.onSubmit(this)
-                                    } label="Comment"
+                                    }
+                                    label={
+                                        edit ? "Update" : "Comment"
+                                    }
                                 />
                             }
                         </div>
@@ -219,6 +229,7 @@ _NoteForm.propTypes = {
     onClickOutside: React.PropTypes.func,
     onSubmit: React.PropTypes.func,
     state: React.PropTypes.string,
+    edit: React.PropTypes.bool,
 };
 
 const NoteForm = clickOutSide(_NoteForm);
@@ -227,8 +238,7 @@ const NoteForm = clickOutSide(_NoteForm);
 
 class NotesList extends React.Component {
 
-    getForm(formKey, parentNote) {
-        const parentNoteId = parentNote && parentNote.id || undefined;
+    getForm(formKey, submitData, isEdit = false) {
         const formData = this.props.forms[formKey];
 
         const pending = formData && formData.state === 'pending';
@@ -246,7 +256,7 @@ class NotesList extends React.Component {
                     !collapsed ? this.onNoteFormClickOutside.bind(this, formKey) : undefined
                 }
                 onSubmit={
-                    this.onSubmit.bind(this, formKey, parentNoteId)
+                    this.onSubmit.bind(this, formKey, submitData)
                 }
                 onExpand={
                     () => {
@@ -258,14 +268,17 @@ class NotesList extends React.Component {
                 collapsed={collapsed}
                 key={formKey}
                 pending={pending}
+                edit={isEdit}
             />
         );
     }
 
-    onSubmit(formKey, parentNoteId, noteForm) {
+    onSubmit(formKey, submitData, noteForm) {
+        const data = Object.assign(
+            {}, submitData, {content: noteForm.getContent()}
+        );
         this.props.onNoteFormSubmit(
-            formKey, parentNoteId, this.props.entity.id, this.props.entity.type,
-            this.props.user.id, noteForm.getContent()
+            formKey, data
         );
     }
 
@@ -281,7 +294,15 @@ class NotesList extends React.Component {
         if (
             formData && formData.state !== 'hidden'
         ) {
-            return this.getForm(formKey, note);
+            return this.getForm(
+                formKey,
+                {
+                    in_reply_to_id: note.id,
+                    parent_id: this.props.entity.id,
+                    parent_type: this.props.entity.type,
+                    user_id: this.props.user.id,
+                }
+            );
         }
 
         return (
@@ -293,14 +314,45 @@ class NotesList extends React.Component {
         );
     }
 
-    openForm(formKey) {
-        this.props.onNoteFormOpen(formKey);
+    openForm(formKey, content) {
+        this.props.onNoteFormOpen(formKey, content);
+    }
+
+    getNoteOrEditor(note) {
+        const formKey = `${note.id}-edit`;
+        const formData = this.props.forms[formKey];
+
+        if (
+            formData && formData.state !== 'hidden'
+        ) {
+            return this.getForm(
+                formKey,
+                {
+                    id: note.id
+                },
+                true
+            );
+        }
+
+        const content = formData && formData.content || note.content;
+
+        return (
+            <div className={style['note-container']}>
+                <Note data={note} key={note.id} category />
+                <IconMenu icon='more_vert' position='top-left' menuRipple>
+                    <MenuItem value='edit' icon='edit' caption='Edit'
+                        onClick={
+                            this.openForm.bind(this, formKey, content)
+                        }
+                    />
+                </IconMenu>
+            </div>
+        );
     }
 
     render() {
         const {
-            items, onNoteFormOpen, onNoteFormHide, onNoteFormSubmit,
-            entity, forms = {}, user = {},
+            items, entity,
         } = this.props;
 
         if (entity === null) {
@@ -322,7 +374,7 @@ class NotesList extends React.Component {
 
                 notes.push(
                     <div className={style['parent-note-item']}>
-                        <Note data={note} key={note.id} category />
+                        {this.getNoteOrEditor(note)}
                         <div className={style['parent-note-tail']} >
                             <div className={style.replies}>
                                 {replies}
@@ -339,7 +391,13 @@ class NotesList extends React.Component {
         const formKey = `${entity.id}-new`;
         return (
             <div className={style['note-list']}>
-                {this.getForm(formKey)}
+                {
+                    this.getForm(formKey, {
+                        parent_id: this.props.entity.id,
+                        parent_type: this.props.entity.type,
+                        user_id: this.props.user.id,
+                    })
+                }
                 {notes}
             </div>
         );

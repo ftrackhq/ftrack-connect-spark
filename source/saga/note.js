@@ -4,7 +4,7 @@ import { call, put } from 'redux-saga/effects';
 import { takeEvery } from 'redux-saga';
 import actions, { notesLoaded, noteSubmitted } from 'action/note';
 import { session } from '../ftrack_api';
-import { createOperation } from '../ftrack_api/operation';
+import { createOperation, updateOperation } from '../ftrack_api/operation';
 
 
 import loglevel from 'loglevel';
@@ -31,19 +31,34 @@ function noteSelect() {
 }
 
 function* submitNote(action) {
-    const createNoteOperation = createOperation(
-        'Note',
-        {
-            content: action.payload.content,
-            parent_id: action.payload.parentId,
-            parent_type: action.payload.parentType,
-            in_reply_to_id: action.payload.parentNoteId,
-            user_id: action.payload.userId,
-        }
-    );
+
+    let operation;
+    const isUpdate = !!action.payload.data.id;
+
+    if (isUpdate) {
+        operation = updateOperation(
+            'Note',
+            [action.payload.data.id],
+            {
+                content: action.payload.data.content,
+            }
+        );
+    } else {
+        operation = createOperation(
+            'Note',
+            {
+                content: action.payload.data.content,
+                parent_id: action.payload.data.parent_id,
+                parent_type: action.payload.data.parent_type,
+                in_reply_to_id: action.payload.data.in_reply_to_id,
+                user_id: action.payload.data.user_id,
+            }
+        );
+    }
+
     const submitResponse = yield call(
         [session, session._call],
-        [createNoteOperation]
+        [operation]
     );
 
     const noteId = submitResponse[0].data.id;
@@ -55,7 +70,9 @@ function* submitNote(action) {
         query
     );
 
-    yield put(noteSubmitted(action.payload.formKey, response.data[0]));
+    yield put(
+        noteSubmitted(action.payload.formKey, response.data[0], isUpdate)
+    );
 }
 
 function* loadNotes(action) {

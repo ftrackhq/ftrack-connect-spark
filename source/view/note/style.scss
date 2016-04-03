@@ -33,6 +33,15 @@
     }
 }
 
+.note-container {
+    display: flex;
+
+    .note-item {
+        flex: 1;
+    }
+
+}
+
 .parent-note-item {
     margin-bottom: 30px;
 }

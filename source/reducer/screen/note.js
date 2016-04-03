@@ -23,6 +23,7 @@ export default function notesReducer(state = {}, action) {
             forms[action.payload.formKey],
             {
                 state: 'visible',
+                content: action.payload.content
             }
         );
         nextState = Object.assign(
@@ -69,23 +70,46 @@ export default function notesReducer(state = {}, action) {
         let items;
         let forms;
 
-        if (action.payload.note.in_reply_to_id) {
-            forms = Object.assign({}, state.forms);
+
+        if (action.payload.isUpdate) {
             items = state.items.map(
                 (note) => {
-                    if (note.id === action.payload.note.in_reply_to_id) {
-                        const replies = [...note.replies, action.payload.note];
-                        return Object.assign({}, note, { replies });
+                    if (note.id === action.payload.note.id) {
+                        return action.payload.note;
+                    } else if (note.id === action.payload.note.in_reply_to_id) {
+                        const parentNote = Object.assign({}, note);
+                        parentNote.replies = note.replies.map(
+                            (reply) => {
+                                if (reply.id === action.payload.note.id) {
+                                    return action.payload.note;
+                                }
+
+                                return reply;
+                            }
+                        );
                     }
 
                     return note;
                 }
             );
         } else {
-            forms = state.forms;
-            items = [action.payload.note, ...state.items];
+            if (action.payload.note.in_reply_to_id) {
+                items = state.items.map(
+                    (note) => {
+                        if (note.id === action.payload.note.in_reply_to_id) {
+                            const replies = [...note.replies, action.payload.note];
+                            return Object.assign({}, note, { replies });
+                        }
+
+                        return note;
+                    }
+                );
+            } else {
+                items = [action.payload.note, ...state.items];
+            }
         }
 
+        forms = Object.assign({}, state.forms);
         delete forms[action.payload.formKey];
 
         nextState = Object.assign(

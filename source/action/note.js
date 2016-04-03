@@ -20,11 +20,12 @@ export function notesLoad() {
     };
 }
 
-export function openNoteForm(formKey) {
+export function openNoteForm(formKey, content) {
     return {
         type: OPEN_NOTE_FORM,
         payload: {
             formKey,
+            content,
         },
     };
 }
@@ -51,27 +52,24 @@ export function notesLoaded(entity, notes, metadata) {
 }
 
 export function submitNoteForm(
-    formKey, parentNoteId, parentId, parentType, userId, content
+    formKey, data, content
 ) {
     return {
         type: SUBMIT_NOTE_FORM,
         payload: {
             formKey,
-            parentNoteId,
-            parentId,
-            parentType,
-            userId,
-            content,
+            data,
         },
     };
 }
 
-export function noteSubmitted(formKey, note) {
+export function noteSubmitted(formKey, note, isUpdate) {
     return {
         type: NOTE_SUBMITTED,
         payload: {
             formKey,
             note,
+            isUpdate,
         },
     };
 }
