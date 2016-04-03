@@ -91,6 +91,7 @@ export default function notesReducer(state = {}, action) {
                                 return reply;
                             }
                         );
+                        return parentNote;
                     }
 
                     return note;

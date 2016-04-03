@@ -369,7 +369,7 @@ class NotesList extends React.Component {
         items.forEach(
             note => {
                 const replies = (note.replies || []).map(
-                    reply => <Note data={reply} />
+                    reply => this.getNoteOrEditor(reply)
                 );
 
                 notes.push(
