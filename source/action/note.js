@@ -6,8 +6,10 @@ const NOTES_LOADED = 'NOTES_LOADED';
 const OPEN_NOTE_FORM = 'OPEN_NOTE_FORM';
 const HIDE_NOTE_FORM = 'HIDE_NOTE_FORM';
 const SUBMIT_NOTE_FORM = 'SUBMIT_NOTE_FORM';
+const REMOVE_NOTE = 'REMOVE_NOTE';
 
 const NOTE_SUBMITTED = 'NOTE_SUBMITTED';
+const NOTE_REMOVED = 'NOTE_REMOVED';
 
 export function notesLoad() {
     return {
@@ -36,6 +38,15 @@ export function hideNoteForm(formKey, content) {
         payload: {
             formKey,
             content,
+        },
+    };
+}
+
+export function removeNote(id) {
+    return {
+        type: REMOVE_NOTE,
+        payload: {
+            id,
         },
     };
 }
@@ -74,11 +85,22 @@ export function noteSubmitted(formKey, note, isUpdate) {
     };
 }
 
+export function noteRemoved(id) {
+    return {
+        type: NOTE_REMOVED,
+        payload: {
+            id,
+        },
+    };
+}
+
 export default {
     NOTES_LOAD,
     NOTES_LOADED,
     OPEN_NOTE_FORM,
     HIDE_NOTE_FORM,
+    REMOVE_NOTE,
     SUBMIT_NOTE_FORM,
     NOTE_SUBMITTED,
+    NOTE_REMOVED,
 };

@@ -7,7 +7,7 @@ import TimeAgo from 'react-timeago';
 import clickOutSide from 'react-click-outside';
 
 import { session } from '../../ftrack_api';
-import { openNoteForm, hideNoteForm, submitNoteForm } from 'action/note';
+import { openNoteForm, hideNoteForm, submitNoteForm, removeNote } from 'action/note';
 
 import style from './style.scss';
 
@@ -237,7 +237,7 @@ const NoteForm = clickOutSide(_NoteForm);
 
 
 function _EditableNote(
-    { note, collapsed, form, onShowForm, onHideForm, onSubmitForm }
+    { note, collapsed, form, onShowForm, onHideForm, onSubmitForm, onRemove }
 ) {
     if (!collapsed) {
         return (
@@ -251,11 +251,14 @@ function _EditableNote(
     }
 
     return (
-        <div className={style['note-container']}>
+        <div className={style['editable-note-container']}>
             <Note data={note} key={note.id} category />
-            <IconMenu icon="more_vert" position="top-left" menuRipple>
+            <IconMenu className={style['icon-menu']} icon="more_vert" menuRipple>
                 <MenuItem value="edit" icon="edit" caption="Edit"
                     onClick={onShowForm}
+                />
+                <MenuItem value="delete" icon="delete" caption="Remove"
+                    onClick={onRemove}
                 />
             </IconMenu>
         </div>
@@ -269,6 +272,7 @@ _EditableNote.propTypes = {
     onShowForm: React.PropTypes.func,
     onHideForm: React.PropTypes.func,
     onSubmitForm: React.PropTypes.func,
+    onRemove: React.PropTypes.func,
 };
 
 
@@ -302,6 +306,7 @@ function ediatbleNoteDispatchToProps() {
                 };
                 dispatch(submitNoteForm(formKey, data));
             },
+            onRemove: () => dispatch(removeNote(props.note.id)),
         };
     };
 }
@@ -319,7 +324,11 @@ function _ReplyForm({ form, collapsed, onSubmitForm, onHideForm, onShowForm }) {
         );
     }
 
-    return <Button label="Reply" primary mini onClick={onShowForm} />;
+    return (
+        <Button label="Reply" className={style['reply-button']} primary mini
+            onClick={onShowForm}
+        />
+    );
 }
 
 _ReplyForm.propTypes = {
@@ -437,11 +446,11 @@ function NotesList({ items, entity, user }) {
     items.forEach(
         note => {
             const replies = (note.replies || []).map(
-                reply => <EditableNote note={reply} />
+                reply => <EditableNote note={reply} key={reply.id} />
             );
 
             notes.push(
-                <div className={style['parent-note-item']}>
+                <div className={style['parent-note-item']} key={note.id}>
                     <EditableNote note={note} />
                     <div className={style['parent-note-tail']} >
                         <div className={style.replies}>
@@ -465,7 +474,7 @@ function NotesList({ items, entity, user }) {
 NotesList.propTypes = {
     items: React.PropTypes.array.isRequired,
     entity: React.PropTypes.object,
-    user: React.PropTypes.user,
+    user: React.PropTypes.object,
 };
 
 const mapStateToProps = (state) => {

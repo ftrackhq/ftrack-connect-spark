@@ -2,9 +2,9 @@
 
 import { call, put } from 'redux-saga/effects';
 import { takeEvery } from 'redux-saga';
-import actions, { notesLoaded, noteSubmitted } from 'action/note';
+import actions, { notesLoaded, noteSubmitted, noteRemoved } from 'action/note';
 import { session } from '../ftrack_api';
-import { createOperation, updateOperation } from '../ftrack_api/operation';
+import { createOperation, updateOperation, deleteOperation } from '../ftrack_api/operation';
 
 
 import loglevel from 'loglevel';
@@ -28,6 +28,22 @@ function noteSelect() {
     );
 
     return `select ${select.join(', ')} from Note`;
+}
+
+function* removeNote(action) {
+    const operation = deleteOperation(
+        'Note',
+        [action.payload.id]
+    );
+
+    const submitResponse = yield call(
+        [session, session._call],
+        [operation]
+    );
+
+    yield put(
+        noteRemoved(action.payload.id)
+    );
 }
 
 function* submitNote(action) {
@@ -165,4 +181,9 @@ export function* notesLoadSaga() {
 /** Prepare publish on NOTES_LOAD */
 export function* noteSubmitSaga() {
     yield takeEvery(actions.SUBMIT_NOTE_FORM, submitNote);
+}
+
+/** Prepare publish on NOTES_LOAD */
+export function* noteRemoveSaga() {
+    yield takeEvery(actions.REMOVE_NOTE, removeNote);
 }

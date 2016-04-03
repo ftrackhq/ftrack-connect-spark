@@ -33,11 +33,15 @@
     }
 }
 
-.note-container {
+.editable-note-container {
     display: flex;
 
     .note-item {
         flex: 1;
+    }
+
+    .icon-menu {
+        margin-top: -10px;
     }
 
 }

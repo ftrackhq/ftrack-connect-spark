@@ -123,6 +123,39 @@ export default function notesReducer(state = {}, action) {
                 forms,
             }
         );
+    } else if (action.type == types.NOTE_REMOVED) {
+        const items = [];
+
+        state.items.forEach(
+            (note) => {
+                if (note.id !== action.payload.id) {
+                    items.push(note);
+
+                    const replies = [];
+                    note.replies.forEach(
+                        (reply) => {
+                            if (reply.id !== action.payload.id) {
+                                replies.push(reply);
+                            }
+                        }
+                    )
+
+                    // If lenght differ a matching note was removed and the
+                    // replies array must be updated.
+                    if (note.replies.length !== replies.length) {
+                        note.replies = replies;
+                    }
+                }
+            } 
+        )
+
+        nextState = Object.assign(
+            {},
+            state,
+            {
+                items,
+            }
+        );
     }
 
     return nextState;
