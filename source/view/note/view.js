@@ -237,7 +237,7 @@ const NoteForm = clickOutSide(_NoteForm);
 
 
 function _EditableNote(
-    { note, collapsed, form, onShowForm, onHideForm, onSubmitForm, onRemove }
+    { note, collapsed, form, author, onShowForm, onHideForm, onSubmitForm, onRemove }
 ) {
     if (!collapsed) {
         return (
@@ -250,10 +250,11 @@ function _EditableNote(
         );
     }
 
-    return (
-        <div className={style['editable-note-container']}>
-            <Note data={note} key={note.id} category />
-            <IconMenu className={style['icon-menu']} icon="more_vert" menuRipple>
+    let menu = [];
+
+    if (author && author.id === note.author.id) {
+        menu = [
+            <IconMenu icon="more_vert" menuRipple>
                 <MenuItem value="edit" icon="edit" caption="Edit"
                     onClick={onShowForm}
                 />
@@ -261,6 +262,15 @@ function _EditableNote(
                     onClick={onRemove}
                 />
             </IconMenu>
+        ];
+    }
+ 
+    return (
+        <div className={style['editable-note-container']}>
+            <Note data={note} key={note.id} category />
+            <div className={style['icon-menu']}>
+                {menu}
+            </div>
         </div>
     );
 }
@@ -273,6 +283,7 @@ _EditableNote.propTypes = {
     onHideForm: React.PropTypes.func,
     onSubmitForm: React.PropTypes.func,
     onRemove: React.PropTypes.func,
+    author: React.PropTypes.object,
 };
 
 
@@ -446,12 +457,12 @@ function NotesList({ items, entity, user }) {
     items.forEach(
         note => {
             const replies = (note.replies || []).map(
-                reply => <EditableNote note={reply} key={reply.id} />
+                reply => <EditableNote note={reply} key={reply.id} author={user} />
             );
 
             notes.push(
                 <div className={style['parent-note-item']} key={note.id}>
-                    <EditableNote note={note} />
+                    <EditableNote note={note} author={user} />
                     <div className={style['parent-note-tail']} >
                         <div className={style.replies}>
                             {replies}
