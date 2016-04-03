@@ -20,12 +20,12 @@ export function notesLoad() {
     };
 }
 
-export function openNoteForm(formKey, content) {
+export function openNoteForm(formKey, data) {
     return {
         type: OPEN_NOTE_FORM,
         payload: {
             formKey,
-            content,
+            data,
         },
     };
 }

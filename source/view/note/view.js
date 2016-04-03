@@ -261,7 +261,7 @@ class NotesList extends React.Component {
                 onExpand={
                     () => {
                         if (collapsed) {
-                            this.openForm(formKey);
+                            this.openForm(formKey, {});
                         }
                     }
                 }
@@ -309,13 +309,13 @@ class NotesList extends React.Component {
             <Button
                 primary mini className={style['reply-button']}
                 label="Reply"
-                onClick={this.openForm.bind(this, formKey)}
+                onClick={this.openForm.bind(this, formKey, {})}
             />
         );
     }
 
-    openForm(formKey, content) {
-        this.props.onNoteFormOpen(formKey, content);
+    openForm(formKey, data) {
+        this.props.onNoteFormOpen(formKey, data);
     }
 
     getNoteOrEditor(note) {
@@ -342,7 +342,7 @@ class NotesList extends React.Component {
                 <IconMenu icon='more_vert' position='top-left' menuRipple>
                     <MenuItem value='edit' icon='edit' caption='Edit'
                         onClick={
-                            this.openForm.bind(this, formKey, content)
+                            this.openForm.bind(this, formKey, { content, })
                         }
                     />
                 </IconMenu>

@@ -18,14 +18,18 @@ export default function notesReducer(state = {}, action) {
         );
     } else if (action.type === types.OPEN_NOTE_FORM) {
         const forms = Object.assign({}, state.forms);
+        const exists = forms[action.payload.formKey] !== undefined;
+        const initialState  = exists ? {} : action.payload.data;
+
         forms[action.payload.formKey] = Object.assign(
             {},
             forms[action.payload.formKey],
             {
-                state: 'visible',
-                content: action.payload.content
-            }
+                state: 'visible'
+            },
+            initialState
         );
+
         nextState = Object.assign(
             {},
             state,
