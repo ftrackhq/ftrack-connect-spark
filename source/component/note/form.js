@@ -6,6 +6,7 @@ import clickOutSide from 'react-click-outside';
 
 import style from './style.scss';
 
+/** Note form use to create or edit a note. */
 class _NoteForm extends React.Component {
 
     constructor(props) {
@@ -104,6 +105,7 @@ _NoteForm.propTypes = {
     edit: React.PropTypes.bool,
     collapsed: React.PropTypes.bool,
     pending: React.PropTypes.bool,
+    author: React.PropTypes.object,
 };
 
 const NoteForm = clickOutSide(_NoteForm);

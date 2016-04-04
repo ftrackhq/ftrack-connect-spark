@@ -7,7 +7,7 @@ import loglevel from 'loglevel';
 import { openNoteForm, hideNoteForm, submitNoteForm, removeNote } from 'action/note';
 import components from 'component/note';
 
-const { AttachmentArea, EditableNote, ReplyForm, NoteForm } = components;
+const { EditableNote, ReplyForm, NoteForm } = components;
 
 import style from './style.scss';
 
@@ -55,7 +55,7 @@ const EditableNoteContainer = connect(
 
 function replyDispatchToProps() {
     return (dispatch, props) => {
-        const { user, parentNote } = props;
+        const { author, parentNote } = props;
         const formKey = `reply-${parentNote.id}`;
         return {
             onHideForm: (noteForm) => dispatch(hideNoteForm(formKey, noteForm.getContent())),
@@ -63,7 +63,7 @@ function replyDispatchToProps() {
             onSubmitForm: (noteForm) => {
                 const data = {
                     content: noteForm.getContent(),
-                    user_id: user.id,
+                    user_id: author.id,
                     in_reply_to_id: parentNote.id,
                     parent_id: parentNote.parent_id,
                     parent_type: parentNote.parent_type,
@@ -115,7 +115,7 @@ function newNoteStateToProps() {
 function newNoteDispatchToProps() {
     return (dispatch, props) => {
         const formKey = `new-${props.entity.id}`;
-        const { user, entity } = props;
+        const { author, entity } = props;
         return {
             onExpand: () => dispatch(openNoteForm(formKey, {})),
             onClickOutside: (noteForm) => {
@@ -126,7 +126,7 @@ function newNoteDispatchToProps() {
             onSubmit: (noteForm) => {
                 const data = {
                     content: noteForm.getContent(),
-                    user_id: user.id,
+                    user_id: author.id,
                     parent_id: entity.id,
                     parent_type: entity.type,
                 };
@@ -141,6 +141,13 @@ const NewNoteFormContainer = connect(
     newNoteDispatchToProps
 )(NoteForm);
 
+/** List an array of note *items* with support for editing and creating notes.
+*
+* The *entity* is the currently loaded entity, e.g. a task or a version. This
+* is used as parent when creating new notes.
+*
+* The *user* object is the active user and is used as author for any new notes.
+*/
 function NotesList({ items, entity, user }) {
     logger.debug('Rendering notes');
 
@@ -168,7 +175,7 @@ function NotesList({ items, entity, user }) {
                         <div className={style.replies}>
                             {replies}
                         </div>
-                        <ReplyFormContainer parentNote={note} user={user} />
+                        <ReplyFormContainer parentNote={note} author={user} />
                     </div>
                 </div>
             );
@@ -177,7 +184,7 @@ function NotesList({ items, entity, user }) {
 
     return (
         <div className={style['note-list']}>
-            <NewNoteFormContainer className={style['new-note-form']} entity={entity} user={user} />
+            <NewNoteFormContainer className={style['new-note-form']} entity={entity} author={user} />
             <div className={style['note-list-inner']}>
                 {notes}
             </div>

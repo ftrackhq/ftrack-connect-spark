@@ -3,13 +3,15 @@
 import React from 'react';
 
 import style from './style.scss';
-
 import { session } from '../../ftrack_api';
 
+// Components file a file type in this list will be displayed using an img
+// element.
 const SUPPORTED_IMG_FILE_TYPES = [
     'png', 'gif', 'jpeg', 'jpg', 'bmp',
 ];
 
+/** Attachment area component to display an array of *components*. */
 function AttachmentArea({ components }) {
     const images = [];
     const other = [];

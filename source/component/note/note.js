@@ -8,7 +8,7 @@ import { session } from '../../ftrack_api';
 import style from './style.scss';
 import AttachmentArea from './attachment_area.js';
 
-
+/** Display user information. */
 function User({ data }) {
     return (
         <span className={style.user}>
@@ -21,6 +21,7 @@ User.propTypes = {
     data: React.PropTypes.object.isRequired,
 };
 
+/** Display review session invitee information. */
 function ReviewSessionInvitee({ data }) {
     return <span>{data.name}</span>;
 }
@@ -29,6 +30,7 @@ ReviewSessionInvitee.propTypes = {
     data: React.PropTypes.object.isRequired,
 };
 
+/** Display author information. */
 function Author({ data }) {
     if (data && data.__entity_type__ === 'User') {
         return <User data={data} />;
@@ -48,7 +50,8 @@ Author.propTypes = {
     data: React.PropTypes.object.isRequired,
 };
 
-function Note({ data, category, children }) {
+/** Note component to display note data. */
+function Note({ data, category }) {
     const categoryItem = (category !== true) ? '' : (
         <span className={style.category}>
             {data.category && data.category.name}
@@ -81,7 +84,6 @@ function Note({ data, category, children }) {
                         )
                     }
                 />
-                {children}
             </div>
         </div>
     );
@@ -91,7 +93,6 @@ function Note({ data, category, children }) {
 Note.propTypes = {
     data: React.PropTypes.object.isRequired,
     category: React.PropTypes.bool,
-    children: React.PropTypes.array,
 };
 
 

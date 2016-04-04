@@ -7,6 +7,15 @@ import Note from './note.js';
 import NoteForm from './form.js';
 import style from './style.scss';
 
+/** Editable note component that displays either a note or a note form.
+*
+* Options to edit or delete are displayed if the *note* author is matching the
+* *author*.
+*
+* Display the note form if *collpased* is false. The *form* object will be
+* applied as properties to the underflying form.
+*
+*/
 function EditableNote(
     { note, collapsed, form, author, onShowForm, onHideForm, onSubmitForm, onRemove }
 ) {
