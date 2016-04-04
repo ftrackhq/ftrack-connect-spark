@@ -74,6 +74,7 @@ export default function notesReducer(state = {}, action) {
         let items;
 
         if (action.payload.isUpdate) {
+            // Find and update the note if the  operation is an update.
             items = state.items.map(
                 (note) => {
                     if (note.id === action.payload.note.id) {
@@ -96,6 +97,8 @@ export default function notesReducer(state = {}, action) {
                 }
             );
         } else {
+            // Find and add the new note if the operation is a reply or new
+            // note.
             if (action.payload.note.in_reply_to_id) {
                 items = state.items.map(
                     (note) => {
@@ -124,6 +127,7 @@ export default function notesReducer(state = {}, action) {
             }
         );
     } else if (action.type === types.NOTE_REMOVED) {
+        // Find and remove the note if the action is a note being removed.
         const items = [];
 
         state.items.forEach(
