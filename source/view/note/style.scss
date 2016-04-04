@@ -42,8 +42,15 @@
 
     .icon-menu {
         margin-top: -10px;
-        width: 36px;
+        visibility: hidden;
+        width: 16px;
         height: 36px;
+    }
+
+    &:hover {
+        .icon-menu {
+            visibility: visible;
+        }
     }
 }
 

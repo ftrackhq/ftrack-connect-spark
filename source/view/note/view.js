@@ -243,8 +243,8 @@ function _EditableNote(
         return (
             <NoteForm
                 {...form}
-                onClickOutside={(noteForm) => onHideForm(noteForm.getContent())}
-                onSubmit={(noteForm) => onSubmitForm(noteForm.getContent())}
+                onClickOutside={onHideForm}
+                onSubmit={onSubmitForm}
                 edit
             />
         );
@@ -264,7 +264,7 @@ function _EditableNote(
             </IconMenu>
         ];
     }
- 
+
     return (
         <div className={style['editable-note-container']}>
             <Note data={note} key={note.id} category />
@@ -309,10 +309,10 @@ function ediatbleNoteDispatchToProps() {
         const formKey = `edit-${props.note.id}`;
         return {
             onShowForm: () => dispatch(openNoteForm(formKey, {})),
-            onHideForm: (content) => dispatch(hideNoteForm(formKey, content)),
-            onSubmitForm: (content) => {
+            onHideForm: (noteForm) => dispatch(hideNoteForm(formKey, noteForm.getContent())),
+            onSubmitForm: (noteForm) => {
                 const data = {
-                    content,
+                    content: noteForm.getContent(),
                     id: props.note.id,
                 };
                 dispatch(submitNoteForm(formKey, data));
