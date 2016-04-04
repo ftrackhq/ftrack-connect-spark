@@ -10,11 +10,14 @@ import { queryOperation } from './operation';
 
 const logger = loglevel.getLogger('ftrack_api');
 
+// A list of combined primary keys. If a entity type does not exist in this map
+// the primary key will be assumed to be id.
 const COMBINED_PRIMARY_KEY_MAP = {
     NoteComponent: ['note_id', 'component_id'],
     Metadata: ['parent_id', 'key'],
 };
 
+/* Return the identity of *item*. */
 function identity(item) {
     if (COMBINED_PRIMARY_KEY_MAP[item.__entity_type__]) {
         const combinedKey = COMBINED_PRIMARY_KEY_MAP[item.__entity_type__].map(
@@ -26,11 +29,26 @@ function identity(item) {
     return item.id;
 }
 
-
-function _gatherCache(data, cache) {
+/** Recursively iterate *data* and gather duplicates in *collection*.
+*
+* Note that *collection* is assumed to be a object and is updated in place. The
+* result will be a dictionary with all entities mapped with their identity.
+*
+* .. example::
+*
+*       {
+*           <primary-key>,Task: [<Task1>, <Task2>, <Task3>],
+*           <primary-key>,Note: [<Note1>, <Note2>]
+*       }
+*
+*       Where Task1, Task2 and Task3 is containing data for the same task.
+*
+*/
+function _gatherEntityDuplicates(data, collection) {
     data.forEach(
         (item) => {
             if (!item.__entity_type__) {
+                // Only process API entity types.
                 return;
             }
 
@@ -45,35 +63,36 @@ function _gatherCache(data, cache) {
 
             const identifier = `${primaryKey},${item.__entity_type__}`;
 
-            for (const key in item) {
-                // skip loop if the property is from prototype
-                if (!item.hasOwnProperty(key)) continue;
+            forIn(
+                item,
+                (value, key) => {
+                    if (value && value.constructor === Array) {
+                        _gatherEntityDuplicates(value, collection);
+                    }
 
-                if (item[key] && item[key].constructor === Array) {
-                    _gatherCache(item[key], cache);
+                    if (value && value.constructor === Object) {
+                        _gatherEntityDuplicates([value], collection);
+                    }
                 }
+            );
 
-                if (item[key] && item[key].constructor === Object) {
-                    _gatherCache([item[key]], cache);
-                }
+            if (!collection[identifier]) {
+                collection[identifier] = [];
             }
 
-            if (!cache[identifier]) {
-                cache[identifier] = [];
-            }
-
-            cache[identifier].push(item);
+            collection[identifier].push(item);
         }
     );
 }
 
+/** Merge lazy loaded entities in *data*. */
 function merge(data) {
-    const cache = {};
+    const collection = {};
 
-    _gatherCache(data, cache);
+    _gatherEntityDuplicates(data, collection);
 
     // Now merge all objects with the same identifier.
-    forIn(cache, (objects) => {
+    forIn(collection, (objects) => {
         const map = {};
         forIn(objects, (item) => {
             forIn(item, (value, key) => {
@@ -91,6 +110,12 @@ function merge(data) {
     return data;
 }
 
+/** Iterate *data* and decode entities with special encoding logic.
+*
+* This will translate objects with __type__ equal to 'datetime' into moment
+* datetime objects.
+*
+*/
 function decode(data) {
     if (data && data.constructor === Array) {
         return data.map(item => decode(item));
