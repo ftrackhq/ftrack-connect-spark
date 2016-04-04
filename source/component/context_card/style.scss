@@ -41,6 +41,10 @@
     flex-direction: column;
 }
 
+.description {
+    padding: $spacing;
+}
+
 @include breakpoint(small) {
     .contents {
         display: flex;

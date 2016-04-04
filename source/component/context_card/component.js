@@ -70,7 +70,7 @@ class ContextCard extends React.Component {
                 </div>
             </div>,
             <Reveal active={this.state.expanded}>
-                <p>{entity.description}</p>
+                <p className={style.description}>{entity.description}</p>
             </Reveal>,
         ];
 
