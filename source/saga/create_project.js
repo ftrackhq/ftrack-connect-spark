@@ -42,8 +42,6 @@ function* createProjectSubmit(action) {
         yield call(showCompletion, {
             header: 'Completed',
             message: 'Project created successfully.',
-        }, () => {
-
         });
         yield put({ type: actions.CREATE_PROJECT_COMPLETED, payload: project });
     } catch (error) {
