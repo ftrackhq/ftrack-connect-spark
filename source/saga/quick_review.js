@@ -4,8 +4,9 @@ import moment from 'moment';
 import uuid from 'uuid';
 
 import { takeEvery } from 'redux-saga';
-import { call } from 'redux-saga/effects';
+import { call, put } from 'redux-saga/effects';
 import { browserHistory } from 'react-router';
+import { reset } from 'redux-form';
 
 import { session } from '../ftrack_api';
 import {
@@ -260,6 +261,9 @@ function* submitQuickReview(action) {
         }, () => {
             browserHistory.replace('/');
         });
+
+        // Reset the form.
+        yield put(reset('quickReview'));
     } catch (error) {
         yield call(showFailure, { header: 'Failed to create review session', error });
     }

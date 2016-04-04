@@ -64,6 +64,7 @@ class QuickReviewView extends React.Component {
     _onCancelClick(e) {
         e.preventDefault();
         this.context.router.goBack();
+        this.props.resetForm();
     }
 
     /** Trigger handleSubmit with values on submission. */
@@ -191,6 +192,7 @@ QuickReviewView = reduxForm({
         'name', 'project', 'collaborators', 'description', 'expiryDate',
     ],
     validateForm,
+    destroyOnUnmount: false,
 })(QuickReviewView);
 
 export default QuickReviewView;
