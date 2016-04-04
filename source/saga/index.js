@@ -2,8 +2,10 @@
 
 import startupSaga from './startup';
 import { quickReviewSubmitSaga } from './quick_review';
-import { publishLoadSaga, publishSubmitSaga } from './publish';
+
+import { publishLoadSaga, publishSubmitSaga, publishResolveContextSaga } from './publish';
 import { notesLoadSaga, noteSubmitSaga, noteRemoveSaga } from './note';
+
 
 export default [
     startupSaga,
@@ -13,4 +15,5 @@ export default [
     notesLoadSaga,
     noteSubmitSaga,
     noteRemoveSaga,
+    publishResolveContextSaga,
 ];

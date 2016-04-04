@@ -1,6 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 import React from 'react';
 import Waypoint from 'react-waypoint';
+import classNames from 'classnames';
 
 import ProgressBar from 'react-toolbox/lib/progress_bar';
 
@@ -76,8 +77,11 @@ class InfiniteScroll extends React.Component {
     }
 
     render() {
+        const _classNames = classNames(
+            style.parent, this.props.className
+        );
         return (
-            <div className={style.parent}>
+            <div className={_classNames}>
                 {this._renderItems()}
                 {this._renderWaypoint()}
                 {this._renderLoadingMessage()}
@@ -87,8 +91,14 @@ class InfiniteScroll extends React.Component {
 }
 
 InfiniteScroll.propTypes = {
+    className: React.PropTypes.string,
     renderItem: React.PropTypes.func.isRequired,
     loadItems: React.PropTypes.func.isRequired,
 };
+
+InfiniteScroll.defaultProps = {
+    className: '',
+};
+
 
 export default InfiniteScroll;

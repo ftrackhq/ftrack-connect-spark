@@ -3,6 +3,7 @@
 const PUBLISH_LOAD = 'PUBLISH_LOAD';
 const PUBLISH_OPTIONS = 'PUBLISH_OPTIONS';
 const PUBLISH_SUBMIT = 'PUBLISH_SUBMIT';
+const PUBLISH_RESOLVE_CONTEXT = 'PUBLISH_RESOLVE_CONTEXT';
 
 /** Publish load action creator. Call when publish load is called */
 export function publishLoad() {
@@ -27,8 +28,17 @@ export function publishSubmit(values) {
     };
 }
 
+/** Resolve publish context into task and parent. */
+export function publishResolveContext(id) {
+    return {
+        type: PUBLISH_RESOLVE_CONTEXT,
+        payload: id,
+    };
+}
+
 export default {
     PUBLISH_LOAD,
     PUBLISH_OPTIONS,
     PUBLISH_SUBMIT,
+    PUBLISH_RESOLVE_CONTEXT,
 };

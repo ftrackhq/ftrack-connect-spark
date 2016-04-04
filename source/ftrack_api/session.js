@@ -217,7 +217,7 @@ export class Session {
     }
 
     /** Return thumbnail URL for *componentId* with *size*. */
-    thumbnail(componentId, size) {
+    thumbnail(componentId, size = 300) {
         if (!componentId) {
             return `${this._serverUrl}/img/thumbnail2.png`;
         }
