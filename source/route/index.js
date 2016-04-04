@@ -15,6 +15,7 @@ import ContextView from 'view/context';
 import { publishLoad } from 'action/publish';
 import BrowseAllView from 'view/browse_all';
 import MyTasksView from 'view/my_tasks';
+import VersionsView from 'view/versions';
 
 function dispatchOnEnter(dispatch, actionCreator) {
     return () => { dispatch(actionCreator()); };
@@ -28,7 +29,13 @@ export default (store) => (
             <Route path="my-tasks" component={MyTasksView} />
             <Route path="browse-all" component={BrowseAllView} />
         </Route>
-        <Route path="/context/:context" component={ContextView} />
+
+        <Route path="/context/:context" component={ContextView}>
+            <IndexRedirect to="notes" />
+            <Route path="notes" component={ExampleView} />
+            <Route path="versions" component={VersionsView} />
+        </Route>
+
         <Route path="/example" component={ExampleView} />
         <Route path="/publish-context" component={PublishContextBrowser} />
         <Route

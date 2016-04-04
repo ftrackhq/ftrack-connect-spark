@@ -1,6 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
+import { browserHistory } from 'react-router';
 import { Tab, Tabs } from 'react-toolbox/lib/tabs';
 import ProgressBar from 'react-toolbox/lib/progress_bar';
 
@@ -17,9 +18,17 @@ class ContextView extends React.Component {
 
     constructor() {
         super();
+        this._tabs = [
+            { route: 'notes', label: 'Notes' },
+            { route: 'versions', label: 'Versions' },
+        ];
         this.state = { index: 0, entity: null, loading: true, error: false };
-        this._handleTabChange = this._handleTabChange.bind(this);
         this._loadContext = this._loadContext.bind(this);
+        this._handleTabChange = this._handleTabChange.bind(this);
+    }
+
+    componentWillMount() {
+        this.setState({ index: this._getActiveIndexFromRoute() });
     }
 
     componentDidMount() {
@@ -27,14 +36,28 @@ class ContextView extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        this.setState({ index: this._getActiveIndexFromRoute() });
+
         if (nextProps.params.active !== this.props.params.context) {
             this._loadContext();
         }
     }
 
-    _handleTabChange(index) {
-        this.setState({ index });
+    _getActiveIndexFromRoute() {
+        const context = this.props.params.context;
+        const index = this._tabs.findIndex(
+            (tab) => this.context.router.isActive(`/context/${context}/${tab.route}`)
+        ) || 0;
+        return index;
     }
+
+    /** Handle tab change. */
+    _handleTabChange(index) {
+        const context = this.props.params.context;
+        this.setState({ index });
+        browserHistory.replace(`/context/${context}/${this._tabs[index].route}`);
+    }
+
 
     /** Load context entity. */
     _loadContext() {
@@ -83,24 +106,22 @@ class ContextView extends React.Component {
                 <HomeHeader back context={contextId} />
                 {entityElement}
                 <Tabs index={this.state.index} onChange={this._handleTabChange}>
-                    <Tab label="Notes">
-                        <p>
-                            Notes on the context.
-                        </p>
-                    </Tab>
-                    <Tab label="Versions">
-                        <p>
-                            Versions on the contex.
-                        </p>
-                    </Tab>
+                    <Tab label="Notes" />
+                    <Tab label="Versions" />
                 </Tabs>
+                {this.props.children}
             </div>
         );
     }
 }
 
+ContextView.contextTypes = {
+    router: React.PropTypes.object.isRequired,
+};
+
 ContextView.propTypes = {
     params: React.PropTypes.object.isRequired,
+    children: React.PropTypes.node.isRequired,
 };
 
 ContextView.defaultProps = {};
