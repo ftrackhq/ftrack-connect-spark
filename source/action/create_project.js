@@ -13,10 +13,10 @@ export function createProjectSubmit(values) {
 }
 
 /** Action to create a project. */
-export function createProject(action) {
+export function createProject(callback) {
     return {
         type: CREATE_PROJECT,
-        payload: action,
+        payload: callback,
     };
 }
 
