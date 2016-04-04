@@ -184,7 +184,11 @@ function NotesList({ items, entity, user }) {
 
     return (
         <div className={style['note-list']}>
-            <NewNoteFormContainer className={style['new-note-form']} entity={entity} author={user} />
+            <NewNoteFormContainer
+                className={style['new-note-form']}
+                entity={entity}
+                author={user}
+            />
             <div className={style['note-list-inner']}>
                 {notes}
             </div>
