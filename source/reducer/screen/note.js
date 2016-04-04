@@ -123,7 +123,7 @@ export default function notesReducer(state = {}, action) {
                 forms,
             }
         );
-    } else if (action.type == types.NOTE_REMOVED) {
+    } else if (action.type === types.NOTE_REMOVED) {
         const items = [];
 
         state.items.forEach(
@@ -138,7 +138,7 @@ export default function notesReducer(state = {}, action) {
                                 replies.push(reply);
                             }
                         }
-                    )
+                    );
 
                     // If lenght differ a matching note was removed and the
                     // replies array must be updated.
@@ -146,8 +146,8 @@ export default function notesReducer(state = {}, action) {
                         note.replies = replies;
                     }
                 }
-            } 
-        )
+            }
+        );
 
         nextState = Object.assign(
             {},

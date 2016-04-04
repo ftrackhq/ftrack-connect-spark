@@ -36,7 +36,7 @@ function* removeNote(action) {
         [action.payload.id]
     );
 
-    const submitResponse = yield call(
+    yield call(
         [session, session._call],
         [operation]
     );

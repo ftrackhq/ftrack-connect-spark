@@ -1,84 +1,11 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-.note-item {
-    display: flex;
-    margin-bottom: 5px;
-
-    .avatar-column {
-        width: 60px;
-    }
-
-    .body-column {
-        flex: 1;
-
-        .top {
-            display: flex;
-            justify-content: space-between;
-        }
-    }
-
-    .attachments-area {
-        margin-top: 10px;
-    }
-}
-
-.note-form {
-    .toolbar {
-        display: flex;
-        flex-direction: row-reverse;
-        .progressbar {
-            transform: scale(0.5);
-            margin-top: -25px;
-        }
-    }
-}
-
-.editable-note-container {
-    display: flex;
-
-    .note-item {
-        flex: 1;
-    }
-
-    .icon-menu {
-        margin-top: -10px;
-        visibility: hidden;
-        width: 16px;
-        height: 36px;
-    }
-
-    &:hover {
-        .icon-menu {
-            visibility: visible;
-        }
-    }
-}
-
 .parent-note-item {
     margin-bottom: 30px;
 }
 
 .parent-note-tail {
     margin-left: 60px;
-}
-
-.category {
-    color: #aaa;
-    font-style: italic;
-    display: block;
-}
-
-.user {
-    font-weight: bold;
-}
-
-.datetime {
-    color: #aaa;
-}
-
-.reply-button {
-    margin: -1.2rem;
-    min-width: 0px;
 }
 
 .note-list {
@@ -95,14 +22,4 @@
 .replies {
     margin-top: 20px;
     margin-bottom: 10px;
-}
-
-.attachments-area {
-    .images > img {
-        padding: 4px;
-    }
-
-    .other {
-
-    }
 }
