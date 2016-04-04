@@ -172,9 +172,15 @@ function NotesList({ items, entity, user }) {
                 <div className={style['parent-note-item']} key={note.id}>
                     <EditableNoteContainer note={note} author={user} />
                     <div className={style['parent-note-tail']} >
-                        <div className={style.replies}>
-                            {replies}
-                        </div>
+                        {
+                            replies.length ?
+                            (
+                                <div className={style.replies}>
+                                    {replies}
+                                </div>
+                            )
+                            : ''
+                        }
                         <ReplyFormContainer parentNote={note} author={user} />
                     </div>
                 </div>

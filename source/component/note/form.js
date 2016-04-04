@@ -38,9 +38,7 @@ class _NoteForm extends React.Component {
 
     render() {
         const content = this.state.content;
-        const collapsed = this.props.collapsed;
-        const pending = this.props.pending;
-        const edit = this.props.edit;
+        const { collapsed, pending, edit } = this.props;
         const _classNames = [style['note-form']];
 
         if (this.props.className) {
