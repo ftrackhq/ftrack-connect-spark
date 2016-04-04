@@ -10,7 +10,7 @@ import { createOperation, updateOperation, deleteOperation } from '../ftrack_api
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('saga:note');
 
-
+/** Return list of note attributes to use in select. */
 function noteSelect() {
     const select = [
         'id', 'content', 'author.first_name', 'author.last_name', 'parent_id',
@@ -30,6 +30,7 @@ function noteSelect() {
     return `select ${select.join(', ')} from Note`;
 }
 
+/** Handle remove note *action*. */
 function* removeNote(action) {
     const operation = deleteOperation(
         'Note',
@@ -46,6 +47,7 @@ function* removeNote(action) {
     );
 }
 
+/** Handle submit note *action*. */
 function* submitNote(action) {
     let operation;
     const isUpdate = !!action.payload.data.id;
@@ -90,6 +92,7 @@ function* submitNote(action) {
     );
 }
 
+/** Handle load notes *action*. */
 function* loadNotes(action) {
     const query = (
         `${noteSelect()} where parent_id is ` +
@@ -121,6 +124,15 @@ function* loadNotes(action) {
                 }
             );
 
+            // Note replies has a category in the model that is not visible to
+            // the end-user.
+            // TODO: Change this when displaying frame numbers as tags.
+            note.replies.forEach(
+                reply => {
+                    delete reply.category;
+                }
+            );
+
             // Order replies since there is garantuee that the they are ordered.
             note.replies.sort(
                 (a, b) => {
@@ -138,6 +150,7 @@ function* loadNotes(action) {
         }
     );
 
+    /** Update author on notes if the author is a review session invitee. */
     if (Object.keys(reviewSessionInviteeAuthors).length) {
         const inviteeQuery = (
             'select id, name from ReviewSessionInvitee where id in ' +
@@ -173,17 +186,17 @@ function* loadNotes(action) {
     );
 }
 
-/** Prepare publish on NOTES_LOAD */
+/** Handle NOTES_LOAD action. */
 export function* notesLoadSaga() {
     yield takeEvery(actions.NOTES_LOAD, loadNotes);
 }
 
-/** Prepare publish on NOTES_LOAD */
+/** Handle SUBMIT_NOTE_FORM action. */
 export function* noteSubmitSaga() {
     yield takeEvery(actions.SUBMIT_NOTE_FORM, submitNote);
 }
 
-/** Prepare publish on NOTES_LOAD */
+/** Handle REMOVE_NOTE action. */
 export function* noteRemoveSaga() {
     yield takeEvery(actions.REMOVE_NOTE, removeNote);
 }
