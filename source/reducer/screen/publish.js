@@ -10,8 +10,7 @@ import types from 'action/publish';
 export default function publishReducer(state = {}, action) {
     let nextState = state;
     if (action.type === types.PUBLISH_OPTIONS) {
-        nextState = Object.assign(...state, action.payload);
+        nextState = Object.assign({}, state, action.payload);
     }
     return nextState;
 }
-
