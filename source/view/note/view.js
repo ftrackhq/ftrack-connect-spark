@@ -304,7 +304,7 @@ function editableNoteStateToProps() {
     };
 }
 
-function ediatbleNoteDispatchToProps() {
+function editableNoteDispatchToProps() {
     return (dispatch, props) => {
         const formKey = `edit-${props.note.id}`;
         return {
@@ -324,7 +324,7 @@ function ediatbleNoteDispatchToProps() {
 
 const EditableNoteContainer = connect(
     editableNoteStateToProps,
-    ediatbleNoteDispatchToProps
+    editableNoteDispatchToProps
 )(EditableNote);
 
 
