@@ -1,13 +1,17 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import { call, put } from 'redux-saga/effects';
+import { browserHistory } from 'react-router';
 
+import { mediator } from '../application';
 import { session, configureSharedApiSession } from '../ftrack_api';
 import {
     ftrackApiUserAuthenticated,
     ftrackApiAuthenticationFailed,
 } from 'action/ftrack_api';
-
+import {
+    showProgress, hideOverlay, showFailure,
+} from './lib/overlay';
 
 /** Return API operation to query user details. */
 function queryUserExpression(apiUser) {
@@ -19,17 +23,6 @@ function queryUserExpression(apiUser) {
         select ${userFields.join()} from User
         where username is "${apiUser}"
     `;
-}
-
-/** Return ftrack API credentials. */
-function getCredentials() {
-    let credentials = null;
-    try {
-        credentials = require('../ftrack_api_credentials.json');
-    } catch (error) {
-        console.log(error); // eslint-disable-line no-console
-    }
-    return credentials;
 }
 
 /**
@@ -46,7 +39,8 @@ function getCredentials() {
  */
 function* startupSaga() {
     try {
-        const credentials = yield call(getCredentials);
+        yield showProgress('Authenticating...', { dismissable: false });
+        const credentials = yield call(mediator.getCredentials);
         yield configureSharedApiSession(
             credentials.serverUrl,
             credentials.apiUser,
@@ -57,9 +51,15 @@ function* startupSaga() {
             queryUserExpression(credentials.apiUser)
         );
         yield put(ftrackApiUserAuthenticated(users.data[0]));
+        yield hideOverlay();
     } catch (error) {
         yield put(ftrackApiAuthenticationFailed(error));
+        yield call(showFailure, {
+            header: 'Authentication failed',
+            error,
+        });
     }
+    browserHistory.push('/home');
 }
 
 export default startupSaga;
