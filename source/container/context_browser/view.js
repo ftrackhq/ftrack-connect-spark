@@ -45,7 +45,8 @@ class ContextBrowser extends React.Component {
             );
         } else {
             this._baseQuery = (
-                'select id, name, thumbnail_id, link from Project order by name, id'
+                'select id, name, thumbnail_id, link from Project where ' +
+                'status is active order by full_name, id'
             );
         }
     }
