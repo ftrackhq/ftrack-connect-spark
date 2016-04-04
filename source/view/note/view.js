@@ -1,3 +1,4 @@
+// :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
 import { connect } from 'react-redux';
@@ -177,7 +178,9 @@ function NotesList({ items, entity, user }) {
     return (
         <div className={style['note-list']}>
             <NewNoteFormContainer entity={entity} user={user} />
-            {notes}
+            <div className={style['note-list-inner']}>
+                {notes}
+            </div>
         </div>
     );
 }

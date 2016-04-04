@@ -1,4 +1,4 @@
-
+// :copyright: Copyright (c) 2016 ftrack
 
 import { call, put } from 'redux-saga/effects';
 import { takeEvery } from 'redux-saga';
