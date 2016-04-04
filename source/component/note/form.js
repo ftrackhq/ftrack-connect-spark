@@ -40,9 +40,14 @@ class _NoteForm extends React.Component {
         const collapsed = this.props.collapsed;
         const pending = this.props.pending;
         const edit = this.props.edit;
+        const _classNames = [style['note-form']];
+
+        if (this.props.className) {
+            _classNames.push(this.props.className);
+        }
 
         return (
-            <div className={style['note-form']}>
+            <div className={_classNames.join(' ')}>
                 <Input
                     value={content}
                     ref="content"
@@ -91,6 +96,7 @@ class _NoteForm extends React.Component {
 
 _NoteForm.propTypes = {
     content: React.PropTypes.string,
+    className: React.PropTypes.string,
     onClickOutside: React.PropTypes.func,
     onSubmit: React.PropTypes.func,
     onExpand: React.PropTypes.func,
