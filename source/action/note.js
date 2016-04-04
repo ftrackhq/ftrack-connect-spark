@@ -11,6 +11,7 @@ const REMOVE_NOTE = 'REMOVE_NOTE';
 const NOTE_SUBMITTED = 'NOTE_SUBMITTED';
 const NOTE_REMOVED = 'NOTE_REMOVED';
 
+/** Load notes action creator. */
 export function notesLoad(id) {
     return {
         type: NOTES_LOAD,
@@ -21,6 +22,7 @@ export function notesLoad(id) {
     };
 }
 
+/** Open notes form action creator. */
 export function openNoteForm(formKey, data) {
     return {
         type: OPEN_NOTE_FORM,
@@ -31,6 +33,7 @@ export function openNoteForm(formKey, data) {
     };
 }
 
+/** Hide notes form action creator. */
 export function hideNoteForm(formKey, content) {
     return {
         type: HIDE_NOTE_FORM,
@@ -41,6 +44,7 @@ export function hideNoteForm(formKey, content) {
     };
 }
 
+/** Remove note action creator. */
 export function removeNote(id) {
     return {
         type: REMOVE_NOTE,
@@ -50,6 +54,7 @@ export function removeNote(id) {
     };
 }
 
+/** Notes loaded action creator. */
 export function notesLoaded(entity, notes, metadata) {
     return {
         type: NOTES_LOADED,
@@ -61,6 +66,7 @@ export function notesLoaded(entity, notes, metadata) {
     };
 }
 
+/** Submit note form action creator. */
 export function submitNoteForm(
     formKey, data
 ) {
@@ -73,6 +79,7 @@ export function submitNoteForm(
     };
 }
 
+/** Notes submitted action creator. */
 export function noteSubmitted(formKey, note, isUpdate) {
     return {
         type: NOTE_SUBMITTED,
@@ -84,6 +91,7 @@ export function noteSubmitted(formKey, note, isUpdate) {
     };
 }
 
+/** Note removed action creator. */
 export function noteRemoved(id) {
     return {
         type: NOTE_REMOVED,
