@@ -11,13 +11,12 @@ const REMOVE_NOTE = 'REMOVE_NOTE';
 const NOTE_SUBMITTED = 'NOTE_SUBMITTED';
 const NOTE_REMOVED = 'NOTE_REMOVED';
 
-export function notesLoad() {
+export function notesLoad(id) {
     return {
         type: NOTES_LOAD,
         payload: {
-            parentId: 'c410b0dc-6c58-11e1-8a63-f23c91df25eb',
+            parentId: id,
             parentType: 'TypedContext',
-            // parentId: 'cc15e526-f670-11e5-b938-20c9d081909b',
         },
     };
 }
