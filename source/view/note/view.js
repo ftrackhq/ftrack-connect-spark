@@ -236,7 +236,7 @@ _NoteForm.propTypes = {
 const NoteForm = clickOutSide(_NoteForm);
 
 
-function _EditableNote(
+function EditableNote(
     { note, collapsed, form, author, onShowForm, onHideForm, onSubmitForm, onRemove }
 ) {
     if (!collapsed) {
@@ -275,7 +275,7 @@ function _EditableNote(
     );
 }
 
-_EditableNote.propTypes = {
+EditableNote.propTypes = {
     note: React.PropTypes.object,
     collapsed: React.PropTypes.bool,
     form: React.PropTypes.object,
@@ -322,13 +322,13 @@ function ediatbleNoteDispatchToProps() {
     };
 }
 
-const EditableNote = connect(
+const EditableNoteContainer = connect(
     editableNoteStateToProps,
     ediatbleNoteDispatchToProps
-)(_EditableNote);
+)(EditableNote);
 
 
-function _ReplyForm({ form, collapsed, onSubmitForm, onHideForm, onShowForm }) {
+function ReplyForm({ form, collapsed, onSubmitForm, onHideForm, onShowForm }) {
     if (!collapsed) {
         return (
             <NoteForm {...form} onClickOutside={onHideForm} onSubmit={onSubmitForm} />
@@ -342,7 +342,7 @@ function _ReplyForm({ form, collapsed, onSubmitForm, onHideForm, onShowForm }) {
     );
 }
 
-_ReplyForm.propTypes = {
+ReplyForm.propTypes = {
     parentNote: React.PropTypes.object,
     user: React.PropTypes.object,
     collapsed: React.PropTypes.bool,
@@ -390,10 +390,10 @@ function replyStateToProps() {
     };
 }
 
-const ReplyForm = connect(
+const ReplyFormContainer = connect(
     replyStateToProps,
     replyDispatchToProps
-)(_ReplyForm);
+)(ReplyForm);
 
 
 function newNoteStateToProps() {
@@ -436,7 +436,7 @@ function newNoteDispatchToProps() {
     };
 }
 
-const NewNoteForm = connect(
+const NewNoteFormContainer = connect(
     newNoteStateToProps,
     newNoteDispatchToProps
 )(NoteForm);
@@ -445,6 +445,7 @@ function NotesList({ items, entity, user }) {
     logger.debug('Rendering notes');
 
     if (entity === null) {
+        // TODO: Implement a proper empty state.
         return (
             <div>
                 Empty
@@ -457,17 +458,17 @@ function NotesList({ items, entity, user }) {
     items.forEach(
         note => {
             const replies = (note.replies || []).map(
-                reply => <EditableNote note={reply} key={reply.id} author={user} />
+                reply => <EditableNoteContainer note={reply} key={reply.id} author={user} />
             );
 
             notes.push(
                 <div className={style['parent-note-item']} key={note.id}>
-                    <EditableNote note={note} author={user} />
+                    <EditableNoteContainer note={note} author={user} />
                     <div className={style['parent-note-tail']} >
                         <div className={style.replies}>
                             {replies}
                         </div>
-                        <ReplyForm parentNote={note} user={user} />
+                        <ReplyFormContainer parentNote={note} user={user} />
                     </div>
                 </div>
             );
@@ -476,7 +477,7 @@ function NotesList({ items, entity, user }) {
 
     return (
         <div className={style['note-list']}>
-            <NewNoteForm entity={entity} user={user} />
+            <NewNoteFormContainer entity={entity} user={user} />
             {notes}
         </div>
     );
