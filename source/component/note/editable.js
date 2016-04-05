@@ -7,6 +7,10 @@ import Note from './note.js';
 import NoteForm from './form.js';
 import style from './style.scss';
 
+import loglevel from 'loglevel';
+
+const logger = loglevel.getLogger('note:editable');
+
 /** Editable note component that displays either a note or a note form.
 *
 * Options to edit or delete are displayed if the *note* author is matching the
@@ -17,12 +21,14 @@ import style from './style.scss';
 *
 */
 function EditableNote(
-    { note, collapsed, form, author, onShowForm, onHideForm, onSubmitForm, onRemove }
+    { note, collapsed, pending, content, author, onShowForm, onHideForm, onSubmitForm, onRemove }
 ) {
+    logger.debug('Render editable note');
     if (!collapsed) {
         return (
             <NoteForm
-                {...form}
+                pending={pending}
+                content={content}
                 onClickOutside={onHideForm}
                 onSubmit={onSubmitForm}
                 edit
@@ -58,7 +64,8 @@ function EditableNote(
 EditableNote.propTypes = {
     note: React.PropTypes.object,
     collapsed: React.PropTypes.bool,
-    form: React.PropTypes.object,
+    content: React.PropTypes.string,
+    pending: React.PropTypes.bool,
     onShowForm: React.PropTypes.func,
     onHideForm: React.PropTypes.func,
     onSubmitForm: React.PropTypes.func,

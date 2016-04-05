@@ -22,10 +22,8 @@ function editableNoteStateToProps() {
         const form = forms[`edit-${props.note.id}`] || {};
 
         return {
-            form: {
-                content: form.content || props.note.content,
-                pending: form.state === 'pending',
-            },
+            content: form.content || props.note.content,
+            pending: form.state === 'pending',
             collapsed: form.state === undefined || form.state === 'hidden',
         };
     };
@@ -82,10 +80,8 @@ function replyStateToProps() {
         );
         const form = forms[`reply-${props.parentNote.id}`] || {};
         return {
-            form: {
-                content: form.content || '',
-                pending: form.state === 'pending',
-            },
+            content: form.content || '',
+            pending: form.state === 'pending',
             collapsed: form.state === undefined || form.state === 'hidden',
         };
     };
