@@ -12,7 +12,7 @@ const logger = loglevel.getLogger('note:reply');
 
 /** Display a reply button or a note form if *collapsed* is false.
 *
-* The *form* object is applied as properties to the the note form.
+* The *pending* and *content* props are passed to the note form.
 *
 */
 function ReplyForm({ content, pending, collapsed, onSubmitForm, onHideForm, onShowForm }) {
@@ -20,7 +20,12 @@ function ReplyForm({ content, pending, collapsed, onSubmitForm, onHideForm, onSh
 
     if (!collapsed) {
         return (
-            <NoteForm content={content} pending={pending} onClickOutside={onHideForm} onSubmit={onSubmitForm} />
+            <NoteForm
+                content={content}
+                pending={pending}
+                onClickOutside={onHideForm}
+                onSubmit={onSubmitForm}
+            />
         );
     }
 

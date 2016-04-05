@@ -16,8 +16,8 @@ const logger = loglevel.getLogger('note:editable');
 * Options to edit or delete are displayed if the *note* author is matching the
 * *author*.
 *
-* Display the note form if *collpased* is false. The *form* object will be
-* applied as properties to the underflying form.
+* Display the note form if *collpased* is false. The *pending* and *content*
+* props are passed ot the note form.
 *
 */
 function EditableNote(
