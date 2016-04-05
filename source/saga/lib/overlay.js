@@ -24,7 +24,9 @@ export function* showCompletion({ header, message }, callback) {
         dissmissable: true,
     }));
     yield take(actions.OVERLAY_HIDE);
-    callback();
+    if (callback) {
+        callback();
+    }
 }
 
 /** Show failure overlay. */
