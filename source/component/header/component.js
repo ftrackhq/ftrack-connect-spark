@@ -31,6 +31,7 @@ function Header(props) {
         <AppBar flat className={_classNames}>
             {props.back ? backButton : null}
             <h4 className={style.title}>{props.title}</h4>
+            {props.centerItems}
             {props.rightButton}
         </AppBar>
     );
@@ -46,6 +47,7 @@ Header.propTypes = {
     title: React.PropTypes.node,
     rightButton: React.PropTypes.node,
     back: React.PropTypes.bool,
+    centerItems: React.PropTypes.array,
 };
 
 Header.defaultProps = {
@@ -54,6 +56,7 @@ Header.defaultProps = {
     title: null,
     rightButton: null,
     back: false,
+    centerItems: [],
 };
 
 export default Header;
