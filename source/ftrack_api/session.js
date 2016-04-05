@@ -65,7 +65,7 @@ function _gatherEntityDuplicates(data, collection) {
 
             forIn(
                 item,
-                (value, key) => {
+                (value) => {
                     if (value && value.constructor === Array) {
                         _gatherEntityDuplicates(value, collection);
                     }

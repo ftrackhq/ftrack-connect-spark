@@ -7,13 +7,25 @@ import types from 'action/note';
  */
 export default function notesReducer(state = {}, action) {
     let nextState = state;
-    if (action.type === types.NOTES_LOADED) {
+
+    if (action.type === types.NOTES_LOAD) {
+        nextState = Object.assign(
+            {},
+            state,
+            {
+                entity: action.payload.entity,
+                items: [],
+                loading: true,
+            }
+        );
+    } else if (action.type === types.NOTES_LOADED) {
         nextState = Object.assign(
             {},
             state,
             {
                 entity: action.payload.entity,
                 items: action.payload.items,
+                loading: false,
             }
         );
     } else if (action.type === types.OPEN_NOTE_FORM) {
@@ -74,7 +86,7 @@ export default function notesReducer(state = {}, action) {
         let items;
 
         if (action.payload.isUpdate) {
-            // Find and update the note if the  operation is an update.
+            // Find and update the note if the operation is an update.
             items = state.items.map(
                 (note) => {
                     if (note.id === action.payload.note.id) {

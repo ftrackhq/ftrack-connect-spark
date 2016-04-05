@@ -34,9 +34,11 @@ export default (store) => (
 
         <Route path="/context/:context" component={ContextView}>
             <IndexRedirect to="notes" />
-            <Route path="notes" component={NotesListView} onEnter={
-                ({ params }) => store.dispatch(notesLoad(params.context))
-            } />
+            <Route path="notes" component={NotesListView}
+                onEnter={
+                    ({ params }) => store.dispatch(notesLoad(params.context))
+                }
+            />
             <Route path="versions" component={VersionsView} />
         </Route>
 

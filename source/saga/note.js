@@ -96,7 +96,7 @@ function* submitNote(action) {
 function* loadNotes(action) {
     const query = (
         `${noteSelect()} where parent_id is ` +
-        `"${action.payload.parentId}" and not in_reply_to has () order by date desc`
+        `"${action.payload.entity.id}" and not in_reply_to has () order by date desc`
     );
 
     logger.debug('Loading notes with "', query, '" from action', action);
@@ -177,8 +177,8 @@ function* loadNotes(action) {
     yield put(
         notesLoaded(
             {
-                id: action.payload.parentId,
-                type: action.payload.parentType,
+                id: action.payload.entity.id,
+                type: action.payload.entity.type,
             },
             response.data,
             response.metadata

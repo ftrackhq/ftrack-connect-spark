@@ -16,8 +16,10 @@ export function notesLoad(id) {
     return {
         type: NOTES_LOAD,
         payload: {
-            parentId: id,
-            parentType: 'TypedContext',
+            entity: {
+                id,
+                type: 'TypedContext',
+            },
         },
     };
 }

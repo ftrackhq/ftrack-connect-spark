@@ -3,6 +3,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import loglevel from 'loglevel';
+import { ProgressBar } from 'react-toolbox';
 
 import { openNoteForm, hideNoteForm, submitNoteForm, removeNote } from 'action/note';
 import components from 'component/note';
@@ -148,7 +149,7 @@ const NewNoteFormContainer = connect(
 *
 * The *user* object is the active user and is used as author for any new notes.
 */
-function NotesList({ items, entity, user }) {
+function NotesList({ items, entity, user, loading }) {
     logger.debug('Rendering notes');
 
     if (entity === null) {
@@ -160,44 +161,57 @@ function NotesList({ items, entity, user }) {
         );
     }
 
-    const notes = [];
+    let content;
 
-    items.forEach(
-        note => {
-            const replies = (note.replies || []).map(
-                reply => <EditableNoteContainer note={reply} key={reply.id} author={user} />
-            );
+    if (loading) {
+        content = (
+            <div className={style.loading}>
+                <ProgressBar type="circular" mode="indeterminate" />
+            </div>
+        );
+    } else {
+        const notes = [];
+        items.forEach(
+            note => {
+                const replies = (note.replies || []).map(
+                    reply => <EditableNoteContainer note={reply} key={reply.id} author={user} />
+                );
 
-            notes.push(
-                <div className={style['parent-note-item']} key={note.id}>
-                    <EditableNoteContainer note={note} author={user} />
-                    <div className={style['parent-note-tail']} >
-                        {
-                            replies.length ?
-                            (
-                                <div className={style.replies}>
-                                    {replies}
-                                </div>
-                            )
-                            : ''
-                        }
-                        <ReplyFormContainer parentNote={note} author={user} />
+                notes.push(
+                    <div className={style['parent-note-item']} key={note.id}>
+                        <EditableNoteContainer note={note} author={user} />
+                        <div className={style['parent-note-tail']} >
+                            {
+                                replies.length ?
+                                (
+                                    <div className={style.replies}>
+                                        {replies}
+                                    </div>
+                                )
+                                : ''
+                            }
+                            <ReplyFormContainer parentNote={note} author={user} />
+                        </div>
                     </div>
-                </div>
-            );
-        }
-    );
+                );
+            }
+        );
 
-    return (
-        <div className={style['note-list']}>
+        content = [
             <NewNoteFormContainer
                 className={style['new-note-form']}
                 entity={entity}
                 author={user}
-            />
+            />,
             <div className={style['note-list-inner']}>
                 {notes}
-            </div>
+            </div>,
+        ];
+    }
+
+    return (
+        <div className={style['note-list']}>
+            {content}
         </div>
     );
 }
@@ -206,14 +220,18 @@ NotesList.propTypes = {
     items: React.PropTypes.array.isRequired,
     entity: React.PropTypes.object,
     user: React.PropTypes.object,
+    loading: React.PropTypes.bool,
 };
 
 const mapStateToProps = (state) => {
     const items = state.screen.notes && state.screen.notes.items || [];
     const entity = state.screen.notes && state.screen.notes.entity || null;
+    const loading = state.screen.notes && state.screen.notes.loading || false;
+
     return {
         items,
         entity,
+        loading,
         user: state.user,
     };
 };
