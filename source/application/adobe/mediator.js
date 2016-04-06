@@ -60,12 +60,21 @@ export class AdobeMediator {
             );
 
             const item = reply.then(
-                (responseEvent) => Promise.resolve({
-                    caption: `${component.name}${component.file_type || ''}`,
-                    disabled: false,
-                    icon: 'image',
-                    data: Object.assign({}, component, responseEvent.data),
-                }),
+                (responseEvent) => {
+                    // Disable components resolved to ftrack.server
+                    const path = responseEvent.data.path;
+                    let isDisabled = false;
+                    if (!path || path.startsWith('http')) {
+                        isDisabled = true;
+                    }
+
+                    return Promise.resolve({
+                        caption: `${component.name}${component.file_type || ''}`,
+                        disabled: isDisabled,
+                        icon: null,
+                        data: Object.assign({}, component, responseEvent.data),
+                    });
+                },
                 () => Promise.resolve({
                     caption: `${component.name}${component.file_type || ''} (failed to resolve)`,
                     disabled: true,
