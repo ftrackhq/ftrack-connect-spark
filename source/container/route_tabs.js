@@ -46,7 +46,7 @@ class RouteTabs extends React.Component {
         return (
             <Tabs index={this.state.index} onChange={this._handleTabChange}>
                 {this.props.items.map(
-                    (tab) => <Tab label={tab.label} />
+                    (tab) => <Tab key={tab.route} label={tab.label} />
                 )}
             </Tabs>
         );
