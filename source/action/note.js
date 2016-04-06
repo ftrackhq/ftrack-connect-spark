@@ -1,6 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 const NOTES_LOAD = 'NOTES_LOAD';
+const NOTES_LOAD_NEXT_PAGE = 'NOTES_LOAD_NEXT_PAGE';
 const NOTES_LOADED = 'NOTES_LOADED';
 
 const OPEN_NOTE_FORM = 'OPEN_NOTE_FORM';
@@ -20,6 +21,20 @@ export function notesLoad(id) {
                 id,
                 type: 'TypedContext',
             },
+        },
+    };
+}
+
+/** Load next page of notes action creator. */
+export function notesLoadNextPage(id, nextOffset) {
+    return {
+        type: NOTES_LOAD_NEXT_PAGE,
+        payload: {
+            entity: {
+                id,
+                type: 'TypedContext',
+            },
+            nextOffset,
         },
     };
 }
@@ -57,13 +72,13 @@ export function removeNote(id) {
 }
 
 /** Notes loaded action creator. */
-export function notesLoaded(entity, notes, metadata) {
+export function notesLoaded(entity, notes, nextOffset) {
     return {
         type: NOTES_LOADED,
         payload: {
             entity,
             items: notes,
-            metadata,
+            nextOffset,
         },
     };
 }
@@ -112,4 +127,5 @@ export default {
     SUBMIT_NOTE_FORM,
     NOTE_SUBMITTED,
     NOTE_REMOVED,
+    NOTES_LOAD_NEXT_PAGE,
 };

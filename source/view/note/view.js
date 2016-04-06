@@ -4,8 +4,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import loglevel from 'loglevel';
 import { ProgressBar } from 'react-toolbox';
+import Waypoint from 'react-waypoint';
 
-import { openNoteForm, hideNoteForm, submitNoteForm, removeNote } from 'action/note';
+import { openNoteForm, hideNoteForm, submitNoteForm, removeNote, notesLoadNextPage } from 'action/note';
 import components from 'component/note';
 
 const { EditableNote, ReplyForm, NoteForm } = components;
@@ -145,7 +146,7 @@ const NewNoteFormContainer = connect(
 *
 * The *user* object is the active user and is used as author for any new notes.
 */
-function NotesList({ items, entity, user, loading }) {
+function NotesList({ items, entity, user, loading, nextOffset, onFetchMore }) {
     logger.debug('Rendering notes');
 
     if (entity === null) {
@@ -157,52 +158,59 @@ function NotesList({ items, entity, user, loading }) {
         );
     }
 
-    let content;
+    const notes = [];
+
+    items.forEach(
+        note => {
+            const replies = (note.replies || []).map(
+                reply => <EditableNoteContainer note={reply} key={reply.id} author={user} />
+            );
+
+            notes.push(
+                <div className={style['parent-note-item']} key={note.id}>
+                    <EditableNoteContainer note={note} author={user} />
+                    <div className={style['parent-note-tail']} >
+                        {
+                            replies.length ?
+                            (
+                                <div className={style.replies}>
+                                    {replies}
+                                </div>
+                            )
+                            : ''
+                        }
+                        <ReplyFormContainer parentNote={note} author={user} />
+                    </div>
+                </div>
+            );
+        }
+    );
+
+    const content = [
+        <NewNoteFormContainer
+            className={style['new-note-form']}
+            entity={entity}
+            author={user}
+        />,
+        <div className={style['note-list-inner']}>
+            {notes}
+        </div>,
+    ];
 
     if (loading) {
-        content = (
+        content.push(
             <div className={style.loading}>
                 <ProgressBar type="circular" mode="indeterminate" />
             </div>
         );
-    } else {
-        const notes = [];
-        items.forEach(
-            note => {
-                const replies = (note.replies || []).map(
-                    reply => <EditableNoteContainer note={reply} key={reply.id} author={user} />
-                );
+    }
 
-                notes.push(
-                    <div className={style['parent-note-item']} key={note.id}>
-                        <EditableNoteContainer note={note} author={user} />
-                        <div className={style['parent-note-tail']} >
-                            {
-                                replies.length ?
-                                (
-                                    <div className={style.replies}>
-                                        {replies}
-                                    </div>
-                                )
-                                : ''
-                            }
-                            <ReplyFormContainer parentNote={note} author={user} />
-                        </div>
-                    </div>
-                );
-            }
-        );
-
-        content = [
-            <NewNoteFormContainer
-                className={style['new-note-form']}
-                entity={entity}
-                author={user}
-            />,
-            <div className={style['note-list-inner']}>
-                {notes}
-            </div>,
-        ];
+    if (loading === false && nextOffset !== null && items.length) {
+        // Only add way point if not loading, there are items already loaded
+        // and there are more pages to load.
+        notes.push(
+            <Waypoint onEnter={onFetchMore.bind(this, entity, nextOffset)} />
+        );        
     }
 
     return (
@@ -217,24 +225,36 @@ NotesList.propTypes = {
     entity: React.PropTypes.object,
     user: React.PropTypes.object,
     loading: React.PropTypes.bool,
+    nextOffset: React.PropTypes.number,
+    onFetchMore: React.PropTypes.func,
 };
 
 const mapStateToProps = (state) => {
     const items = state.screen.notes && state.screen.notes.items || [];
     const entity = state.screen.notes && state.screen.notes.entity || null;
     const loading = state.screen.notes && state.screen.notes.loading || false;
+    const nextOffset = state.screen.notes && state.screen.notes.nextOffset;
 
     return {
         items,
+        nextOffset,
         entity,
         loading,
         user: state.user,
     };
 };
 
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onFetchMore: (entity, nextOffset) => {
+            dispatch(notesLoadNextPage(entity.id, nextOffset));
+        },
+    };
+}
+
 const NotesListView = connect(
     mapStateToProps,
-    null
+    mapDispatchToProps
 )(NotesList);
 
 export default NotesListView;

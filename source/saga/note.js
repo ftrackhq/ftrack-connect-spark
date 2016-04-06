@@ -92,11 +92,18 @@ function* submitNote(action) {
     );
 }
 
-/** Handle load notes *action*. */
+/** Handle load notes and load next page *action*. */
 function* loadNotes(action) {
+    let offset = 0
+
+    if (action.type === actions.NOTES_LOAD_NEXT_PAGE) {
+        offset = action.payload.nextOffset;
+    }
+
     const query = (
         `${noteSelect()} where parent_id is ` +
-        `"${action.payload.entity.id}" and not in_reply_to has () order by date desc`
+        `"${action.payload.entity.id}" and not in_reply_to has () ` +
+        `order by thread_activity desc offset ${offset} limit 10`
     );
 
     logger.debug('Loading notes with "', query, '" from action', action);
@@ -181,7 +188,7 @@ function* loadNotes(action) {
                 type: action.payload.entity.type,
             },
             response.data,
-            response.metadata
+            response.metadata.next.offset
         )
     );
 }
@@ -189,6 +196,11 @@ function* loadNotes(action) {
 /** Handle NOTES_LOAD action. */
 export function* notesLoadSaga() {
     yield takeEvery(actions.NOTES_LOAD, loadNotes);
+}
+
+/** Handle NOTES_LOAD action. */
+export function* notesLoadNextPageSaga() {
+    yield takeEvery(actions.NOTES_LOAD_NEXT_PAGE, loadNotes);
 }
 
 /** Handle SUBMIT_NOTE_FORM action. */

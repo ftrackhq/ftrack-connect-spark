@@ -1,6 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-import types from 'action/note';
+import actions from 'action/note';
 
 /**
  * Reduce state for application-wide notes.
@@ -8,27 +8,38 @@ import types from 'action/note';
 export default function notesReducer(state = {}, action) {
     let nextState = state;
 
-    if (action.type === types.NOTES_LOAD) {
+    if (action.type === actions.NOTES_LOAD) {
         nextState = Object.assign(
             {},
             state,
             {
                 entity: action.payload.entity,
                 items: [],
+                nextOffset: 0,
                 loading: true,
             }
         );
-    } else if (action.type === types.NOTES_LOADED) {
+    } if (action.type === actions.NOTES_LOAD_NEXT_PAGE) {
         nextState = Object.assign(
             {},
             state,
             {
-                entity: action.payload.entity,
-                items: action.payload.items,
+                loading: true,
+            }
+        );
+    } else if (action.type === actions.NOTES_LOADED) {
+        const items = [...state.items, ...action.payload.items];
+
+        nextState = Object.assign(
+            {},
+            state,
+            {
+                items: items,
+                nextOffset: action.payload.nextOffset,
                 loading: false,
             }
         );
-    } else if (action.type === types.OPEN_NOTE_FORM) {
+    } else if (action.type === actions.OPEN_NOTE_FORM) {
         const forms = Object.assign({}, state.forms);
         const exists = forms[action.payload.formKey] !== undefined;
         const initialState = exists ? {} : action.payload.data;
@@ -49,7 +60,7 @@ export default function notesReducer(state = {}, action) {
                 forms,
             }
         );
-    } else if (action.type === types.HIDE_NOTE_FORM) {
+    } else if (action.type === actions.HIDE_NOTE_FORM) {
         const forms = Object.assign({}, state.forms);
         forms[action.payload.formKey] = Object.assign(
             {}, state.forms[action.payload.formKey], {
@@ -66,7 +77,7 @@ export default function notesReducer(state = {}, action) {
             }
         );
     } else if (
-        action.type === types.SUBMIT_NOTE_FORM
+        action.type === actions.SUBMIT_NOTE_FORM
     ) {
         const forms = Object.assign({}, state.forms);
         forms[action.payload.formKey] = Object.assign(
@@ -82,8 +93,9 @@ export default function notesReducer(state = {}, action) {
                 forms,
             }
         );
-    } else if (action.type === types.NOTE_SUBMITTED) {
+    } else if (action.type === actions.NOTE_SUBMITTED) {
         let items;
+        let nextOffset = state.nextOffset;
 
         if (action.payload.isUpdate) {
             // Find and update the note if the operation is an update.
@@ -124,6 +136,9 @@ export default function notesReducer(state = {}, action) {
                 );
             } else {
                 items = [action.payload.note, ...state.items];
+                // Add one to the offset since next page will start on +1 after
+                // the new note was added.
+                nextOffset += 1;
             }
         }
 
@@ -136,11 +151,13 @@ export default function notesReducer(state = {}, action) {
             {
                 items,
                 forms,
+                nextOffset,
             }
         );
-    } else if (action.type === types.NOTE_REMOVED) {
+    } else if (action.type === actions.NOTE_REMOVED) {
         // Find and remove the note if the action is a note being removed.
         const items = [];
+        let nextOffset = state.nextOffset;
 
         state.items.forEach(
             (note) => {
@@ -161,6 +178,10 @@ export default function notesReducer(state = {}, action) {
                     if (note.replies.length !== replies.length) {
                         note.replies = replies;
                     }
+                } else {
+                    // Subtract one from the offset since next page will start
+                    // on -1 after the note was removed.
+                    nextOffset -= 1;
                 }
             }
         );
@@ -170,6 +191,7 @@ export default function notesReducer(state = {}, action) {
             state,
             {
                 items,
+                nextOffset,
             }
         );
     }

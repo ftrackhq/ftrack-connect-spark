@@ -4,7 +4,7 @@ import startupSaga from './startup';
 import { quickReviewSubmitSaga } from './quick_review';
 
 import { publishLoadSaga, publishSubmitSaga, publishResolveContextSaga } from './publish';
-import { notesLoadSaga, noteSubmitSaga, noteRemoveSaga } from './note';
+import { notesLoadSaga, notesLoadNextPageSaga, noteSubmitSaga, noteRemoveSaga } from './note';
 
 
 export default [
@@ -13,6 +13,7 @@ export default [
     publishLoadSaga,
     publishSubmitSaga,
     notesLoadSaga,
+    notesLoadNextPageSaga,
     noteSubmitSaga,
     noteRemoveSaga,
     publishResolveContextSaga,
