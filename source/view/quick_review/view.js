@@ -6,7 +6,6 @@ import { reduxForm } from 'redux-form';
 
 import Input from 'react-toolbox/lib/input';
 import DatePicker from 'react-toolbox/lib/date_picker';
-import { Link } from 'react-router';
 
 import Form from 'component/form';
 import Selector from 'component/selector';
@@ -16,6 +15,7 @@ import {
 } from '../../util/validation';
 import Reveal from 'component/reveal';
 import { quickReviewSubmit } from 'action/quick_review';
+import { createProject } from 'action/create_project';
 
 /** Validate form values and return error object. */
 const validateForm = (values) => {
@@ -44,6 +44,8 @@ class QuickReviewView extends React.Component {
         this._onCancelClick = this._onCancelClick.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
         this._isSubmitDisabled = this._isSubmitDisabled.bind(this);
+        this._createProject = this._createProject.bind(this);
+        this._updateProject = this._updateProject.bind(this);
 
         const _projects = session._query(
             'select id, full_name from Project where status is "active"'
@@ -62,6 +64,7 @@ class QuickReviewView extends React.Component {
     _onCancelClick(e) {
         e.preventDefault();
         this.context.router.goBack();
+        this.props.resetForm();
     }
 
     /** Trigger handleSubmit with values on submission. */
@@ -84,6 +87,16 @@ class QuickReviewView extends React.Component {
         return field.touched && field.error || null;
     }
 
+    /** Update the selected project with the new one. */
+    _updateProject(project) {
+        this.props.fields.project.onChange(project.id);
+    }
+
+    /** Create a new project. */
+    _createProject(e) {
+        e.preventDefault();
+        this.props.createProject(this._updateProject);
+    }
 
     render() {
         const {
@@ -106,7 +119,7 @@ class QuickReviewView extends React.Component {
                     query={this._projects}
                     {...project}
                 />
-                <p>Or, <Link to="/create-project">create a new project</Link>.</p>
+                <p>Or, <a href="#" onClick={ this._createProject }>create a new project</a>.</p>
                 <Input
                     type="text"
                     label="Review session name"
@@ -154,12 +167,16 @@ QuickReviewView.propTypes = {
     resetForm: React.PropTypes.func.isRequired,
     submitting: React.PropTypes.bool.isRequired,
     projects: React.PropTypes.object,
+    createProject: React.PropTypes.func,
 };
 
 function mapDispatchToProps(dispatch) {
     return {
         handleSubmit(values) {
             dispatch(quickReviewSubmit(values));
+        },
+        createProject(callback) {
+            dispatch(createProject(callback));
         },
     };
 }
@@ -175,6 +192,7 @@ QuickReviewView = reduxForm({
         'name', 'project', 'collaborators', 'description', 'expiryDate',
     ],
     validateForm,
+    destroyOnUnmount: false,
 })(QuickReviewView);
 
 export default QuickReviewView;
