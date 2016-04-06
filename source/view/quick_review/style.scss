@@ -1,0 +1,17 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+.user {
+    background-color: $color-dark-300;
+    padding: 10px;
+}
+
+.addButton {
+    margin-left: auto;
+    display: block;
+}
+
+.label {
+    font-size: $input-field-font-size;
+    line-height: $input-field-font-size;
+    color: $input-text-label-color;
+}

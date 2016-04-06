@@ -26,21 +26,6 @@ const logger = loglevel.getLogger('saga:quick_review');
 
 
 /**
- * Return guessed invitee name from *email*
- *
- * Retrieves the part before the at sign, replaces separators with space
- * and transform to title case.
- */
-function guessInviteeName(email) {
-    let name = email.split('@')[0];
-    name = name.replace(/[._-]/g, ' ').replace(/\s\s+/g, ' ');
-    name = name.replace(
-        /\w\S*/g, (word) => word.charAt(0).toUpperCase() + word.substr(1).toLowerCase()
-    );
-    return name;
-}
-
-/**
  * Return promise which will be resolved with an array of two elements:
  *
  * componentAssets
@@ -159,19 +144,17 @@ function* createQuickReview(values, media) {
         componentVersions.push({ componentId, versionId });
     }
 
-    const emails = values.collaborators.split(',').map((value) => value.trim());
     const reviewSessionInviteeIds = [];
-    for (const email of emails) {
-        if (email.includes('@')) {
-            const inviteeName = guessInviteeName(email);
+    for (const invitee of values.collaborators) {
+        if (invitee.email.includes('@')) {
             const reviewSessionInviteeId = uuid.v4();
             reviewSessionInviteeIds.push(reviewSessionInviteeId);
 
             operations.push(createOperation('ReviewSessionInvitee', {
                 id: reviewSessionInviteeId,
                 review_session_id: reviewSessionId,
-                email,
-                name: inviteeName,
+                email: invitee.email,
+                name: invitee.name,
             }));
         }
     }
