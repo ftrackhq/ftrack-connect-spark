@@ -1,4 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
+import { session } from '../../ftrack_api';
+import Event from '../../ftrack_api/event';
 
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('adobe:mediator');
@@ -11,7 +13,99 @@ const logger = loglevel.getLogger('adobe:mediator');
  */
 export class AdobeMediator {
 
+    /** Return components to import for *options*. */
+    getImportComponents(options) {
+        logger.info('Getting import components for version', options);
+        const components = this._loadComponents(options.versionId);
+        const resolvedComponents = components.then(this._resolveComponentPaths);
+        return resolvedComponents;
+    }
 
+    /** Import *component* and resolve on success. */
+    importComponent(component) {
+        const _import = window.top.FT.import;
+        const path = component.path;
+        const meta = {
+            component_id: component.id,
+            version_id: component.version_id,
+            asset_id: component.version.asset_id,
+        };
+        logger.info('Importing component', component);
+        const promise = new Promise((resolve, reject) => {
+            logger.info('Running promise', path, meta);
+            _import.openDocument(path, meta, (error, response) => {
+                logger.info('Open document', error, response);
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(response);
+                }
+            });
+        });
+
+        return promise;
+    }
+
+    /** Resolve component paths via events. */
+    _resolveComponentPaths(components) {
+        const util = window.top.FT.util;
+        const platform = util.getResolverPlatfom();
+        const resolveEventPromises = components.map((component) => {
+            const event = new Event(
+                'ftrack.location.request-resolve',
+                { componentId: component.id, locationName: null, platform }
+            );
+            const reply = session.eventHub.publish(
+                event, { reply: true, timeout: 10 }
+            );
+
+            const item = reply.then(
+                (responseEvent) => Promise.resolve({
+                    caption: `${component.name}${component.file_type || ''}`,
+                    disabled: false,
+                    icon: 'image',
+                    data: Object.assign({}, component, responseEvent.data),
+                }),
+                () => Promise.resolve({
+                    caption: `${component.name}${component.file_type || ''} (failed to resolve)`,
+                    disabled: true,
+                    icon: null,
+                    data: Object.assign({}, component),
+                })
+            );
+            return item;
+        });
+        return Promise.all(resolveEventPromises);
+    }
+
+    /** Load components for *versionId*. */
+    _loadComponents(versionId) {
+        const select = [
+            'id',
+            'system_type',
+            'name',
+            'size',
+            'file_type',
+            'container_id',
+            'version_id',
+            'version.asset_id',
+        ];
+        const queryString = (
+            `select ${select.join(', ')} from Component where ` +
+            `version_id is ${versionId} order by name, file_type, id`
+        );
+
+        const request = session._query(queryString);
+        const components = request.then(
+            (response) => Promise.resolve(
+                response.data.map(component => component)
+            )
+        );
+
+        return components;
+    }
+
+    /** Get publish options */
     getPublishOptions(options) {
         const exporter = window.top.FT.exporter;
         logger.info('Get publish options', options);

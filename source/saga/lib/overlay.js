@@ -17,7 +17,7 @@ export function* showProgress(header, options = {}) {
 
 
 /** Show completed overlay. */
-export function* showCompletion({ header, message }, callback) {
+export function* showCompletion({ header, message }, callback = () => {}) {
     yield put(overlayShow({
         header,
         message,

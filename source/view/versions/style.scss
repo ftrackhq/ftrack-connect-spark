@@ -2,8 +2,19 @@
 
 .task-list {
     padding: $spacing;
+
 }
 
 .item {
     margin-bottom: $spacing-large;
+
+    overflow: visible;
+}
+
+.import {
+    position: relative;
+}
+
+.menu {
+    position: absolute;
 }

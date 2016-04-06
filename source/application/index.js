@@ -34,8 +34,18 @@ export default function createApplication({
     const routes = makeRoutes(store);
 
     // Render the React application to the DOM
-    ReactDOM.render(
-        <RootContainer history={history} routes={routes} store={store} />,
-        document.getElementById('app')
-    );
+    function renderApplication() {
+        ReactDOM.render(
+            <RootContainer history={history} routes={routes} store={store} />,
+            document.getElementById('app')
+        );
+    }
+
+    // Execute renderApplication once DOM is ready.
+    const loadedStates = ['complete', 'loaded', 'interactive'];
+    if (loadedStates.includes(document.readyState) && document.body) {
+        renderApplication();
+    } else {
+        window.addEventListener('DOMContentLoaded', renderApplication, false);
+    }
 }
