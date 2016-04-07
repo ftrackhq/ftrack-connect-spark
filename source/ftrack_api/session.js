@@ -202,7 +202,6 @@ export class Session {
 
         request = request.then((data) => {
             const result = decode(data);
-            logger.debug('Decode ', result);
             return Promise.resolve(result);
         });
 
