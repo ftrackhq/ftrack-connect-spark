@@ -20,7 +20,7 @@ function AttachmentArea({ components }) {
         component => {
             if (
                 SUPPORTED_IMG_FILE_TYPES.includes(
-                    component.file_type.slice(1)
+                    component.file_type.slice(1).toLowerCase()
                 )
             ) {
                 images.push(<img key={component.id} src={session.thumbnail(component.id, 100)} />);
