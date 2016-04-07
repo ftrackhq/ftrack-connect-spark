@@ -34,19 +34,19 @@
 
     .body {
         flex: 1;
+        height: 100%;
+        width: 100%;
+
+        padding: $spacing;
+
         display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        padding: $spacing-large;
+        justify-content: space-around;
 
         .preview-image {
-            display: block;
-            max-width: 100%;
-            max-height: 100%;
-            min-height: 0;
-            min-width: 0;
-            object-fit: scale-down;
+            flex: 1;
+            background-position: center;
+            background-size: contain;
+            background-repeat: no-repeat;
         }
     }
 }

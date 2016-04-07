@@ -43,7 +43,16 @@ class PreviewImage extends React.Component {
             return <ProgressBar type="circular" mode="indeterminate" />;
         }
 
-        return <img src={url} className={style['preview-image']}/>;
+        return (
+            <div
+                style={{
+                    backgroundImage: `url('${url}')`,
+                    maxWidth: this.image.width,
+                    maxHeight: this.image.height,
+                }}
+                className={style['preview-image']}
+            />
+        );
     }
 
 }
