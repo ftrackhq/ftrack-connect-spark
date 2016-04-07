@@ -65,7 +65,7 @@ function Note({ data, category }) {
             <div className={style['avatar-column']}>
                 {
                     displayAvatar ? (
-                        <Avatar>
+                        <Avatar className={style.avatar}>
                             <img src={session.thumbnail(data.author.thumbnail_id, 100)} />
                         </Avatar>
                     ) : ''
