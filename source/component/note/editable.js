@@ -42,7 +42,7 @@ function EditableNote(
                 <MenuItem value="delete" icon="delete" caption="Remove"
                     onClick={onRemove}
                 />
-            </IconMenu>,
+            </IconMenu>
         );
     }
 
