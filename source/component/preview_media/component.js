@@ -1,62 +1,141 @@
 
 import React from 'react';
-import { IconButton } from 'react-toolbox';
+import { IconButton, ProgressBar } from 'react-toolbox';
 
 import style from './style';
 import Header from 'component/header';
 
-function PreviewMedia({ components, visible, index, onDismiss, onDownload, onChange }) {
-    const closeButton = <IconButton icon="close" onClick={onDismiss} />;
+import Mousetrap from 'mousetrap';
 
-    if (!visible) {
-        return null;
+
+class PreviewImage extends React.Component {
+
+    constructor() {
+        super()
+
+        this.state = {};
+        this.state.isLoaded = false;
     }
 
-    const handleChange = (index) => {
+    componentWillReceiveProps(nextProps) {
+        this.loadImage(nextProps.url);
+    }
+
+    componentWillMount() {
+        this.loadImage(this.props.url);   
+    }
+
+    loadImage(url) {        
+        this.setState({isLoaded: false});
+
+        this.image = new window.Image();
+        this.image.onload = () => {
+            this.setState({isLoaded: true})
+        };
+        this.image.src = url;
+    }
+
+    render() {
+        const { url } = this.props;
+        const { isLoaded } = this.state;
+
+        if (!isLoaded) {
+            return <ProgressBar type="circular" mode="indeterminate" />;
+        }
+
+        return <img src={url} className={style['preview-image']}/>;
+    }
+
+}
+
+PreviewImage.propTypes = {
+    url: React.PropTypes.string.isRequired,
+    name: React.PropTypes.string.isRequired,
+    downloadUrl: React.PropTypes.string,
+};
+
+
+class PreviewMedia extends React.Component {
+
+    componentWillMount() {
+        Mousetrap.bind('esc', this.props.onDismiss);
+        Mousetrap.bind(
+            'left', () => this.handleChange(this.props.index - 1)
+        );
+        Mousetrap.bind(
+            'right', () => this.handleChange(this.props.index + 1)
+        );
+    }
+
+    componentWillUnmount() {
+        Mousetrap.unbind('esc');
+        Mousetrap.unbind('left');
+        Mousetrap.unbind('right');
+    }
+
+    handleChange(index) {
         let adjustedIndex = index;
 
         if (adjustedIndex < 0) {
-            adjustedIndex = components.length - 1;
+            adjustedIndex = this.props.children.length - 1;
         }
 
-        if (adjustedIndex > components.length - 1) {
+        if (adjustedIndex > this.props.children.length - 1) {
             adjustedIndex = 0;
         }
 
-        onChange(adjustedIndex);
+        this.props.onChange(adjustedIndex);
     }
 
-    const centerItems = (
-        <div className={style['media-control']}>
-            <span
-                className={style['control-button']}
-                onClick={handleChange.bind(this, index - 1)}
-            >&#10094;</span>
-            {`${index + 1} of ${components.length}`}
-            <span
-                className={style['control-button']}
-                onClick={handleChange.bind(this, index + 1)}
-            >&#10095;</span>
-        </div>
-    );
+    render() {
+        const { children, visible, index, onDismiss, onDownload, onChange } = this.props;
+        const closeButton = <IconButton icon="close" onClick={onDismiss} />;
 
-    const component = components[index];
+        if (!visible) {
+            return null;
+        }
 
-    return (
-        <div className={style['preview-media']}>
-            <Header
-                className={style.header}
-                title={`${component.name}${component.file_type}`}
-                rightButton={closeButton}
-                centerItems={centerItems}
-            />
-            {index}
-        </div>
-    );
+        const centerItems = (
+            <h4 className={style['media-control']}>
+                <span
+                    className={style['control-button']}
+                    onClick={this.handleChange.bind(this, index - 1)}
+                >&#10094;</span>
+                {`${index + 1} of ${children.length}`}
+                <span
+                    className={style['control-button']}
+                    onClick={this.handleChange.bind(this, index + 1)}
+                >&#10095;</span>
+            </h4>
+        );
+
+        const child = children[index];
+
+        return (
+            <div
+                className={style['preview-media']}
+                onKeyDown={
+                    (event) => {
+                        debugger;
+                    }
+                }
+            >
+                <Header
+                    className={style.header}
+                    title={child.props.name}
+                    rightButton={closeButton}
+                    centerItems={centerItems}
+                />
+                <div className={style.body}>
+                    {child}
+                </div>
+            </div>
+        );
+    }
 }
 
 PreviewMedia.propTypes = {
-    components: React.PropTypes.array,
+    children: React.PropTypes.arrayOf(Image),
     index: React.PropTypes.number,
     visible: React.PropTypes.bool,
     onDismiss: React.PropTypes.func.isRequired,
@@ -65,19 +144,12 @@ PreviewMedia.propTypes = {
 };
 
 PreviewMedia.defaultProps = {
-    components: [{
-        id: 'a',
-        name: 'file1',
-        file_type: '.jpeg',
-    }, {
-        id: 'b',
-        name: 'another',
-        file_type: '.png',
-    }, {
-        id: 'c',
-        name: 'yes',
-        file_type: '.png',
-    }],
+    children: [
+        <PreviewImage url="https://i.ytimg.com/vi/tntOCGkgt98/maxresdefault.jpg" name="Cat1.png" />,
+        <PreviewImage url="http://sites.psu.edu/siowfa15/wp-content/uploads/sites/29639/2015/10/cat.jpg" name="Cat2.jpg" />,
+        <PreviewImage url="http://www.factslides.com/imgs/black-cat.jpg" name="Cat3 is here.jpg" />,
+        <PreviewImage url="http://i.kinja-img.com/gawker-media/image/upload/s--gRG2YWja--/efg4piwisx1tcco4byit.png" name="Small.jpg" />
+    ],
     index: 0,
     visible: true,
 };
