@@ -4,6 +4,11 @@ import classNames from 'classnames';
 
 import style from './style.scss';
 
+/** Aliases for API entity types */
+const entityTypeAliases = {
+    AssetVersion: 'Version',
+};
+
 /**
  * Obtain entity type from *entity*.
  *
@@ -16,8 +21,10 @@ function getEntityTypeDescription(entity) {
         entityType = entity.type.name;
     } else if (entity.object_type && entity.object_type.name) {
         entityType = entity.object_type.name;
+    } else if (entity.asset && entity.asset.type && entity.asset.type.name) {
+        entityType = entity.asset.type.name;
     } else if (entity.__entity_type__) {
-        entityType = entity.__entity_type__;
+        entityType = entityTypeAliases[entity.__entity_type__] || entity.__entity_type__;
     }
     return entityType;
 }

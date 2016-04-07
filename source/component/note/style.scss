@@ -1,0 +1,92 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+.category {
+    color: $color-text-secondary;
+    font-style: italic;
+    display: block;
+}
+
+.user {
+    font-weight: bold;
+}
+
+.datetime {
+    color: $color-text-secondary;
+}
+
+.note-item {
+    display: flex;
+    margin-bottom: $spacing-small;
+
+    .avatar-column {
+        width: 60px;
+
+        .avatar {
+            .image {
+                width: 100%;
+                height: 100%;
+                background-size: cover;
+            }
+        }
+    }
+
+    .body-column {
+        flex: 1;
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+        }
+    }
+
+    .attachments-area {
+        margin-top: $spacing;
+    }
+}
+
+.note-form {
+    .toolbar {
+        display: flex;
+        flex-direction: row-reverse;
+        .progressbar {
+            transform: scale(0.5);
+            margin-top: -25px;
+        }
+    }
+}
+
+.reply-button {
+    margin: -1.2rem;
+    min-width: 0px;
+}
+
+.editable-note-container {
+    display: flex;
+
+    .note-item {
+        flex: 1;
+    }
+
+    .icon-menu {
+        margin-top: -10px;
+        visibility: hidden;
+        width: 16px;
+        height: 36px;
+    }
+
+    &:hover {
+        .icon-menu {
+            visibility: visible;
+        }
+    }
+}
+
+.attachments-area {
+    .images > img {
+        padding: $spacing-small;
+    }
+
+    .other {
+
+    }
+}
