@@ -10,7 +10,7 @@ export function* showProgress(header, options = {}) {
         header,
         message: 'This may take a few minutes, please keep this window open until finished.',
         loader: true,
-        dissmissable: true,
+        dismissable: true,
         dismissLabel: 'Cancel',
     }, options)));
 }
@@ -21,7 +21,7 @@ export function* showCompletion({ header, message }, callback = () => {}) {
     yield put(overlayShow({
         header,
         message,
-        dissmissable: true,
+        dismissable: true,
     }));
     yield take(actions.OVERLAY_HIDE);
     if (callback) {
@@ -35,7 +35,7 @@ export function* showFailure({ header, error }, callback = () => {}) {
         header,
         message: 'Please try again or contact support with the following details',
         error: error && error.message || '',
-        dissmissable: true,
+        dismissable: true,
     }));
     yield take(actions.OVERLAY_HIDE);
     callback();
