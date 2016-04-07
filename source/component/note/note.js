@@ -58,18 +58,25 @@ function Note({ data, category }) {
         </span>
     );
 
+    // TODO: Break out as a separate component.
     const author = data.author;
     let avatar = false;
     if (author) {
-        let img = false;
+        let image = false;
         if (author.thumbnail_id) {
-            img = <img src={session.thumbnail(author.thumbnail_id, 100)} />;
+            const url = session.thumbnail(author.thumbnail_id, 100);
+            image = (
+                <div
+                    className={style.image}
+                    style={{ backgroundImage: `url('${url}')` }}
+                />
+            );
         }
 
         const title = author.name || `${author.first_name} ${author.last_name}`;
         avatar = (
             <Avatar title={title} className={style.avatar}>
-                {img}
+                {image}
             </Avatar>
         );
     }
