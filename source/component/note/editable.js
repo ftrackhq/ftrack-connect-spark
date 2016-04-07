@@ -33,7 +33,7 @@ function EditableNote(
 
     let menu = false;
 
-    if (author && author.id === note.author.id) {
+    if (author && note.author && author.id === note.author.id) {
         menu = (
             <IconMenu icon="more_vert" menuRipple>
                 <MenuItem value="edit" icon="edit" caption="Edit"

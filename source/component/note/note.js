@@ -58,22 +58,30 @@ function Note({ data, category }) {
         </span>
     );
 
-    const displayAvatar = data.author && data.author.__entity_type__ === 'User';
+    const author = data.author;
+    let avatar = false;
+    if (author) {
+        let img = false;
+        if (author.thumbnail_id) {
+            img = <img src={session.thumbnail(author.thumbnail_id, 100)} />;
+        }
+
+        const title = author.name || `${author.first_name} ${author.last_name}`;
+        avatar = (
+            <Avatar title={title} className={style.avatar}>
+                {img}
+            </Avatar>
+        );
+    }
 
     return (
         <div className={style['note-item']}>
             <div className={style['avatar-column']}>
-                {
-                    displayAvatar ? (
-                        <Avatar className={style.avatar}>
-                            <img src={session.thumbnail(data.author.thumbnail_id, 100)} />
-                        </Avatar>
-                    ) : ''
-                }
+                {avatar}
             </div>
             <div className={style['body-column']}>
                 <span className={style.top}>
-                    <Author data={data.author} />
+                    <Author data={author} />
                     <TimeAgo className={style.datetime} date={data.date.toDate()} />
                 </span>
                 {categoryItem}
