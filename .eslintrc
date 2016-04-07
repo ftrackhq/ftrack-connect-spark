@@ -14,5 +14,7 @@
         // Require stateless functions when not using lifecycle methods, setState or ref
         // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/prefer-stateless-function.md
         "react/prefer-stateless-function": 1,
+
+        "no-param-reassign": [2, {"props": false}]
     }
 }
