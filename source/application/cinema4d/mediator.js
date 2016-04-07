@@ -21,6 +21,7 @@ export class Cinema4dMediator extends AbstractMediator {
 
         try {
             this._options = this._loadOptions();
+            logger.info('Loaded application options', this._options);
         } catch (err) {
             logger.error(err);
         }
@@ -61,9 +62,18 @@ export class Cinema4dMediator extends AbstractMediator {
                     new Error(`${response.exception}: ${response.content}`)
                 );
             }
-            return Promise.resolve(response);
+            return Promise.resolve(response.output || null);
         });
         return promise;
+    }
+
+    /** Return credentials */
+    getCredentials() {
+        return {
+            serverUrl: this._options.server_url,
+            apiUser: this._options.api_user,
+            apiKey: this._options.api_key,
+        };
     }
 
     /** Return publish options */

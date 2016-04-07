@@ -40,7 +40,7 @@ function queryUserExpression(apiUser) {
 function* startupSaga() {
     try {
         yield showProgress(null, { dismissable: false, message: null });
-        const credentials = yield call(mediator.getCredentials);
+        const credentials = yield call([mediator, mediator.getCredentials]);
         yield configureSharedApiSession(
             credentials.serverUrl,
             credentials.apiUser,

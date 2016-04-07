@@ -119,6 +119,7 @@ function* submitPublish(action) {
             review: true,
             delivery: true,
         });
+        logger.info('Exported media', media);
         const reviewableMedia = media.filter((file) => file.use === 'review');
         const deliverableMedia = media.filter((file) => file.use === 'delivery');
 
