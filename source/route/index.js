@@ -12,6 +12,7 @@ import CreateProjectView from 'view/create_project';
 import PublishContextBrowser from 'container/publish_context_browser';
 import PublishView from 'view/publish';
 import ContextView from 'view/context';
+import { importReset } from 'action/import';
 import { publishLoad } from 'action/publish';
 import BrowseAllView from 'view/browse_all';
 import MyTasksView from 'view/my_tasks';
@@ -33,7 +34,9 @@ export default (store) => (
         <Route path="/context/:context" component={ContextView}>
             <IndexRedirect to="notes" />
             <Route path="notes" component={ExampleView} />
-            <Route path="versions" component={VersionsView} />
+            <Route path="versions" component={VersionsView}
+                onEnter={dispatchOnEnter(store.dispatch, importReset)}
+            />
         </Route>
 
         <Route path="/example" component={ExampleView} />

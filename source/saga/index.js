@@ -3,6 +3,7 @@
 import startupSaga from './startup';
 import { quickReviewSubmitSaga } from './quick_review';
 import { publishLoadSaga, publishSubmitSaga, publishResolveContextSaga } from './publish';
+import { importGetComponentsSaga, importComponentSaga } from './import';
 import { createProjectSaga, createProjectSubmitSaga } from './create_project';
 
 export default [
@@ -13,4 +14,6 @@ export default [
     createProjectSaga,
     createProjectSubmitSaga,
     publishResolveContextSaga,
+    importGetComponentsSaga,
+    importComponentSaga,
 ];

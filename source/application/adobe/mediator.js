@@ -1,4 +1,5 @@
 // :copyright: Copyright (c) 2016 ftrack
+import { loadComponents, resolveComponentPaths } from '../lib/import';
 
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('adobe:mediator');
@@ -11,7 +12,40 @@ const logger = loglevel.getLogger('adobe:mediator');
  */
 export class AdobeMediator {
 
+    /** Return components to import for *options*. */
+    getImportComponents(options) {
+        logger.info('Getting import components for version', options);
+        const components = loadComponents(options.versionId);
+        const resolvedComponents = components.then(resolveComponentPaths);
+        return resolvedComponents;
+    }
 
+    /** Import *component* and resolve on success. */
+    importComponent(component) {
+        const _import = window.top.FT.import;
+        const path = component.path;
+        const meta = {
+            component_id: component.id,
+            version_id: component.version_id,
+            asset_id: component.version.asset_id,
+        };
+        logger.info('Importing component', component);
+        const promise = new Promise((resolve, reject) => {
+            logger.info('Running promise', path, meta);
+            _import.openDocument(path, meta, (error, response) => {
+                logger.info('Open document', error, response);
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(response);
+                }
+            });
+        });
+
+        return promise;
+    }
+
+    /** Get publish options */
     getPublishOptions(options) {
         const exporter = window.top.FT.exporter;
         logger.info('Get publish options', options);

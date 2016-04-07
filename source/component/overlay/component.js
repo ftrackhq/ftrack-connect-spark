@@ -16,7 +16,7 @@ import style from './style';
 function Overlay(props) {
     const {
         className, active, fixed, loader, header, message, error,
-        dissmissable, onDismss, dismissLabel,
+        dismissable, onDismss, dismissLabel,
     } = props;
 
     const _classNames = classNames(
@@ -29,23 +29,25 @@ function Overlay(props) {
     const children = [];
 
     if (loader) {
-        children.push(<ProgressBar type="circular" mode="indeterminate" />);
+        children.push(<ProgressBar key="loader" type="circular" mode="indeterminate" />);
     }
 
     if (header) {
-        children.push(<h3>{header}</h3>);
+        children.push(<h3 key="header">{header}</h3>);
     }
 
     if (message) {
-        children.push(<h6 className={style.message}>{message}</h6>);
+        children.push(<h6 key="message" className={style.message}>{message}</h6>);
     }
 
     if (error) {
-        children.push(<p className={style['error-message']}>Error: {error}</p>);
+        children.push(<p key="error" className={style['error-message']}>Error: {error}</p>);
     }
 
-    if (dissmissable) {
-        children.push(<Button label={dismissLabel} onClick={onDismss} raised />);
+    if (dismissable) {
+        children.push(
+            <Button key="dismiss-button" label={dismissLabel} onClick={onDismss} raised />
+        );
     }
 
     return (
@@ -65,7 +67,7 @@ Overlay.propTypes = {
     header: React.PropTypes.node,
     message: React.PropTypes.node,
     error: React.PropTypes.node,
-    dissmissable: React.PropTypes.bool,
+    dismissable: React.PropTypes.bool,
     onDismss: React.PropTypes.func,
     dismissLabel: React.PropTypes.node,
 };
@@ -78,7 +80,7 @@ Overlay.defaultProps = {
     header: null,
     message: null,
     error: null,
-    dissmissable: false,
+    dismissable: false,
     onDismss: null,
     dismissLabel: 'Close',
 };
