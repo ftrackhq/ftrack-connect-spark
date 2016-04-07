@@ -1,7 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 .category {
-    color: #aaa;
+    color: $color-text-secondary;
     font-style: italic;
     display: block;
 }
@@ -11,12 +11,12 @@
 }
 
 .datetime {
-    color: #aaa;
+    color: $color-text-secondary;
 }
 
 .note-item {
     display: flex;
-    margin-bottom: 5px;
+    margin-bottom: $spacing-small;
 
     .avatar-column {
         width: 60px;
@@ -42,7 +42,7 @@
     }
 
     .attachments-area {
-        margin-top: 10px;
+        margin-top: $spacing;
     }
 }
 
@@ -85,7 +85,7 @@
 
 .attachments-area {
     .images > img {
-        padding: 4px;
+        padding: $spacing-small;
     }
 
     .other {
