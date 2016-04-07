@@ -6,18 +6,12 @@ import { Button } from 'react-toolbox';
 import style from './style.scss';
 import NoteForm from './form.js';
 
-import loglevel from 'loglevel';
-
-const logger = loglevel.getLogger('note:reply');
-
 /** Display a reply button or a note form if *collapsed* is false.
 *
 * The *pending* and *content* props are passed to the note form.
 *
 */
 function ReplyForm({ content, pending, collapsed, onSubmitForm, onHideForm, onShowForm }) {
-    logger.debug('Render reply');
-
     if (!collapsed) {
         return (
             <NoteForm

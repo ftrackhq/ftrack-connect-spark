@@ -7,10 +7,6 @@ import Note from './note.js';
 import NoteForm from './form.js';
 import style from './style.scss';
 
-import loglevel from 'loglevel';
-
-const logger = loglevel.getLogger('note:editable');
-
 /** Editable note component that displays either a note or a note form.
 *
 * Options to edit or delete are displayed if the *note* author is matching the
@@ -23,7 +19,6 @@ const logger = loglevel.getLogger('note:editable');
 function EditableNote(
     { note, collapsed, pending, content, author, onShowForm, onHideForm, onSubmitForm, onRemove }
 ) {
-    logger.debug('Render editable note');
     if (!collapsed) {
         return (
             <NoteForm
