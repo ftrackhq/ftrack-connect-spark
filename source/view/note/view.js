@@ -6,7 +6,10 @@ import loglevel from 'loglevel';
 import { ProgressBar } from 'react-toolbox';
 import Waypoint from 'react-waypoint';
 
-import { openNoteForm, hideNoteForm, submitNoteForm, removeNote, notesLoadNextPage } from 'action/note';
+import {
+    openNoteForm, hideNoteForm, submitNoteForm, removeNote, notesLoadNextPage,
+} from 'action/note';
+
 import components from 'component/note';
 
 const { EditableNote, ReplyForm, NoteForm } = components;
@@ -188,18 +191,19 @@ function NotesList({ items, entity, user, loading, nextOffset, onFetchMore }) {
 
     const content = [
         <NewNoteFormContainer
+            key="new-note-form"
             className={style['new-note-form']}
             entity={entity}
             author={user}
         />,
-        <div className={style['note-list-inner']}>
+        <div key="note-list-inner" className={style['note-list-inner']}>
             {notes}
         </div>,
     ];
 
     if (loading) {
         content.push(
-            <div className={style.loading}>
+            <div key="loading" className={style.loading}>
                 <ProgressBar type="circular" mode="indeterminate" />
             </div>
         );
@@ -209,8 +213,12 @@ function NotesList({ items, entity, user, loading, nextOffset, onFetchMore }) {
         // Only add way point if not loading, there are items already loaded
         // and there are more pages to load.
         notes.push(
-            <Waypoint onEnter={onFetchMore.bind(this, entity, nextOffset)} />
-        );        
+            <Waypoint
+                onEnter={
+                    () => onFetchMore(entity, nextOffset)
+                }
+            />
+        );
     }
 
     return (
@@ -244,13 +252,11 @@ const mapStateToProps = (state) => {
     };
 };
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        onFetchMore: (entity, nextOffset) => {
-            dispatch(notesLoadNextPage(entity.id, nextOffset));
-        },
-    };
-}
+const mapDispatchToProps = (dispatch) => ({
+    onFetchMore: (entity, nextOffset) => {
+        dispatch(notesLoadNextPage(entity.id, nextOffset));
+    },
+});
 
 const NotesListView = connect(
     mapStateToProps,

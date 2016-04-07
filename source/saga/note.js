@@ -94,7 +94,7 @@ function* submitNote(action) {
 
 /** Handle load notes and load next page *action*. */
 function* loadNotes(action) {
-    let offset = 0
+    let offset = 0;
 
     if (action.type === actions.NOTES_LOAD_NEXT_PAGE) {
         offset = action.payload.nextOffset;

@@ -34,7 +34,7 @@ export default function notesReducer(state = {}, action) {
             {},
             state,
             {
-                items: items,
+                items,
                 nextOffset: action.payload.nextOffset,
                 loading: false,
             }

@@ -47,7 +47,7 @@ function Author({ data }) {
 }
 
 Author.propTypes = {
-    data: React.PropTypes.object.isRequired,
+    data: React.PropTypes.object,
 };
 
 /** Note component to display note data. */
