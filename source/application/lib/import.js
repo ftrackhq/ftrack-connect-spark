@@ -32,7 +32,7 @@ export function resolveComponentPaths(components) {
                 });
             },
             () => Promise.resolve({
-                caption: `${component.name}${component.file_type || ''} (failed to resolve)`,
+                caption: `${component.name}${component.file_type || ''} (Unavailable)`,
                 disabled: true,
                 icon: null,
                 data: Object.assign({}, component),
