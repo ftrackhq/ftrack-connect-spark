@@ -4,6 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 import { debounce } from 'lodash/function';
+import { without } from 'lodash/array';
 
 import Input from 'react-toolbox/lib/input';
 import DatePicker from 'react-toolbox/lib/date_picker';
@@ -263,6 +264,12 @@ class QuickReviewView extends React.Component {
         );
     }
 
+    removeCollaborator(item) {
+        this.props.fields.collaborators.onChange(
+            without(this.props.fields.collaborators.value, item)
+        );
+    }
+
     _addNewCollaborator() {
         const email = this.state.collaborator;
         const name = this.state.name;
@@ -287,16 +294,17 @@ class QuickReviewView extends React.Component {
     _renderCollaborators() {
         const collaborators = this.props.fields.collaborators.value;
 
-        if (collaborators) {
+        if (collaborators.length) {
             const items = collaborators.map((item) => {
-                const addCollaborator = this.addCollaborator.bind(this, item);
+                const removeCollaborator = this.removeCollaborator.bind(this, item);
 
                 return (
                     <ListItem
                         avatar={session.thumbnail(item.thumbnail_id, 100)}
                         caption={ item.name }
                         legend={ item.email }
-                        onClick={ addCollaborator }
+                        onClick={ removeCollaborator }
+                        rightIcon="delete"
                     />
                 );
             });
@@ -398,13 +406,11 @@ class QuickReviewView extends React.Component {
                 {
                     collaborators.value.length ?
                     <p className={ style.label }>Collaborators</p> :
-                    ''
+                    null
                 }
                 { this._renderCollaborators() }
                 <Input
-                    label={
-                        collaborators.value.length ? '' : 'Add collaborators'
-                    }
+                    label="Add collaborators"
                     type="text"
                     name="collaborator"
                     {...collaborator}
