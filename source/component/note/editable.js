@@ -31,10 +31,10 @@ function EditableNote(
         );
     }
 
-    let menu = [];
+    let menu = false;
 
     if (author && author.id === note.author.id) {
-        menu = [
+        menu = (
             <IconMenu icon="more_vert" menuRipple>
                 <MenuItem value="edit" icon="edit" caption="Edit"
                     onClick={onShowForm}
@@ -43,7 +43,7 @@ function EditableNote(
                     onClick={onRemove}
                 />
             </IconMenu>,
-        ];
+        );
     }
 
     return (
