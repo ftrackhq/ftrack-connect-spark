@@ -42,7 +42,7 @@ class VersionsView extends React.Component {
         );
 
         let query = session._query(
-            `${queryString} order by asset_id, version, id ` +
+            `${queryString} order by date desc` +
             `offset ${this._offset} limit ${this._limit}`
         );
 
