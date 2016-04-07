@@ -19,8 +19,8 @@ import MyTasksView from 'view/my_tasks';
 import VersionsView from 'view/versions';
 import NotesListView from 'view/note';
 
-function dispatchOnEnter(dispatch, actionCreator, args) {
-    return () => { dispatch(actionCreator(...args)); };
+function dispatchOnEnter(dispatch, actionCreator) {
+    return () => { dispatch(actionCreator()); };
 }
 
 
