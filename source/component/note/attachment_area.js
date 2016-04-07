@@ -8,7 +8,7 @@ import { session } from '../../ftrack_api';
 // Components file a file type in this list will be displayed using an img
 // element.
 const SUPPORTED_IMG_FILE_TYPES = [
-    'png', 'gif', 'jpeg', 'jpg', 'bmp',
+    'png', 'gif', 'jpeg', 'jpg', 'bmp', 'tif', 'tiff',
 ];
 
 /** Attachment area component to display an array of *components*. */
