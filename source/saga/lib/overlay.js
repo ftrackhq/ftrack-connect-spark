@@ -17,14 +17,16 @@ export function* showProgress(header, options = {}) {
 
 
 /** Show completed overlay. */
-export function* showCompletion({ header, message }, callback) {
+export function* showCompletion({ header, message }, callback = () => {}) {
     yield put(overlayShow({
         header,
         message,
         dissmissable: true,
     }));
     yield take(actions.OVERLAY_HIDE);
-    callback();
+    if (callback) {
+        callback();
+    }
 }
 
 /** Show failure overlay. */

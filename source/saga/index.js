@@ -2,9 +2,10 @@
 
 import startupSaga from './startup';
 import { quickReviewSubmitSaga } from './quick_review';
-
 import { publishLoadSaga, publishSubmitSaga, publishResolveContextSaga } from './publish';
 import { notesLoadSaga, notesLoadNextPageSaga, noteSubmitSaga, noteRemoveSaga } from './note';
+import { importGetComponentsSaga, importComponentSaga } from './import';
+import { createProjectSaga, createProjectSubmitSaga } from './create_project';
 
 
 export default [
@@ -16,5 +17,9 @@ export default [
     notesLoadNextPageSaga,
     noteSubmitSaga,
     noteRemoveSaga,
+    createProjectSaga,
+    createProjectSubmitSaga,
     publishResolveContextSaga,
+    importGetComponentsSaga,
+    importComponentSaga,
 ];

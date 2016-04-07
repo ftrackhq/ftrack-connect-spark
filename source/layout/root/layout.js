@@ -4,6 +4,7 @@ import React, { PropTypes } from 'react';
 import ToolboxApp from 'react-toolbox/lib/app';
 
 import ApplicationOverlay from 'container/application_overlay';
+import ApplicationSnackbar from 'container/application_snackbar';
 
 // Include global application styles
 import 'react-toolbox/components/commons.scss';
@@ -15,6 +16,7 @@ function RootLayout({ children }) {
         <ToolboxApp>
             {children}
             <ApplicationOverlay />
+            <ApplicationSnackbar />
         </ToolboxApp>
     );
 }

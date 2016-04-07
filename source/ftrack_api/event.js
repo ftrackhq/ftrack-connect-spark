@@ -184,6 +184,7 @@ export class EventHub {
 
     /** Handle replies. */
     _handleEvent(event) {
+        this.logger.debug('Event received', event);
         const resolve = this._replyCallbacks[event.inReplyToEvent];
         if (resolve) {
             resolve(event);

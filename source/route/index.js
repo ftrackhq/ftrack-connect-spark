@@ -12,6 +12,7 @@ import CreateProjectView from 'view/create_project';
 import PublishContextBrowser from 'container/publish_context_browser';
 import PublishView from 'view/publish';
 import ContextView from 'view/context';
+import { importReset } from 'action/import';
 import { publishLoad } from 'action/publish';
 import { notesLoad } from 'action/note';
 import BrowseAllView from 'view/browse_all';
@@ -39,7 +40,9 @@ export default (store) => (
                     ({ params }) => store.dispatch(notesLoad(params.context))
                 }
             />
-            <Route path="versions" component={VersionsView} />
+            <Route path="versions" component={VersionsView}
+                onEnter={dispatchOnEnter(store.dispatch, importReset)}
+            />
         </Route>
 
         <Route path="/example" component={ExampleView} />
