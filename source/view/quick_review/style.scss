@@ -1,7 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 .user {
-    background-color: $color-dark-300;
     padding: 10px;
 }
 
@@ -14,4 +13,8 @@
     font-size: $input-field-font-size;
     line-height: $input-field-font-size;
     color: $input-text-label-color;
+}
+
+.result {
+    background-color: $color-dark-300;
 }

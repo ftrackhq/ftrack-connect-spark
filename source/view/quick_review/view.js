@@ -59,7 +59,10 @@ function ResultList({ items, onClick }) {
         });
 
         return (
-            <List selectable ripple>
+            <List
+                selectable
+                ripple
+            >
                 { result }
             </List>
         );
@@ -81,10 +84,8 @@ class QuickReviewView extends React.Component {
     constructor() {
         super();
         this.state = {
-            collaborator: '',
             availableCollaborators: [],
             name: '',
-            helpText: '',
         };
         this._onCancelClick = this._onCancelClick.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
@@ -98,6 +99,7 @@ class QuickReviewView extends React.Component {
         this.addCollaborator = this.addCollaborator.bind(this);
         this._changeName = this._changeName.bind(this);
         this._addNewCollaborator = this._addNewCollaborator.bind(this);
+        this._renderCollaborators = this._renderCollaborators.bind(this);
 
         const _projects = session._query(
             'select id, full_name from Project where status is "active"'
@@ -159,6 +161,8 @@ class QuickReviewView extends React.Component {
             });
         }
 
+        this.props.fields.collaborator.onChange(value);
+
         let name = '';
         if (value.includes('@')) {
             name = guessName(value);
@@ -166,10 +170,10 @@ class QuickReviewView extends React.Component {
 
         this.setState({
             name,
-            collaborator: value,
         });
     }
 
+    /** Load collaborators from server based on *value*. */
     _loadCollaborators(value) {
         const inviteeQuery = (
             'select name, email from ReviewSessionInvitee where name ' +
@@ -217,7 +221,9 @@ class QuickReviewView extends React.Component {
             }
 
             Object.keys(results).forEach((email) => {
-                collaborators.push(results[email]);
+                if (!this.collaboratorExists(email)) {
+                    collaborators.push(results[email]);
+                }
             });
 
             this.setState({
@@ -226,28 +232,18 @@ class QuickReviewView extends React.Component {
         });
     }
 
-    _renderList(collaborators) {
-        const result = collaborators.map((item) => {
-            const addCollaborator = this.addCollaborator.bind(this, item);
+    /** Check if a collaborator already exists. */
+    collaboratorExists(email) {
+        const exists = this.props.fields.collaborators.value.find(
+            collaborator => collaborator.email === email
+        );
 
-            return (
-                <ListItem
-                    avatar={session.thumbnail(item.thumbnail_id, 100)}
-                    caption={ item.name }
-                    legend={ item.email }
-                    onClick={ addCollaborator }
-                />
-            );
-        });
-
-        return result;
+        return exists;
     }
 
     addCollaborator(item) {
         // User already exists.
-        const exists = this.props.fields.collaborators.value.find(
-            collaborator => collaborator.email === item.email
-        );
+        const exists = this.collaboratorExists(item.email);
 
         // Clear form.
         this.setState({
@@ -260,6 +256,10 @@ class QuickReviewView extends React.Component {
 
         this.props.fields.collaborators.onChange(
             this.props.fields.collaborators.value.concat([item])
+        );
+
+        this.props.fields.collaborator.onChange(
+            ''
         );
     }
 
@@ -275,7 +275,6 @@ class QuickReviewView extends React.Component {
 
         this.setState({
             name: '',
-            collaborator: '',
         });
     }
 
@@ -285,24 +284,52 @@ class QuickReviewView extends React.Component {
         });
     }
 
+    _renderCollaborators() {
+        const collaborators = this.props.fields.collaborators.value;
+
+        if (collaborators) {
+            const items = collaborators.map((item) => {
+                const addCollaborator = this.addCollaborator.bind(this, item);
+
+                return (
+                    <ListItem
+                        avatar={session.thumbnail(item.thumbnail_id, 100)}
+                        caption={ item.name }
+                        legend={ item.email }
+                        onClick={ addCollaborator }
+                    />
+                );
+            });
+
+            return (
+                <List selectable ripple>
+                    { items }
+                </List>
+            );
+        }
+
+        return false;
+    }
+
     renderResult(collaborators) {
         const result = [];
 
         if (collaborators.length) {
             result.push(
                 <ResultList
+                    className={ style.result }
                     items={ this.state.availableCollaborators }
                     onClick={this.addCollaborator}
                 />
             );
         } else if (this.state.name !== '') {
             result.push(
-                <div>
+                <div className={ style.user }>
                     <p className="text-faded">
                         Invite {this.state.name}? {this.state.name} will
                         automatically recieve an invitation email.
                     </p>
-                    <div className={ style.user }>
+                    <div>
                         <Input
                             value={ this.state.name }
                             onChange={ this._changeName }
@@ -318,25 +345,31 @@ class QuickReviewView extends React.Component {
                 </div>
             );
         } else {
-            result.push(
-                <p className="text-more-faded">
-                    Search for a person by name or email address, or enter an
-                    email address to invite someone new.
-                </p>
+            if (this.props.fields.collaborator.active) {
+                return (
+                    <p className="text-more-faded">
+                        Search for a person by name or email address, or enter an
+                        email address to invite someone new.
+                    </p>
+                );
+            }
+        }
+
+        if (result) {
+            return (
+                <div className={ style.result }>
+                    { result }
+                </div>
             );
         }
 
-        return (
-            <div>
-                { result }
-            </div>
-        );
+        return '';
     }
 
     render() {
         const {
             fields: {
-                name, project, collaborators, description, expiryDate,
+                name, project, collaborator, collaborators, description, expiryDate,
             },
         } = this.props;
 
@@ -363,19 +396,19 @@ class QuickReviewView extends React.Component {
                     error={this._errorMessage(name)}
                 />
                 {
-                    this.props.fields.collaborators.value.length ?
+                    collaborators.value.length ?
                     <p className={ style.label }>Collaborators</p> :
                     ''
                 }
-                <List selectable ripple>
-                    { this._renderList(this.props.fields.collaborators.value) }
-                </List>
+                { this._renderCollaborators() }
                 <Input
-                    label={ this.props.fields.collaborators.value.length ? '' : 'Collaborators' }
+                    label={
+                        collaborators.value.length ? '' : 'Add collaborators'
+                    }
                     type="text"
-                    name="collaborators"
-                    error={this._errorMessage(collaborators)}
-                    value={this.state.collaborator}
+                    name="collaborator"
+                    {...collaborator}
+                    error={this._errorMessage(collaborator)}
                     onChange={this._onChange}
                     autoComplete="off"
                 />
@@ -435,9 +468,11 @@ QuickReviewView = connect(
 QuickReviewView = reduxForm({
     form: 'quickReview',
     fields: [
-        'name', 'project', 'collaborators', 'description', 'expiryDate',
+        'name', 'project', 'collaborator', 'collaborators', 'description',
+        'expiryDate',
     ],
     initialValues: {
+        collaborator: '',
         collaborators: [],
     },
     validateForm,
