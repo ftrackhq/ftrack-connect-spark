@@ -1,10 +1,10 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-import AttachmentArea from './attachment_area.js';
-import EditableNote from './editable.js';
-import NoteForm from './form.js';
-import ReplyForm from './reply.js';
-import Note from './note.js';
+import AttachmentArea from './attachment_area';
+import EditableNote from './editable';
+import NoteForm from './form';
+import ReplyForm from './reply';
+import Note from './note';
 
 export default {
     AttachmentArea,
