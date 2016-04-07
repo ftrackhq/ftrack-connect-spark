@@ -1,4 +1,5 @@
 // :copyright: Copyright (c) 2016 ftrack
+import { loadComponents, resolveComponentPaths } from '../lib/import';
 
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('adobe:mediator');
@@ -13,7 +14,40 @@ import AbstractMediator from '../abstract_mediator';
  */
 export class AdobeMediator extends AbstractMediator {
 
+    /** Return components to import for *options*. */
+    getImportComponents(options) {
+        logger.info('Getting import components for version', options);
+        const components = loadComponents(options.versionId);
+        const resolvedComponents = components.then(resolveComponentPaths);
+        return resolvedComponents;
+    }
 
+    /** Import *component* and resolve on success. */
+    importComponent(component) {
+        const _import = window.top.FT.import;
+        const path = component.path;
+        const meta = {
+            component_id: component.id,
+            version_id: component.version_id,
+            asset_id: component.version.asset_id,
+        };
+        logger.info('Importing component', component);
+        const promise = new Promise((resolve, reject) => {
+            logger.info('Running promise', path, meta);
+            _import.openDocument(path, meta, (error, response) => {
+                logger.info('Open document', error, response);
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(response);
+                }
+            });
+        });
+
+        return promise;
+    }
+
+    /** Get publish options */
     getPublishOptions(options) {
         const exporter = window.top.FT.exporter;
         logger.info('Get publish options', options);
@@ -80,6 +114,25 @@ export class AdobeMediator extends AbstractMediator {
 
         return promise;
     }
+
+    /** Return ftrack API credentials. */
+    getCredentials() {
+        const util = window.top.FT.util;
+        logger.info('Reading credentials from adobe mediator.');
+
+        const promise = new Promise((resolve, reject) => {
+            util.getCredentials((error, credentials) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(credentials);
+                }
+            });
+        });
+
+        return promise;
+    }
+
 }
 
 const adobeMediator = new AdobeMediator();

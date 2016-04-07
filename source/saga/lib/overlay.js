@@ -5,26 +5,28 @@ import actions, { overlayShow, overlayHide } from 'action/overlay';
 
 
 /** Dispatch a show overlay action with *header* and a progress-style layout. */
-export function* showProgress(header) {
-    yield put(overlayShow({
+export function* showProgress(header, options = {}) {
+    yield put(overlayShow(Object.assign({
         header,
         message: 'This may take a few minutes, please keep this window open until finished.',
         loader: true,
         dissmissable: true,
         dismissLabel: 'Cancel',
-    }));
+    }, options)));
 }
 
 
 /** Show completed overlay. */
-export function* showCompletion({ header, message }, callback) {
+export function* showCompletion({ header, message }, callback = () => {}) {
     yield put(overlayShow({
         header,
         message,
         dissmissable: true,
     }));
     yield take(actions.OVERLAY_HIDE);
-    callback();
+    if (callback) {
+        callback();
+    }
 }
 
 /** Show failure overlay. */
