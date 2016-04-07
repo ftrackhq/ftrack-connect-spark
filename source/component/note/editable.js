@@ -26,6 +26,7 @@ function EditableNote(
                 content={content}
                 onClickOutside={onHideForm}
                 onSubmit={onSubmitForm}
+                autoFocus
                 edit
             />
         );

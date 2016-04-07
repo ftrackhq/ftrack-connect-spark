@@ -19,6 +19,7 @@ function ReplyForm({ content, pending, collapsed, onSubmitForm, onHideForm, onSh
                 pending={pending}
                 onClickOutside={onHideForm}
                 onSubmit={onSubmitForm}
+                autoFocus
             />
         );
     }

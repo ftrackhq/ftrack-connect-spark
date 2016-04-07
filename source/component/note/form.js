@@ -38,7 +38,7 @@ class _NoteForm extends React.Component {
 
     render() {
         const content = this.state.content;
-        const { collapsed, pending, edit } = this.props;
+        const { collapsed, pending, edit, autoFocus } = this.props;
         const _classNames = [style['note-form']];
 
         if (this.props.className) {
@@ -60,6 +60,7 @@ class _NoteForm extends React.Component {
                     onChange={
                         (value) => this.setState({ content: value })
                     }
+                    autoFocus={autoFocus === true}
                     onFocus={
                         () => {
                             if (collapsed) {
@@ -103,6 +104,7 @@ _NoteForm.propTypes = {
     edit: React.PropTypes.bool,
     collapsed: React.PropTypes.bool,
     pending: React.PropTypes.bool,
+    autoFocus: React.PropTypes.bool,
     author: React.PropTypes.object,
 };
 
