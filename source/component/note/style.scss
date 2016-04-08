@@ -82,11 +82,37 @@
 }
 
 .attachments-area {
-    .images > img {
-        padding: $spacing-small;
+    .images {
+        .image {
+            height: 71px;
+            width: 126px;
+            margin: 0 $spacing-small $spacing-tiny 0;
+            cursor: pointer;
+            display: inline-block;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
     }
 
     .other {
+        p {
+            display: flex;
+            align-items: center;
+            color: $color-text-secondary;
 
+            .attachment-icon {
+                font-size: $font-size-big;
+                margin-right: $spacing-tiny;
+            }
+
+            .file-name:hover {
+                text-decoration: underline;
+            }
+
+            .file-name {
+                cursor: pointer;
+            }
+        }
     }
 }
