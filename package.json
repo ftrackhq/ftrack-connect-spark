@@ -6,8 +6,7 @@
     "main": "source/index.js",
     "scripts": {
         "clean": "rimraf dist/*",
-        "copy": "copyfiles -f ./source/index.html ./source/favicon.ico ./dist & copyfiles -f ./source/application/adobe/index.html ./dist/adobe & copyfiles -f ./source/application/cinema4d/index.html ./dist/cinema4d ",
-        "dist": "npm run copy & webpack --env=dist",
+        "dist": "webpack --env=dist",
         "lint": "eslint ./source",
         "posttest": "npm run lint",
         "release:major": "npm version major && npm publish && git push --follow-tags",
@@ -35,6 +34,7 @@
         "babel-preset-react": "^6.0.15",
         "babel-preset-react-hmre": "^1.1.0",
         "chai": "^3.2.0",
+        "copy-webpack-plugin": "^1.1.1",
         "copyfiles": "^0.2.1",
         "css-loader": "^0.23.0",
         "eslint": "^2.2.0",
