@@ -31,9 +31,11 @@ function Header(props) {
         <AppBar flat className={_classNames}>
             {props.back ? backButton : null}
             <h4 className={style.title}>{props.title}</h4>
-            {props.centerItems}
+            <h4 className={style.center}>
+                {props.centerItems}
+            </h4>
             <div>
-            {props.rightButton}
+            {props.rightItems}
             </div>
         </AppBar>
     );
@@ -47,16 +49,16 @@ Header.propTypes = {
     className: React.PropTypes.string,
     color: React.PropTypes.string,
     title: React.PropTypes.node,
-    rightButton: React.PropTypes.node,
+    rightItems: React.PropTypes.arrayOf(React.PropTypes.node),
     back: React.PropTypes.bool,
-    centerItems: React.PropTypes.array,
+    centerItems: React.PropTypes.arrayOf(React.PropTypes.node),
 };
 
 Header.defaultProps = {
     color: 'primary',
     className: '',
     title: null,
-    rightButton: null,
+    rightItems: null,
     back: false,
     centerItems: [],
 };

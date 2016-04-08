@@ -126,7 +126,7 @@ export class PreviewMedia extends React.Component {
         );
 
         let centerItems = (
-            <h4 className={style['media-control']}>
+            <div className={style['media-control']}>
                 <span
                     className={style['control-button']}
                     onClick={this.handleChange.bind(this, index - 1)}
@@ -136,7 +136,7 @@ export class PreviewMedia extends React.Component {
                     className={style['control-button']}
                     onClick={this.handleChange.bind(this, index + 1)}
                 >&#10095;</span>
-            </h4>
+            </div>
         );
 
         let child = children[index];
@@ -150,7 +150,7 @@ export class PreviewMedia extends React.Component {
                 <Header
                     className={style.header}
                     title={child.props.name}
-                    rightButton={[downloadButton, closeButton]}
+                    rightItems={[downloadButton, closeButton]}
                     centerItems={centerItems}
                 />
                 <div className={style.body}>

@@ -15,7 +15,7 @@ const navigateBack = () => {
 const rightButton = <IconButton icon="close" onClick={navigateBack} />;
 
 function ClosableHeader(props) {
-    return <Header rightButton={rightButton} {...props} />;
+    return <Header rightItems={rightButton} {...props} />;
 }
 
 export default ClosableHeader;

@@ -12,3 +12,11 @@
 
 }
 
+.center {
+    position: absolute;
+    display: block;
+    line-height: $appbar-height;
+    right: 0;
+    left: 0;
+    text-align: center;
+}
