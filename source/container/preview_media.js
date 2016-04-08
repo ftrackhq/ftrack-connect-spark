@@ -47,7 +47,6 @@ PreviewMediaComponents.propTypes = {
     visible: React.PropTypes.bool,
     onDismiss: React.PropTypes.func.isRequired,
     onDownload: React.PropTypes.func.isRequired,
-    onChange: React.PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state) {

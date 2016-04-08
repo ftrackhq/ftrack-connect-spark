@@ -1,11 +1,13 @@
 
 import React from 'react';
 import { IconButton } from 'react-toolbox';
+import Mousetrap from 'mousetrap';
 
-import style from './style';
 import Header from 'component/header';
 
-import Mousetrap from 'mousetrap';
+import style from './style';
+import PreviewImage from './image';
+
 
 export class PreviewMedia extends React.Component {
 
@@ -49,9 +51,10 @@ export class PreviewMedia extends React.Component {
     render() {
         const { children, onDismiss, onDownload } = this.props;
         const { index } = this.state;
-        const closeButton = <IconButton icon="close" onClick={onDismiss} />;
+        const closeButton = <IconButton key="close" icon="close" onClick={onDismiss} />;
         const downloadButton = (
             <IconButton
+                key="download"
                 icon="file_download"
                 label="Download"
                 onClick={
@@ -104,7 +107,7 @@ export class PreviewMedia extends React.Component {
 }
 
 PreviewMedia.propTypes = {
-    children: React.PropTypes.arrayOf(Image),
+    children: React.PropTypes.arrayOf(React.PropTypes.node),
     defaultIndex: React.PropTypes.number,
     onDismiss: React.PropTypes.func.isRequired,
     onDownload: React.PropTypes.func.isRequired,

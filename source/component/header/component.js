@@ -49,9 +49,9 @@ Header.propTypes = {
     className: React.PropTypes.string,
     color: React.PropTypes.string,
     title: React.PropTypes.node,
-    rightItems: React.PropTypes.arrayOf(React.PropTypes.node),
+    rightItems: React.PropTypes.node,
     back: React.PropTypes.bool,
-    centerItems: React.PropTypes.arrayOf(React.PropTypes.node),
+    centerItems: React.PropTypes.node,
 };
 
 Header.defaultProps = {
