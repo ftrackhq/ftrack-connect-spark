@@ -16,6 +16,10 @@ const config = Object.assign({}, baseConfig, {
             'babel-polyfill',
             path.join(__dirname, '../source/application/adobe/index'),
         ],
+        cinema4d: [
+            'babel-polyfill',
+            path.join(__dirname, '../source/application/cinema4d/index'),
+        ],
     },
     cache: false,
     devtool: 'sourcemap',
