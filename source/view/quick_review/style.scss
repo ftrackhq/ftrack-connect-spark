@@ -26,4 +26,18 @@
 .selected-collaborator-item {
     margin-right: $spacing-small;
     margin-bottom: $spacing;
+
+    padding-left: 0;
+
+    > [data-react-toolbox="avatar"] {
+        height: $chip-height;
+        margin-right: $chip-icon-margin-right;
+        vertical-align: middle;
+        width: $chip-height;
+
+        > span {
+            font-size: $chip-icon-font-size;
+            line-height: $chip-height;
+        }
+    }
 }

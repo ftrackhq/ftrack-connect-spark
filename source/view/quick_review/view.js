@@ -39,7 +39,7 @@ const validateForm = (values) => {
         }
     }
 
-    if (!values.collaborators.length) {
+    if (!values.collaborators || !values.collaborators.length) {
         errors.collaborators = 'Required';
     }
 
@@ -156,7 +156,7 @@ class QuickReviewView extends React.Component {
     }
 
     _onChange(value) {
-        if (value.length >= 3) {
+        if (value.length >= 1) {
             this._loadCollaborators(value);
         } else {
             this.setState({
@@ -296,7 +296,7 @@ class QuickReviewView extends React.Component {
     _renderCollaborators() {
         const collaborators = this.props.fields.collaborators.value;
 
-        if (collaborators.length) {
+        if (collaborators && collaborators.length) {
             const items = collaborators.map((item) => {
                 const removeCollaborator = this.removeCollaborator.bind(this, item);
 
@@ -402,7 +402,7 @@ class QuickReviewView extends React.Component {
                     error={this._errorMessage(name)}
                 />
                 {
-                    collaborators.value.length ?
+                    collaborators.value && collaborators.value.length ?
                     <p className={ style.label }>Collaborators</p> :
                     null
                 }
