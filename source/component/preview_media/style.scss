@@ -17,6 +17,8 @@
     visibility: visible;
 
     .header {
+        background-color: $color-purple;
+
         h4:first-child {
             overflow: hidden;
             text-overflow: ellipsis;
