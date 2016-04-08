@@ -273,7 +273,7 @@ class QuickReviewView extends React.Component {
     }
 
     _addNewCollaborator() {
-        const email = this.state.collaborator;
+        const email = this.props.fields.collaborator.value;
         const name = this.state.name;
 
         this.addCollaborator({
