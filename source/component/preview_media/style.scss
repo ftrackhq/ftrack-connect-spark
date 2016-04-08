@@ -1,0 +1,67 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+@import "../../style/_theme.scss";
+
+.preview-media {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    background: rgba($color-background, 0.9);
+
+    transition: transform 0.1s ease;
+    transform: translate3d(0,0,0);
+
+    visibility: visible;
+
+    .header {
+        background-color: $color-purple;
+
+        h4:first-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 33%;
+        }
+
+        .media-control {
+            user-select: none;
+
+            .control-button {
+                padding: 5px;
+                cursor: pointer;
+            }
+        }
+    }
+
+
+    .body {
+        flex: 1;
+        height: 100%;
+        width: 100%;
+
+        padding: $spacing;
+
+        display: flex;
+        justify-content: space-around;
+
+        .preview-image {
+            flex: 1;
+            margin: auto;
+            width: 100%;
+            height: calc(100% - #{$appbar-height});
+            background-position: center;
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+    }
+}
+
+.loading {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}

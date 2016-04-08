@@ -1,3 +1,6 @@
+// TODO: Consider renaming this class and module since it is issueing a
+// browser history go back. I wanted to use it for other purposes.
+
 import React from 'react';
 
 import { IconButton } from 'react-toolbox';
@@ -12,7 +15,7 @@ const navigateBack = () => {
 const rightButton = <IconButton icon="close" onClick={navigateBack} />;
 
 function ClosableHeader(props) {
-    return <Header rightButton={rightButton} {...props} />;
+    return <Header rightItems={rightButton} {...props} />;
 }
 
 export default ClosableHeader;

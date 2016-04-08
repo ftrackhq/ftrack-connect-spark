@@ -55,7 +55,7 @@ class HomeHeader extends React.Component {
         );
 
         return (
-            <Header {...this.props} rightButton={shareButton} color="dark-100" />
+            <Header {...this.props} rightItems={shareButton} color="dark-100" />
         );
     }
 }
