@@ -1,0 +1,30 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+.parent-note-item {
+    margin-bottom: 30px;
+}
+
+.parent-note-tail {
+    margin-left: 60px;
+}
+
+.note-list {
+    display: flex;
+    flex-direction: column;
+    font-size: $font-size-small;
+    padding: 20px;
+
+    > .new-note-form {
+        margin-bottom: 15px;
+    }
+}
+
+.replies {
+    margin-top: $spacing-small;
+    margin-bottom: $spacing;
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+}
