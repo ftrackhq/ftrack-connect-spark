@@ -28,7 +28,7 @@ function PreviewMediaComponents(props) {
                             key={component.id}
                             url={session.thumbnail(component.id, 2048)}
                             name={`${component.name}${component.file_type}`}
-                            downloadUrl={component.id}
+                            downloadUrl={session.getComponent(component.id)}
                         />
                     );
                 }
@@ -55,7 +55,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        onDownload: (componentId) => dispatch(download(componentId)),
+        onDownload: (downloadUrl) => {
+            window.location = downloadUrl;
+        },
         onDismiss: () => dispatch(hidePreviewMedia()),
     };
 }

@@ -5,6 +5,8 @@ import React from 'react';
 import style from './style.scss';
 import { session } from '../../ftrack_api';
 
+import FontIcon from 'react-toolbox/lib/font_icon';
+
 // Components file a file type in this list will be displayed using an img
 // element.
 const SUPPORTED_IMG_FILE_TYPES = [
@@ -34,7 +36,8 @@ function AttachmentArea({ components, onAttachmentClick }) {
                             function() {
                                 onAttachmentClick(
                                     component.id,
-                                    mediaComponents
+                                    mediaComponents,
+                                    true
                                 );
                             }
                         }
@@ -45,7 +48,25 @@ function AttachmentArea({ components, onAttachmentClick }) {
                     />);
             } else {
                 other.push(
-                    <p key={component.id}>{`${component.name}${component.file_type}`}</p>
+                    <p
+                        key={component.id}
+                    >
+                        <FontIcon className={style['attachment-icon']} value="attachment" />
+                        <span
+                            className={style['file-name']}
+                            onClick={
+                                function() {
+                                    onAttachmentClick(
+                                        component.id,
+                                        mediaComponents,
+                                        false
+                                    );
+                                }
+                            }
+                        >
+                            {`${component.name}${component.file_type}`}
+                        </span>
+                    </p>
                 );
             }
         }

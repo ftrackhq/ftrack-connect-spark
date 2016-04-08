@@ -32,7 +32,9 @@ function Header(props) {
             {props.back ? backButton : null}
             <h4 className={style.title}>{props.title}</h4>
             {props.centerItems}
+            <div>
             {props.rightButton}
+            </div>
         </AppBar>
     );
 }

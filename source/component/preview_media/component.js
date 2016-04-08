@@ -108,6 +108,18 @@ export class PreviewMedia extends React.Component {
         const { children, onDismiss, onDownload } = this.props;
         const { index } = this.state;
         const closeButton = <IconButton icon="close" onClick={onDismiss} />;
+        const downloadButton = (
+            <IconButton
+                icon="file_download"
+                label="Download"
+                onClick={
+                    () => {
+                        const child = children[this.state.index];
+                        onDownload(child.props.downloadUrl);
+                    }
+                }
+            />
+        );
 
         let centerItems = (
             <h4 className={style['media-control']}>
@@ -130,18 +142,11 @@ export class PreviewMedia extends React.Component {
         }
 
         return (
-            <div
-                className={style['preview-media']}
-                onKeyDown={
-                    (event) => {
-                        debugger;
-                    }
-                }
-            >
+            <div className={style['preview-media']}>
                 <Header
                     className={style.header}
                     title={child.props.name}
-                    rightButton={closeButton}
+                    rightButton={[downloadButton, closeButton]}
                     centerItems={centerItems}
                 />
                 <div className={style.body}>
