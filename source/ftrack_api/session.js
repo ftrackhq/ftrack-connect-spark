@@ -240,6 +240,17 @@ export class Session {
         return request;
     }
 
+    getComponent(componentId) {
+        if (!componentId) {
+            return `${this._serverUrl}/img/thumbnail2.png`;
+        }
+
+        return (
+            `${this._serverUrl}/component/get?id=${componentId}` +
+            `&username=${this._apiUser}&apiKey=${this._apiKey}`
+        );
+    }
+
     /** Return thumbnail URL for *componentId* with *size*. */
     thumbnail(componentId, size = 300) {
         if (!componentId) {

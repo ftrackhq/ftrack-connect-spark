@@ -10,6 +10,8 @@ import {
     openNoteForm, hideNoteForm, submitNoteForm, removeNote, notesLoadNextPage,
 } from 'action/note';
 
+import { openPreviewMedia } from 'action/preview_media';
+
 import components from 'component/note';
 
 const { EditableNote, ReplyForm, NoteForm } = components;
@@ -47,6 +49,15 @@ function editableNoteDispatchToProps() {
                 dispatch(submitNoteForm(formKey, data));
             },
             onRemove: () => dispatch(removeNote(props.note.id)),
+            onAttachmentClick: function(componentId, components) {
+                const index = components.findIndex(
+                    function(component) {
+                        return component.id === componentId;
+                    }
+                );
+                
+                dispatch(openPreviewMedia(Math.max(index, 0), components));
+            }
         };
     };
 }

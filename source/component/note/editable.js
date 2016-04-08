@@ -16,9 +16,12 @@ import style from './style.scss';
 * props are passed ot the note form.
 *
 */
-function EditableNote(
-    { note, collapsed, pending, content, author, onShowForm, onHideForm, onSubmitForm, onRemove }
-) {
+function EditableNote(props) {
+    const {
+        note, collapsed, pending, content, author, onShowForm, onHideForm,
+        onSubmitForm, onRemove, onAttachmentClick
+    } = props;
+
     if (!collapsed) {
         return (
             <NoteForm
@@ -49,7 +52,12 @@ function EditableNote(
 
     return (
         <div className={style['editable-note-container']}>
-            <Note data={note} key={note.id} category />
+            <Note
+                data={note}
+                key={note.id}
+                category
+                onAttachmentClick={onAttachmentClick}
+            />
             <div className={style['icon-menu']}>
                 {menu}
             </div>
@@ -66,6 +74,7 @@ EditableNote.propTypes = {
     onHideForm: React.PropTypes.func,
     onSubmitForm: React.PropTypes.func,
     onRemove: React.PropTypes.func,
+    onAttachmentClick: React.PropTypes.func,
     author: React.PropTypes.object,
 };
 

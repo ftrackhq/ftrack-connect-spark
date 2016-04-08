@@ -8,6 +8,15 @@ export default function previewMediaReducer(state = {}, action) {
 
     if (action.type === types.OPEN_PRVIEW_MEDIA) {
 
+        nextState = Object.assign(
+            {}, state,
+            {
+                visible: true,
+                index: action.payload.index,
+                components: action.payload.components,
+            }
+        );
+
     } else if (action.type === types.DOWNLOAD_PRVIEW_MEDIA) {
 
     } else if (action.type === types.HIDE_PREVIEW_MEDIA) {

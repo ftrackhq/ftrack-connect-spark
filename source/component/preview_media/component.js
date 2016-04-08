@@ -8,7 +8,7 @@ import Header from 'component/header';
 import Mousetrap from 'mousetrap';
 
 
-class PreviewImage extends React.Component {
+export class PreviewImage extends React.Component {
 
     constructor() {
         super()
@@ -64,15 +64,23 @@ PreviewImage.propTypes = {
 };
 
 
-class PreviewMedia extends React.Component {
+export class PreviewMedia extends React.Component {
+
+    constructor(props) {
+        super()
+
+        this.state = {
+            index: props.defaultIndex,
+        };
+    }
 
     componentWillMount() {
         Mousetrap.bind('esc', this.props.onDismiss);
         Mousetrap.bind(
-            'left', () => this.handleChange(this.props.index - 1)
+            'left', () => this.handleChange(this.state.index - 1)
         );
         Mousetrap.bind(
-            'right', () => this.handleChange(this.props.index + 1)
+            'right', () => this.handleChange(this.state.index + 1)
         );
     }
 
@@ -93,18 +101,15 @@ class PreviewMedia extends React.Component {
             adjustedIndex = 0;
         }
 
-        this.props.onChange(adjustedIndex);
+        this.setState({index: adjustedIndex});
     }
 
     render() {
-        const { children, visible, index, onDismiss, onDownload, onChange } = this.props;
+        const { children, onDismiss, onDownload } = this.props;
+        const { index } = this.state;
         const closeButton = <IconButton icon="close" onClick={onDismiss} />;
 
-        if (!visible) {
-            return null;
-        }
-
-        const centerItems = (
+        let centerItems = (
             <h4 className={style['media-control']}>
                 <span
                     className={style['control-button']}
@@ -118,7 +123,11 @@ class PreviewMedia extends React.Component {
             </h4>
         );
 
-        const child = children[index];
+        let child = children[index];
+        if (!child) {
+            child = <div>No media to show...</div>;
+            centerItems = '';
+        }
 
         return (
             <div
@@ -145,22 +154,12 @@ class PreviewMedia extends React.Component {
 
 PreviewMedia.propTypes = {
     children: React.PropTypes.arrayOf(Image),
-    index: React.PropTypes.number,
-    visible: React.PropTypes.bool,
+    defaultIndex: React.PropTypes.number,
     onDismiss: React.PropTypes.func.isRequired,
     onDownload: React.PropTypes.func.isRequired,
-    onChange: React.PropTypes.func.isRequired,
 };
 
 PreviewMedia.defaultProps = {
-    children: [
-        <PreviewImage url="https://i.ytimg.com/vi/tntOCGkgt98/maxresdefault.jpg" name="Cat1.png" />,
-        <PreviewImage url="http://sites.psu.edu/siowfa15/wp-content/uploads/sites/29639/2015/10/cat.jpg" name="Cat2.jpg" />,
-        <PreviewImage url="http://www.factslides.com/imgs/black-cat.jpg" name="Cat3 is here.jpg" />,
-        <PreviewImage url="http://i.kinja-img.com/gawker-media/image/upload/s--gRG2YWja--/efg4piwisx1tcco4byit.png" name="Small.jpg" />
-    ],
-    index: 0,
-    visible: true,
+    children: [],
+    defaultIndex: 0,
 };
-
-export default PreviewMedia;

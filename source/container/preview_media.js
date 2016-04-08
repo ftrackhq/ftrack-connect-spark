@@ -1,7 +1,52 @@
 
+import React from 'react';
 import { connect } from 'react-redux';
+
 import { download, hidePreviewMedia, changeActive } from 'action/preview_media';
-import PreviewMedia from 'component/preview_media';
+import { PreviewMedia, PreviewImage } from 'component/preview_media';
+import { session } from '../ftrack_api';
+
+function PreviewMediaComponents(props) {
+
+    const { components, visible, index, onDismiss, onDownload, onChange } = props;
+
+    if (!visible) {
+        return <span/>;
+    }
+
+    return (
+        <PreviewMedia
+            onDismiss={onDismiss}
+            onDownload={onDownload}
+            defaultIndex={index}
+        >
+        {
+            components.map(
+                component => {
+                    return (
+                        <PreviewImage
+                            key={component.id}
+                            url={session.thumbnail(component.id, 2048)}
+                            name={`${component.name}${component.file_type}`}
+                            downloadUrl={component.id}
+                        />
+                    );
+                }
+            )
+        }
+        </PreviewMedia>
+    )
+
+}
+
+PreviewMediaComponents.propTypes = {
+    components: React.PropTypes.array,
+    index: React.PropTypes.number,
+    visible: React.PropTypes.bool,
+    onDismiss: React.PropTypes.func.isRequired,
+    onDownload: React.PropTypes.func.isRequired,
+    onChange: React.PropTypes.func.isRequired,
+};
 
 function mapStateToProps(state) {
     const previewMediaState = state.screen.preview_media || {};
@@ -12,13 +57,12 @@ function mapDispatchToProps(dispatch) {
     return {
         onDownload: (componentId) => dispatch(download(componentId)),
         onDismiss: () => dispatch(hidePreviewMedia()),
-        onChange: (index) => dispatch(changeActive(index)),
     };
 }
 
 const PreviewMediaContainer = connect(
     mapStateToProps,
     mapDispatchToProps
-)(PreviewMedia);
+)(PreviewMediaComponents);
 
 export default PreviewMediaContainer;

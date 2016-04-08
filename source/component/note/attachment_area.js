@@ -12,8 +12,9 @@ const SUPPORTED_IMG_FILE_TYPES = [
 ];
 
 /** Attachment area component to display an array of *components*. */
-function AttachmentArea({ components }) {
+function AttachmentArea({ components, onAttachmentClick }) {
     const images = [];
+    const mediaComponents = [];
     const other = [];
 
     components.forEach(
@@ -23,7 +24,25 @@ function AttachmentArea({ components }) {
                     component.file_type.slice(1).toLowerCase()
                 )
             ) {
-                images.push(<img key={component.id} src={session.thumbnail(component.id, 100)} />);
+                mediaComponents.push(
+                    component
+                );
+                images.push(
+                    <div
+                        key={component.id}
+                        onClick={
+                            function() {
+                                onAttachmentClick(
+                                    component.id,
+                                    mediaComponents
+                                );
+                            }
+                        }
+                        className={style.image}
+                        style={{
+                            backgroundImage: `url('${session.thumbnail(component.id, 400)}')`
+                        }}
+                    />);
             } else {
                 other.push(
                     <p key={component.id}>{`${component.name}${component.file_type}`}</p>
@@ -46,6 +65,7 @@ function AttachmentArea({ components }) {
 
 AttachmentArea.propTypes = {
     components: React.PropTypes.array.isRequired,
+    onAttachmentClick: React.PropTypes.func,
 };
 
 export default AttachmentArea;

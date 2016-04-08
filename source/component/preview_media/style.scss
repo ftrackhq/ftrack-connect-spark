@@ -18,10 +18,12 @@
 
     .header {
         .media-control {
-            line-height: 56px;
-            float:left;
-            right: 50%;
             position: absolute;
+            display: block;
+            line-height: $appbar-height;
+            right: 0;
+            left: 0;
+            text-align: center;
             user-select: none;
 
             .control-button {
@@ -44,6 +46,9 @@
 
         .preview-image {
             flex: 1;
+            margin: auto;
+            width: 100%;
+            height: calc(100% - #{$appbar-height});
             background-position: center;
             background-size: contain;
             background-repeat: no-repeat;

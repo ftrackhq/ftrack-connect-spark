@@ -82,8 +82,16 @@
 }
 
 .attachments-area {
-    .images > img {
-        padding: $spacing-small;
+    .images {
+        .image {
+            height: 75px;
+            width: 100px;
+            margin: $spacing-small;
+            cursor: pointer;
+            display: inline-block;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
     }
 
     .other {
