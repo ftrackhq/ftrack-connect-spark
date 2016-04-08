@@ -41,6 +41,7 @@ class ContextCard extends React.Component {
         if (isExpandable) {
             actions.push(
                 <Button
+                    key="context-action-expand-button"
                     icon={expandIcon}
                     className={style['expand-button']}
                     onClick={this._onToggleExpand}
@@ -49,7 +50,7 @@ class ContextCard extends React.Component {
         }
 
         const contents = [
-            <div className={style.contents}>
+            <div key="context-contents" className={style.contents}>
                 <div className={style.side}>
                     <EntityThumbnail thumbnailId={entity.thumbnail_id} />
                     <StatusBar color={statusColor} />
@@ -69,7 +70,7 @@ class ContextCard extends React.Component {
                     </CardActions>
                 </div>
             </div>,
-            <Reveal active={this.state.expanded}>
+            <Reveal key="context-reveal" active={this.state.expanded}>
                 <p className={style.description}>{entity.description}</p>
             </Reveal>,
         ];

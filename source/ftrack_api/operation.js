@@ -27,3 +27,13 @@ export function updateOperation(type, keys, data) {
     operation.entity_data = Object.assign({}, data, { __entity_type__: type });
     return operation;
 }
+
+/** Return delete operation object for entity *type* identified by *keys*. */
+export function deleteOperation(type, keys) {
+    const operation = {
+        action: 'delete',
+        entity_type: type,
+        entity_key: keys,
+    };
+    return operation;
+}

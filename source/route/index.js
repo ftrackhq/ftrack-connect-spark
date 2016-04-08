@@ -12,10 +12,13 @@ import CreateProjectView from 'view/create_project';
 import PublishContextBrowser from 'container/publish_context_browser';
 import PublishView from 'view/publish';
 import ContextView from 'view/context';
+import { importReset } from 'action/import';
 import { publishLoad } from 'action/publish';
+import { notesLoad } from 'action/note';
 import BrowseAllView from 'view/browse_all';
 import MyTasksView from 'view/my_tasks';
 import VersionsView from 'view/versions';
+import NotesListView from 'view/note';
 
 function dispatchOnEnter(dispatch, actionCreator) {
     return () => { dispatch(actionCreator()); };
@@ -32,8 +35,14 @@ export default (store) => (
 
         <Route path="/context/:context" component={ContextView}>
             <IndexRedirect to="notes" />
-            <Route path="notes" component={ExampleView} />
-            <Route path="versions" component={VersionsView} />
+            <Route path="notes" component={NotesListView}
+                onEnter={
+                    ({ params }) => store.dispatch(notesLoad(params.context))
+                }
+            />
+            <Route path="versions" component={VersionsView}
+                onEnter={dispatchOnEnter(store.dispatch, importReset)}
+            />
         </Route>
 
         <Route path="/example" component={ExampleView} />
