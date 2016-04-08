@@ -1,9 +1,14 @@
+// :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
 import { ProgressBar } from 'react-toolbox';
 
 import style from './style';
 
+/** An image component used as a child to a PreviewMedia component.
+*
+* The *url* prop is used as source for the image.
+*/
 export class PreviewImage extends React.Component {
 
     constructor() {

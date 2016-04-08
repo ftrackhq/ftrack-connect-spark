@@ -13,17 +13,25 @@ const SUPPORTED_IMG_FILE_TYPES = [
     'png', 'gif', 'jpeg', 'jpg', 'bmp', 'tif', 'tiff',
 ];
 
-/** Attachment area component to display an array of *components*. */
+/** Attachment area component to display an array of *components*.
+*
+* *onAttachmentClick* prop is called when an attachment media or document is
+* clicked.
+*
+*/
 class AttachmentArea extends React.Component {
 
+    /** Handle click on attachment *component*. */
     onAttachmentClick(component) {
         this.props.onAttachmentClick(this, component.id, this.isMedia(component));
     }
 
+    /** Return a list of components that are assumed to contain media. */
     getMediaComponents() {
         return this.props.components.filter(this.isMedia);
     }
 
+    /** Return true if *component* is assumed to be consumable media. */
     isMedia(component) {
         return SUPPORTED_IMG_FILE_TYPES.includes(
             component.file_type.slice(1).toLowerCase()

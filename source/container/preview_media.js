@@ -6,11 +6,12 @@ import { hidePreviewMedia } from 'action/preview_media';
 import { PreviewMedia, PreviewImage } from 'component/preview_media';
 import { session } from '../ftrack_api';
 
+/** Preview media component used to preview media components. */
 function PreviewMediaComponents(props) {
     const { components, visible, index, onDismiss, onDownload } = props;
 
     if (!visible) {
-        return <span />;
+        return <noscript />;
     }
 
     return (

@@ -1,3 +1,4 @@
+// :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
 import { IconButton } from 'react-toolbox';
@@ -6,9 +7,17 @@ import Mousetrap from 'mousetrap';
 import Header from 'component/header';
 
 import style from './style';
-import PreviewImage from './image';
 
-
+/** Preview media component can be used to cycle  media in a modal dialog.
+*
+* The *children* props are assumed to be an instance of a image/PreviewImage.
+*
+* *defaultIndex* is the starting index of *children*
+*
+* *onDismiss* is called when the component requests a dimsmiss, *onDownload* is
+* called when the components requests a download of a supplied URL.
+*
+**/
 export class PreviewMedia extends React.Component {
 
     constructor(props) {
