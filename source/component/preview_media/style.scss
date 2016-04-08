@@ -17,6 +17,12 @@
     visibility: visible;
 
     .header {
+        h4:first-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 30px;
+        }
+
         .media-control {
             position: absolute;
             display: block;
