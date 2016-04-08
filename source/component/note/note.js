@@ -108,7 +108,7 @@ function Note({ data, category, onAttachmentClick }) {
 Note.propTypes = {
     data: React.PropTypes.object.isRequired,
     category: React.PropTypes.bool,
-    onAttachmentClick: React.PropTypes.func
+    onAttachmentClick: React.PropTypes.func,
 };
 
 

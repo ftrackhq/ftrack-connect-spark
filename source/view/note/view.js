@@ -51,20 +51,17 @@ function editableNoteDispatchToProps() {
                 dispatch(submitNoteForm(formKey, data));
             },
             onRemove: () => dispatch(removeNote(props.note.id)),
-            onAttachmentClick: function(attachmentArea, componentId, isMedia) {
+            onAttachmentClick: (attachmentArea, componentId, isMedia) => {
                 if (isMedia) {
-                    const components = attachmentArea.getMediaComponents();
-                    const index = components.findIndex(
-                        function(component) {
-                            return component.id === componentId;
-                        }
+                    const items = attachmentArea.getMediaComponents();
+                    const index = items.findIndex(
+                        (component) => component.id === componentId
                     );
-                    
-                    dispatch(openPreviewMedia(Math.max(index, 0), components));
+                    dispatch(openPreviewMedia(Math.max(index, 0), items));
                 } else {
                     window.location = session.getComponent(componentId);
                 }
-            }
+            },
         };
     };
 }

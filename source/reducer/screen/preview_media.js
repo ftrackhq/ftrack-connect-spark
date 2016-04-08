@@ -16,7 +16,7 @@ export default function previewMediaReducer(state = {}, action) {
             }
         );
     } else if (action.type === types.HIDE_PREVIEW_MEDIA) {
-        nextState = Object.assign({}, state, {visible: false});
+        nextState = Object.assign({}, state, { visible: false });
     }
 
     return nextState;

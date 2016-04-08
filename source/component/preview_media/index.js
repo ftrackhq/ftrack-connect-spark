@@ -1,3 +1,4 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-export { PreviewMedia, PreviewImage } from './component.js';
+export { PreviewMedia } from './component';
+export { PreviewImage } from './image';

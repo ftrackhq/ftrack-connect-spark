@@ -16,18 +16,18 @@ const SUPPORTED_IMG_FILE_TYPES = [
 /** Attachment area component to display an array of *components*. */
 class AttachmentArea extends React.Component {
 
-    isMedia(component) {
-        return SUPPORTED_IMG_FILE_TYPES.includes(
-            component.file_type.slice(1).toLowerCase()
-        );   
+    onAttachmentClick(component) {
+        this.props.onAttachmentClick(this, component.id, this.isMedia(component));
     }
 
     getMediaComponents() {
         return this.props.components.filter(this.isMedia);
     }
 
-    onAttachmentClick(component) {
-        this.props.onAttachmentClick(this, component.id, this.isMedia(component))
+    isMedia(component) {
+        return SUPPORTED_IMG_FILE_TYPES.includes(
+            component.file_type.slice(1).toLowerCase()
+        );
     }
 
     render() {
@@ -43,11 +43,11 @@ class AttachmentArea extends React.Component {
                         <div
                             key={component.id}
                             onClick={
-                                this.onAttachmentClick.bind(this, component)
+                                () => this.onAttachmentClick(component)
                             }
                             className={style.image}
                             style={{
-                                backgroundImage: `url('${session.thumbnail(component.id, 400)}')`
+                                backgroundImage: `url('${session.thumbnail(component.id, 400)}')`,
                             }}
                         />);
                 } else {
@@ -59,7 +59,7 @@ class AttachmentArea extends React.Component {
                             <span
                                 className={style['file-name']}
                                 onClick={
-                                    this.onAttachmentClick.bind(this, component)
+                                    () => this.onAttachmentClick(component)
                                 }
                             >
                                 {`${component.name}${component.file_type}`}

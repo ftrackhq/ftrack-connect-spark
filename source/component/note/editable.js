@@ -19,7 +19,7 @@ import style from './style.scss';
 function EditableNote(props) {
     const {
         note, collapsed, pending, content, author, onShowForm, onHideForm,
-        onSubmitForm, onRemove, onAttachmentClick
+        onSubmitForm, onRemove, onAttachmentClick,
     } = props;
 
     if (!collapsed) {

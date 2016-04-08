@@ -1,78 +1,16 @@
 
 import React from 'react';
-import { IconButton, ProgressBar } from 'react-toolbox';
+import { IconButton } from 'react-toolbox';
 
 import style from './style';
 import Header from 'component/header';
 
 import Mousetrap from 'mousetrap';
 
-
-export class PreviewImage extends React.Component {
-
-    constructor() {
-        super()
-
-        this.state = {};
-        this.state.isLoaded = false;
-    }
-
-    componentWillReceiveProps(nextProps) {
-        this.loadImage(nextProps.url);
-    }
-
-    componentWillMount() {
-        this.loadImage(this.props.url);   
-    }
-
-    loadImage(url) {        
-        this.setState({isLoaded: false});
-
-        this.image = new window.Image();
-        this.image.onload = () => {
-            this.setState({isLoaded: true})
-        };
-        this.image.src = url;
-    }
-
-    render() {
-        const { url } = this.props;
-        const { isLoaded } = this.state;
-
-        if (!isLoaded) {
-            return (
-                <div className={style.loading}>
-                    <ProgressBar type="circular" mode="indeterminate" />
-                </div>
-            );
-        }
-
-        return (
-            <div
-                style={{
-                    backgroundImage: `url('${url}')`,
-                    maxWidth: this.image.width,
-                    maxHeight: this.image.height,
-                }}
-                className={style['preview-image']}
-            />
-        );
-    }
-
-}
-
-PreviewImage.propTypes = {
-    url: React.PropTypes.string.isRequired,
-    name: React.PropTypes.string.isRequired,
-    downloadUrl: React.PropTypes.string,
-};
-
-
 export class PreviewMedia extends React.Component {
 
     constructor(props) {
-        super()
-
+        super();
         this.state = {
             index: props.defaultIndex,
         };
@@ -105,7 +43,7 @@ export class PreviewMedia extends React.Component {
             adjustedIndex = 0;
         }
 
-        this.setState({index: adjustedIndex});
+        this.setState({ index: adjustedIndex });
     }
 
     render() {
@@ -129,12 +67,16 @@ export class PreviewMedia extends React.Component {
             <div className={style['media-control']}>
                 <span
                     className={style['control-button']}
-                    onClick={this.handleChange.bind(this, index - 1)}
+                    onClick={
+                        () => this.handleChange(index - 1)
+                    }
                 >&#10094;</span>
                 {`${index + 1} of ${children.length}`}
                 <span
                     className={style['control-button']}
-                    onClick={this.handleChange.bind(this, index + 1)}
+                    onClick={
+                        () => this.handleChange(index + 1)
+                    }
                 >&#10095;</span>
             </div>
         );

@@ -2,16 +2,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { download, hidePreviewMedia, changeActive } from 'action/preview_media';
+import { hidePreviewMedia } from 'action/preview_media';
 import { PreviewMedia, PreviewImage } from 'component/preview_media';
 import { session } from '../ftrack_api';
 
 function PreviewMediaComponents(props) {
-
-    const { components, visible, index, onDismiss, onDownload, onChange } = props;
+    const { components, visible, index, onDismiss, onDownload } = props;
 
     if (!visible) {
-        return <span/>;
+        return <span />;
     }
 
     return (
@@ -22,21 +21,18 @@ function PreviewMediaComponents(props) {
         >
         {
             components.map(
-                component => {
-                    return (
-                        <PreviewImage
-                            key={component.id}
-                            url={session.thumbnail(component.id, 2048)}
-                            name={`${component.name}${component.file_type}`}
-                            downloadUrl={session.getComponent(component.id)}
-                        />
-                    );
-                }
+                component => (
+                    <PreviewImage
+                        key={component.id}
+                        url={session.thumbnail(component.id, 2048)}
+                        name={`${component.name}${component.file_type}`}
+                        downloadUrl={session.getComponent(component.id)}
+                    />
+                )
             )
         }
         </PreviewMedia>
-    )
-
+    );
 }
 
 PreviewMediaComponents.propTypes = {
