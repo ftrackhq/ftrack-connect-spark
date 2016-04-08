@@ -5,21 +5,10 @@ import Header from 'component/header';
 import { Button, Menu, MenuItem } from 'react-toolbox';
 import { browserHistory } from 'react-router';
 
-import { openPreviewMedia } from 'action/preview_media'
-
 import style from './style.scss';
 
 /** Push new route on item selected. */
 const navigateToMenu = (value) => {
-
-    if (value === 'preview') {
-
-        openPreviewMedia(
-            []
-        );
-
-        return;
-    }
     browserHistory.push(`/${value}`);
 };
 
@@ -60,11 +49,6 @@ class HomeHeader extends React.Component {
                         value="publish"
                         icon="file_upload"
                         caption="Publish"
-                    />
-                    <MenuItem
-                        value="preview"
-                        icon="file_upload"
-                        caption="Preview"
                     />
                 </Menu>
             </div>
