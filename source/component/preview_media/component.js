@@ -40,7 +40,11 @@ export class PreviewImage extends React.Component {
         const { isLoaded } = this.state;
 
         if (!isLoaded) {
-            return <ProgressBar type="circular" mode="indeterminate" />;
+            return (
+                <div className={style.loading}>
+                    <ProgressBar type="circular" mode="indeterminate" />
+                </div>
+            );
         }
 
         return (
