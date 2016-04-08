@@ -242,7 +242,7 @@ function* submitQuickReview(action) {
             header: 'Completed',
             message: 'The review session has now been created.',
         }, () => {
-            hashHistory.replace('/');
+            hashHistory.replace('/home');
         });
 
         // Reset the form.
