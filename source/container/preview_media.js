@@ -40,7 +40,13 @@ function PreviewMediaComponents(props) {
 }
 
 PreviewMediaComponents.propTypes = {
-    components: React.PropTypes.array,
+    components: React.PropTypes.arrayOf(
+        React.PropTypes.shape({
+            id: React.PropTypes.string.isRequired,
+            name: React.PropTypes.string.isRequired,
+            file_type: React.PropTypes.string.isRequired,
+        })
+    ),
     index: React.PropTypes.number,
     visible: React.PropTypes.bool,
     onDismiss: React.PropTypes.func.isRequired,
