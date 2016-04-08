@@ -12,7 +12,7 @@ import { session } from '../../ftrack_api';
 import { isEmptyString } from '../../util/validation';
 
 import Reveal from 'component/reveal';
-import { publishSubmit } from 'action/publish';
+import { publishResolveContext, publishSubmit } from 'action/publish';
 
 import style from './style.scss';
 
@@ -30,24 +30,15 @@ const validateForm = (values) => {
 
 
 /** Quick review view */
-/* eslint-disable react/prefer-stateless-function */
 class PublishView extends React.Component {
     constructor() {
         super();
-        this._contextId = null;
-        this.state = { link: '' };
+        this.state = { link: '', context: null };
         this._onCancelClick = this._onCancelClick.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
         this._isSubmitDisabled = this._isSubmitDisabled.bind(this);
+        this._updateContext = this._updateContext.bind(this);
         this._link = '';
-
-        this._contexts = session._query(
-            'select id, full_name from Project'
-        ).then((data) => data.data.reduce(
-            (accumulator, item) => (
-                Object.assign({}, accumulator, { [item.id]: item.full_name })
-            ), {}
-        ));
 
         this._assetTypes = session._query(
             'select id, name from AssetType'
@@ -56,6 +47,28 @@ class PublishView extends React.Component {
                 Object.assign({}, accumulator, { [item.id]: item.name })
             ), {}
         ));
+    }
+
+    /** Update context when component is mounted. */
+    componentWillMount() {
+        this._updateContext(this.props.params.context);
+    }
+
+    /** Update context if route has changed. */
+    componentWillReciveProps(nextProps) {
+        const nextContext = nextProps.params.context;
+        const currentContext = this.props.params.context;
+        if (nextContext !== currentContext) {
+            this._updateContext();
+        }
+    }
+
+    /** Update current context to *contextId*.  */
+    _updateContext(contextId) {
+        if (contextId && contextId !== this.state.context) {
+            this.state.context = contextId;
+            this.props.onContextChange(contextId);
+        }
     }
 
     /** Navigate back on cancel clicked */
@@ -156,11 +169,12 @@ PublishView.propTypes = {
     contexts: React.PropTypes.object,
     params: React.PropTypes.object,
     link: React.PropTypes.array,
+    onContextChange: React.PropTypes.func,
 };
 
 PublishView.defaultProps = {
     params: {
-        task: null,
+        context: null,
     },
 };
 
@@ -190,6 +204,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
+        onContextChange(contextId) {
+            dispatch(publishResolveContext(contextId));
+        },
         submitForm(values) {
             dispatch(publishSubmit(values));
         },

@@ -37,6 +37,7 @@ export default (store) => (
             <IndexRedirect to="notes" />
             <Route path="notes" component={NotesListView}
                 onEnter={
+                    // eslint-disable-next-line react/prop-types
                     ({ params }) => store.dispatch(notesLoad(params.context))
                 }
             />
@@ -56,7 +57,7 @@ export default (store) => (
             component={CreateProjectView}
         />
         <Route
-            path="/publish"
+            path="/publish/:context"
             component={PublishView}
             onEnter={dispatchOnEnter(store.dispatch, publishLoad)}
         />
