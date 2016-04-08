@@ -3,7 +3,7 @@
 const OPEN_PRVIEW_MEDIA = 'OPEN_PRVIEW_MEDIA';
 const HIDE_PREVIEW_MEDIA = 'HIDE_PREVIEW_MEDIA';
 
-/** Open media preview of *components*. */
+/** Action to open media preview of *components*. */
 export function openPreviewMedia(index, components) {
     return {
         type: OPEN_PRVIEW_MEDIA,
@@ -14,6 +14,7 @@ export function openPreviewMedia(index, components) {
     };
 }
 
+/** Action to hide preview media */
 export function hidePreviewMedia() {
     return {
         type: HIDE_PREVIEW_MEDIA,

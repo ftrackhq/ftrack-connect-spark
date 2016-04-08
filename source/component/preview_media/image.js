@@ -26,6 +26,7 @@ export class PreviewImage extends React.Component {
         this.loadImage(nextProps.url);
     }
 
+    /** Load *url* in an off DOM image and set isLoaded when done. */
     loadImage(url) {
         this.setState({ isLoaded: false });
 

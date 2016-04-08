@@ -240,6 +240,7 @@ export class Session {
         return request;
     }
 
+    /** Return an URL where *componentId* can be downloaded. */
     getComponent(componentId) {
         if (!componentId) {
             return `${this._serverUrl}/img/thumbnail2.png`;
