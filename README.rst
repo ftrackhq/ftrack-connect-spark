@@ -60,14 +60,13 @@ Start for development::
     npm start # or
     npm run serve
 
-Start for development::
-
-    npm start # or
-    npm run serve
-
 Start the dev-server with the adobe entry in development mode::
 
     npm run serve:adobe
+
+Start the dev-server with the cinema4d entry in development mode::
+
+    npm run serve:cinema4d
 
 Start the dev-server with the dist version::
 

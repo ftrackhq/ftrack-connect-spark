@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Tab, Tabs } from 'react-toolbox';
-import { browserHistory } from 'react-router';
+import { hashHistory } from 'react-router';
 
 
 /**
@@ -37,7 +37,7 @@ class RouteTabs extends React.Component {
     /** Handle tab change. */
     _handleTabChange(index) {
         this.setState({ index });
-        browserHistory.replace(`${this.props.baseRoute}${this.props.items[index].route}`);
+        hashHistory.replace(`${this.props.baseRoute}${this.props.items[index].route}`);
     }
 
 
