@@ -10,6 +10,8 @@ import Input from 'react-toolbox/lib/input';
 import DatePicker from 'react-toolbox/lib/date_picker';
 import { List, ListItem } from 'react-toolbox';
 import Button from 'react-toolbox/lib/button';
+import Chip from 'react-toolbox/lib/chip';
+import EntityAvatar from 'component/entity_avatar';
 
 import Form from 'component/form';
 import Selector from 'component/selector';
@@ -51,7 +53,7 @@ function ResultList({ items, onClick }) {
 
             return (
                 <ListItem
-                    avatar={session.thumbnail(item.thumbnail_id, 100)}
+                    avatar={<EntityAvatar entity={item} />}
                     caption={ item.name }
                     legend={ item.email }
                     onClick={ handleClick }
@@ -299,23 +301,19 @@ class QuickReviewView extends React.Component {
                 const removeCollaborator = this.removeCollaborator.bind(this, item);
 
                 return (
-                    <ListItem
-                        avatar={session.thumbnail(item.thumbnail_id, 100)}
-                        caption={ item.name }
-                        legend={ item.email }
-                        onClick={ removeCollaborator }
-                        rightIcon="delete"
-                    />
+                    <Chip
+                        key={item.id}
+                        deletable
+                        onDeleteClick={removeCollaborator}
+                        className={style['selected-collaborator-item']}
+                    >
+                        <EntityAvatar entity={item} />
+                        {item.name}
+                    </Chip>
                 );
             });
-
-            return (
-                <List selectable ripple>
-                    { items }
-                </List>
-            );
+            return <div className={style['selected-collaborators']}>{items}</div>;
         }
-
         return false;
     }
 

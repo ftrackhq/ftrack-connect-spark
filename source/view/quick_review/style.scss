@@ -18,3 +18,12 @@
 .result {
     background-color: $color-dark-300;
 }
+
+.selected-collaborators {
+    padding: $spacing 0 0;
+}
+
+.selected-collaborator-item {
+    margin-right: $spacing-small;
+    margin-bottom: $spacing;
+}
