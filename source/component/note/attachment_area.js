@@ -14,79 +14,78 @@ const SUPPORTED_IMG_FILE_TYPES = [
 ];
 
 /** Attachment area component to display an array of *components*. */
-function AttachmentArea({ components, onAttachmentClick }) {
-    const images = [];
-    const mediaComponents = [];
-    const other = [];
+class AttachmentArea extends React.Component {
 
-    components.forEach(
-        component => {
-            if (
-                SUPPORTED_IMG_FILE_TYPES.includes(
-                    component.file_type.slice(1).toLowerCase()
-                )
-            ) {
-                mediaComponents.push(
-                    component
-                );
-                images.push(
-                    <div
-                        key={component.id}
-                        onClick={
-                            function() {
-                                onAttachmentClick(
-                                    component.id,
-                                    mediaComponents,
-                                    true
-                                );
-                            }
-                        }
-                        className={style.image}
-                        style={{
-                            backgroundImage: `url('${session.thumbnail(component.id, 400)}')`
-                        }}
-                    />);
-            } else {
-                other.push(
-                    <p
-                        key={component.id}
-                    >
-                        <FontIcon className={style['attachment-icon']} value="attachment" />
-                        <span
-                            className={style['file-name']}
+    isMedia(component) {
+        return SUPPORTED_IMG_FILE_TYPES.includes(
+            component.file_type.slice(1).toLowerCase()
+        );   
+    }
+
+    getMediaComponents() {
+        return this.props.components.filter(this.isMedia);
+    }
+
+    onAttachmentClick(component) {
+        this.props.onAttachmentClick(this, component.id, this.isMedia(component))
+    }
+
+    render() {
+        const { components } = this.props;
+
+        const images = [];
+        const other = [];
+
+        components.forEach(
+            component => {
+                if (this.isMedia(component)) {
+                    images.push(
+                        <div
+                            key={component.id}
                             onClick={
-                                function() {
-                                    onAttachmentClick(
-                                        component.id,
-                                        mediaComponents,
-                                        false
-                                    );
-                                }
+                                this.onAttachmentClick.bind(this, component)
                             }
+                            className={style.image}
+                            style={{
+                                backgroundImage: `url('${session.thumbnail(component.id, 400)}')`
+                            }}
+                        />);
+                } else {
+                    other.push(
+                        <p
+                            key={component.id}
                         >
-                            {`${component.name}${component.file_type}`}
-                        </span>
-                    </p>
-                );
+                            <FontIcon className={style['attachment-icon']} value="attachment" />
+                            <span
+                                className={style['file-name']}
+                                onClick={
+                                    this.onAttachmentClick.bind(this, component)
+                                }
+                            >
+                                {`${component.name}${component.file_type}`}
+                            </span>
+                        </p>
+                    );
+                }
             }
-        }
-    );
+        );
 
-    return (
-        <div className={style['attachments-area']}>
-            <div className={style.images}>
-                {images}
+        return (
+            <div className={style['attachments-area']}>
+                <div className={style.images}>
+                    {images}
+                </div>
+                <div className={style.other}>
+                    {other}
+                </div>
             </div>
-            <div className={style.other}>
-                {other}
-            </div>
-        </div>
-    );
+        );
+    }
 }
 
 AttachmentArea.propTypes = {
     components: React.PropTypes.array.isRequired,
-    onAttachmentClick: React.PropTypes.func,
+    onAttachmentClick: React.PropTypes.func.isRequired,
 };
 
 export default AttachmentArea;

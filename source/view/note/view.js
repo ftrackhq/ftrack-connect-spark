@@ -51,8 +51,9 @@ function editableNoteDispatchToProps() {
                 dispatch(submitNoteForm(formKey, data));
             },
             onRemove: () => dispatch(removeNote(props.note.id)),
-            onAttachmentClick: function(componentId, components, isMedia) {
+            onAttachmentClick: function(attachmentArea, componentId, isMedia) {
                 if (isMedia) {
+                    const components = attachmentArea.getMediaComponents();
                     const index = components.findIndex(
                         function(component) {
                             return component.id === componentId;
