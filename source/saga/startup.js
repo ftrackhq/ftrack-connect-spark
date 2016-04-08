@@ -1,7 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import { call, put } from 'redux-saga/effects';
-import { browserHistory } from 'react-router';
+import { hashHistory } from 'react-router';
 
 import { mediator } from '../application';
 import { session, configureSharedApiSession } from '../ftrack_api';
@@ -59,7 +59,7 @@ function* startupSaga() {
             error,
         });
     }
-    browserHistory.push('/home');
+    hashHistory.push('/home');
 }
 
 export default startupSaga;

@@ -3,13 +3,13 @@
 import React from 'react';
 import Header from 'component/header';
 import { Button, Menu, MenuItem } from 'react-toolbox';
-import { browserHistory } from 'react-router';
+import { hashHistory } from 'react-router';
 
 import style from './style.scss';
 
 /** Push new route on item selected. */
 const navigateToMenu = (value) => {
-    browserHistory.push(`/${value}`);
+    hashHistory.push(`/${value}`);
 };
 
 /**

@@ -5,7 +5,7 @@ import uuid from 'uuid';
 
 import { takeEvery } from 'redux-saga';
 import { call, put } from 'redux-saga/effects';
-import { browserHistory } from 'react-router';
+import { hashHistory } from 'react-router';
 import { reset } from 'redux-form';
 
 import { session } from '../ftrack_api';
@@ -259,7 +259,7 @@ function* submitQuickReview(action) {
             header: 'Completed',
             message: 'The review session has now been created.',
         }, () => {
-            browserHistory.replace('/');
+            hashHistory.replace('/');
         });
 
         // Reset the form.

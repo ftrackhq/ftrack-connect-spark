@@ -1,12 +1,12 @@
 import React from 'react';
 
 import { IconButton } from 'react-toolbox';
-import { browserHistory } from 'react-router';
+import { hashHistory } from 'react-router';
 import Header from 'component/header';
 
 /** Go back. */
 const navigateBack = () => {
-    browserHistory.goBack();
+    hashHistory.goBack();
 };
 
 const rightButton = <IconButton icon="close" onClick={navigateBack} />;
