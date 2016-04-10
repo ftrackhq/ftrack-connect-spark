@@ -4,7 +4,9 @@ import { call, put } from 'redux-saga/effects';
 import { takeEvery } from 'redux-saga';
 import actions, { notesLoaded, noteSubmitted, noteRemoved } from 'action/note';
 import { session } from '../ftrack_api';
-import { createOperation, updateOperation, deleteOperation } from '../ftrack_api/operation';
+import {
+    createOperation, updateOperation, deleteOperation, queryOperation,
+} from '../ftrack_api/operation';
 
 
 import loglevel from 'loglevel';
@@ -100,9 +102,50 @@ function* loadNotes(action) {
         offset = action.payload.nextOffset;
     }
 
+    const entityId = action.payload.entity.id;
+    const relatedEntitiesSelect = 'id, link, status.color, thumbnail_id';
+
+    // Gather all version ids of assets publish on entity.
+    const assetVersionsQuery = (
+        `select ${relatedEntitiesSelect} from AssetVersion where asset.context_id is "${entityId}"`
+    );
+
+    // Gather all version ids of assets publish on entity.
+    const taskVersionsQuery = (
+        `select ${relatedEntitiesSelect} from AssetVersion where task_id is "${entityId}"`
+    );
+
+    // Gather all tasks that are direct children to entity.
+    const tasksQuery = (
+        `select ${relatedEntitiesSelect} from Task where parent_id is "${entityId}"`
+    );
+
+    const relatedEntitiesResponse = yield call(
+        [session, session._call],
+        [
+            queryOperation(assetVersionsQuery),
+            queryOperation(taskVersionsQuery),
+            queryOperation(tasksQuery),
+        ]
+    );
+
+    const ids = [entityId];
+    const extraInformation = {};
+
+    relatedEntitiesResponse.forEach(
+        (item) => {
+            item.data.forEach(
+                (entity) => {
+                    ids.push(entity.id);
+                    extraInformation[entity.id] = entity;
+                }
+            );
+        }
+    );
+
     const query = (
-        `${noteSelect()} where parent_id is ` +
-        `"${action.payload.entity.id}" and not in_reply_to has () ` +
+        `${noteSelect()} where parent_id in ` +
+        `(${ids.join(',')}) and not in_reply_to has () ` +
         `order by thread_activity desc offset ${offset} limit 10`
     );
 
@@ -120,6 +163,10 @@ function* loadNotes(action) {
 
     response.data.forEach(
         note => {
+            if (extraInformation[note.parent_id]) {
+                note.extraInformation = extraInformation[note.parent_id];
+            }
+
             note.metadata.forEach(
                 item => {
                     if (item.key === 'inviteeId') {
@@ -184,7 +231,7 @@ function* loadNotes(action) {
     yield put(
         notesLoaded(
             {
-                id: action.payload.entity.id,
+                id: entityId,
                 type: action.payload.entity.type,
             },
             response.data,

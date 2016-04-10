@@ -42,6 +42,11 @@
     .attachments-area {
         margin-top: $spacing;
     }
+
+    .context-card {
+        background-color: $color-dark-300;
+        margin: $spacing 0;
+    }
 }
 
 .note-form {

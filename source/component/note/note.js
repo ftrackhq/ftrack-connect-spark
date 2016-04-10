@@ -8,6 +8,8 @@ import { session } from '../../ftrack_api';
 import style from './style.scss';
 import AttachmentArea from './attachment_area.js';
 
+import ContextCard from 'component/context_card';
+
 /** Display user information. */
 function User({ data }) {
     return (
@@ -58,6 +60,16 @@ function Note({ data, category, onAttachmentClick }) {
         </span>
     );
 
+    let card = '';
+
+    if (data.extraInformation) {
+        card = (<ContextCard
+            className={style['context-card']}
+            entity={data.extraInformation}
+            flat
+        />);
+    }
+
     // TODO: Break out as a separate component.
     const author = data.author;
     let avatar = false;
@@ -92,6 +104,7 @@ function Note({ data, category, onAttachmentClick }) {
                     <TimeAgo className={style.datetime} date={data.date.toDate()} />
                 </span>
                 {categoryItem}
+                {card}
                 <span>{data.content}</span>
                 <AttachmentArea onAttachmentClick={onAttachmentClick} components={
                         data.note_components.map(
