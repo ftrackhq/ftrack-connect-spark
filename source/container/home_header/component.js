@@ -46,7 +46,7 @@ class HomeHeader extends React.Component {
                         caption="Quick review"
                     />
                     <MenuItem
-                        value="publish"
+                        value={`publish/${this.props.context}`}
                         icon="file_upload"
                         caption="Publish"
                     />
@@ -59,5 +59,13 @@ class HomeHeader extends React.Component {
         );
     }
 }
+
+HomeHeader.propTypes = {
+    context: React.PropTypes.string,
+};
+
+HomeHeader.defaultProps = {
+    context: null,
+};
 
 export default HomeHeader;
