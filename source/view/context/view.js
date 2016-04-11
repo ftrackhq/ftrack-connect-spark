@@ -110,7 +110,7 @@ class ContextView extends React.Component {
                 {entityElement}
                 <RouteTabs
                     items={tabs}
-                    baseRoute={`/context/${contextId}/${contextType}/`}
+                    baseRoute={`/context/${contextType}/${contextId}/`}
                 />
                 {this.props.children}
             </div>

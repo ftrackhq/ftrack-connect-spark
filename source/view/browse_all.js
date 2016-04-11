@@ -8,7 +8,7 @@ import ContextBrowser from 'container/context_browser';
 
 /** Handle selecting a context. */
 function _onSelectContext(id, type) {
-    hashHistory.push(`/context/${id}/${type}`);
+    hashHistory.push(`/context/${type}/${id}`);
 }
 
 export default function BrowseAllView() {

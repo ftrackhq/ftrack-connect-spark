@@ -33,7 +33,7 @@ export default (store) => (
             <Route path="browse-all" component={BrowseAllView} />
         </Route>
 
-        <Route path="/context/:id/:type" component={ContextView}>
+        <Route path="/context/:type/:id" component={ContextView}>
             <IndexRedirect to="notes" />
             <Route path="notes" component={NotesListView}
                 onEnter={
