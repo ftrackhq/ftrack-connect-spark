@@ -45,6 +45,10 @@ class _NoteForm extends React.Component {
             _classNames.push(this.props.className);
         }
 
+        if (!collapsed) {
+            _classNames.push(style.expanded);
+        }
+
         return (
             <div className={_classNames.join(' ')}>
                 <Input
