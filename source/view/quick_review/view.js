@@ -156,7 +156,7 @@ class QuickReviewView extends React.Component {
     }
 
     _onChange(value) {
-        if (value.length >= 1) {
+        if (value && value.length >= 1) {
             this._loadCollaborators(value);
         } else {
             this.setState({
@@ -176,15 +176,38 @@ class QuickReviewView extends React.Component {
         });
     }
 
+    /** Return a LIKE query string from *keys* and *values*. */
+    _getFilterString(keys, values) {
+        const results = [];
+
+        for (const value of values) {
+            const keyResults = [];
+            for (const key of keys) {
+                if (value) {
+                    keyResults.push(`${key} like "%${value}%"`);
+                }
+            }
+            if (keyResults.length) {
+                results.push(
+                    `(${keyResults.join(' or ')})`
+                );
+            }
+        }
+
+        return results.join(' and ');
+    }
+
     /** Load collaborators from server based on *value*. */
     _loadCollaborators(value) {
+        const parts = value.split(' ');
+
         const inviteeQuery = (
-            'select name, email from ReviewSessionInvitee where name ' +
-            `like "%${value}%" or email like "%${value}%"`
+            'select name, email from ReviewSessionInvitee where ' +
+            `${this._getFilterString(['name', 'email'], parts)}`
         );
         const userQuery = (
-            'select first_name, last_name, email, thumbnail_id from User ' +
-            `where first_name like "%${value}%" or email like "%${value}%" ` +
+            'select first_name, last_name, email, thumbnail_id from User where ' +
+            `${this._getFilterString(['first_name', 'last_name', 'email'], parts)} ` +
             'and is_active is true'
         );
 
