@@ -4,13 +4,13 @@ import React from 'react';
 import AppBar from 'react-toolbox/lib/app_bar';
 import classNames from 'classnames';
 import { Button } from 'react-toolbox/lib/button';
-import { browserHistory } from 'react-router';
+import { hashHistory } from 'react-router';
 
 import style from './style';
 
 /** Go back. */
 const navigateBack = () => {
-    browserHistory.goBack();
+    hashHistory.goBack();
 };
 
 /** Header component containing back button, title and right button */

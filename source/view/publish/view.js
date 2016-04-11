@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { reduxForm } from 'redux-form';
-import { browserHistory } from 'react-router';
+import { hashHistory } from 'react-router';
 
 import Input from 'react-toolbox/lib/input';
 
@@ -99,7 +99,7 @@ class PublishView extends React.Component {
 
     _onBrowse() {
         const path = '/publish-context';
-        browserHistory.push(path);
+        hashHistory.push(path);
     }
 
     render() {
