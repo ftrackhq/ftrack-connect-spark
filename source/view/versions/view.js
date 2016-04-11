@@ -30,7 +30,7 @@ class VersionsView extends React.Component {
 
     /** Load more items. */
     _loadItems() {
-        const contextId = this.props.params.context;
+        const contextId = this.props.params.id;
         const select = [
             'thumbnail_id', 'version', 'link',
             'asset.type.id', 'asset.type.name',
