@@ -51,7 +51,7 @@ Author.propTypes = {
 };
 
 /** Note component to display note data. */
-function Note({ data, category }) {
+function Note({ data, category, onAttachmentClick }) {
     const categoryItem = (category !== true) ? '' : (
         <span className={style.category}>
             {data.category && data.category.name}
@@ -70,7 +70,7 @@ function Note({ data, category }) {
                 </span>
                 {categoryItem}
                 <span>{data.content}</span>
-                <AttachmentArea components={
+                <AttachmentArea onAttachmentClick={onAttachmentClick} components={
                         data.note_components.map(
                             noteComponent => noteComponent.component
                         )
@@ -85,6 +85,7 @@ function Note({ data, category }) {
 Note.propTypes = {
     data: React.PropTypes.object.isRequired,
     category: React.PropTypes.bool,
+    onAttachmentClick: React.PropTypes.func,
 };
 
 

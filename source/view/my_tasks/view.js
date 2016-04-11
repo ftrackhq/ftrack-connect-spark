@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { browserHistory } from 'react-router';
+import { hashHistory } from 'react-router';
 import style from './style';
 
 import InfiniteScroll from 'component/infinite_scroll';
@@ -27,7 +27,7 @@ class MyTasks extends React.Component {
 
     /** Navigate to the task. */
     _selectContext(item) {
-        browserHistory.push(`/context/${item.id}`);
+        hashHistory.push(`/context/${item.id}`);
     }
 
     /** Load more items. */

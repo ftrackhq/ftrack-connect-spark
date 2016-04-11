@@ -6,8 +6,7 @@
     "main": "source/index.js",
     "scripts": {
         "clean": "rimraf dist/*",
-        "copy": "copyfiles -f ./source/index.html ./source/favicon.ico ./dist & copyfiles -f ./source/application/adobe/index.html ./dist/adobe ",
-        "dist": "npm run copy & webpack --env=dist",
+        "dist": "webpack --env=dist",
         "lint": "eslint ./source",
         "posttest": "npm run lint",
         "release:major": "npm version major && npm publish && git push --follow-tags",
@@ -16,6 +15,7 @@
         "serve": "node server.js --env=dev",
         "serve:dist": "node server.js --env=dist",
         "serve:adobe": "node server.js --env=dev_adobe",
+        "serve:cinema4d": "node server.js --env=dev_cinema4d",
         "start": "node server.js --env=dev",
         "test": "karma start",
         "test:watch": "karma start --autoWatch=true --singleRun=false"
@@ -34,6 +34,7 @@
         "babel-preset-react": "^6.0.15",
         "babel-preset-react-hmre": "^1.1.0",
         "chai": "^3.2.0",
+        "copy-webpack-plugin": "^1.1.1",
         "copyfiles": "^0.2.1",
         "css-loader": "^0.23.0",
         "eslint": "^2.2.0",
@@ -75,6 +76,7 @@
         "lodash": "^4.6.1",
         "loglevel": "^1.4.0",
         "moment": "^2.12.0",
+        "mousetrap": "^1.5.3",
         "normalize.css": "^3.0.3",
         "react": "^0.14.0",
         "react-addons-css-transition-group": "^0.14.7",

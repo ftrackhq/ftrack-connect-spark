@@ -30,6 +30,7 @@ $color-accent-contrast: $color-accent !default;
 //-- Sizing
 $unit: 1rem !default;
 
+$spacing-tiny: 0.4 * $unit;
 $spacing-small: 0.8 * $unit;
 $spacing: 1.6 * $unit;
 $spacing-large: 2.4 * $unit;

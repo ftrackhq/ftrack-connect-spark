@@ -4,13 +4,13 @@ import React from 'react';
 import AppBar from 'react-toolbox/lib/app_bar';
 import classNames from 'classnames';
 import { Button } from 'react-toolbox/lib/button';
-import { browserHistory } from 'react-router';
+import { hashHistory } from 'react-router';
 
 import style from './style';
 
 /** Go back. */
 const navigateBack = () => {
-    browserHistory.goBack();
+    hashHistory.goBack();
 };
 
 /** Header component containing back button, title and right button */
@@ -31,7 +31,12 @@ function Header(props) {
         <AppBar flat className={_classNames}>
             {props.back ? backButton : null}
             <h4 className={style.title}>{props.title}</h4>
-            {props.rightButton}
+            <h4 className={style.center}>
+                {props.centerItems}
+            </h4>
+            <div>
+            {props.rightItems}
+            </div>
         </AppBar>
     );
 }
@@ -44,16 +49,18 @@ Header.propTypes = {
     className: React.PropTypes.string,
     color: React.PropTypes.string,
     title: React.PropTypes.node,
-    rightButton: React.PropTypes.node,
+    rightItems: React.PropTypes.node,
     back: React.PropTypes.bool,
+    centerItems: React.PropTypes.node,
 };
 
 Header.defaultProps = {
     color: 'primary',
     className: '',
     title: null,
-    rightButton: null,
+    rightItems: null,
     back: false,
+    centerItems: [],
 };
 
 export default Header;

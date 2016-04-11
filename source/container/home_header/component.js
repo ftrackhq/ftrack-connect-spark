@@ -3,13 +3,13 @@
 import React from 'react';
 import Header from 'component/header';
 import { Button, Menu, MenuItem } from 'react-toolbox';
-import { browserHistory } from 'react-router';
+import { hashHistory } from 'react-router';
 
 import style from './style.scss';
 
 /** Push new route on item selected. */
 const navigateToMenu = (value) => {
-    browserHistory.push(`/${value}`);
+    hashHistory.push(`/${value}`);
 };
 
 /**
@@ -46,7 +46,7 @@ class HomeHeader extends React.Component {
                         caption="Quick review"
                     />
                     <MenuItem
-                        value="publish"
+                        value={`publish/${this.props.context}`}
                         icon="file_upload"
                         caption="Publish"
                     />
@@ -55,9 +55,17 @@ class HomeHeader extends React.Component {
         );
 
         return (
-            <Header {...this.props} rightButton={shareButton} color="dark-100" />
+            <Header {...this.props} rightItems={shareButton} color="dark-100" />
         );
     }
 }
+
+HomeHeader.propTypes = {
+    context: React.PropTypes.string,
+};
+
+HomeHeader.defaultProps = {
+    context: null,
+};
 
 export default HomeHeader;
