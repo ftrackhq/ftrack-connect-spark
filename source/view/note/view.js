@@ -9,11 +9,9 @@ import Waypoint from 'react-waypoint';
 import {
     openNoteForm, hideNoteForm, submitNoteForm, removeNote, notesLoadNextPage,
 } from 'action/note';
-
+import { mediator } from '../../application';
 import { openPreviewMedia } from 'action/preview_media';
-
 import { session } from '../../ftrack_api';
-
 import components from 'component/note';
 
 const { EditableNote, ReplyForm, NoteForm } = components;
@@ -59,7 +57,9 @@ function editableNoteDispatchToProps() {
                     );
                     dispatch(openPreviewMedia(Math.max(index, 0), items));
                 } else {
-                    window.location = session.getComponent(componentId);
+                    mediator.downloadFileFromUrl(
+                        session.getComponent(componentId), dispatch
+                    );
                 }
             },
         };
