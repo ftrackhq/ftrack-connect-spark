@@ -64,7 +64,7 @@ function Note({ data, category, onAttachmentClick }) {
     if (category && data.category) {
         if (data.category.id === REVIEW_SESSION_NOTE_CATEGORY) {
             tags.push(
-                <span className={style['review-session-category']}>
+                <span key={data.category.id} className={style['review-session-category']}>
                     {data.category.name}
                 </span>
             );
