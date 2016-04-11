@@ -2,7 +2,7 @@
 
 import { takeEvery, takeLatest } from 'redux-saga';
 import { call, take, put } from 'redux-saga/effects';
-import { browserHistory } from 'react-router';
+import { hashHistory } from 'react-router';
 
 import { session } from '../ftrack_api';
 import { createOperation } from '../ftrack_api/operation';
@@ -50,11 +50,11 @@ function* createProjectSubmit(action) {
 }
 
 function* createProject(action) {
-    browserHistory.push('/create-project');
+    hashHistory.push('/create-project');
 
     const completedAction = yield take(actions.CREATE_PROJECT_COMPLETED);
 
-    browserHistory.goBack();
+    hashHistory.goBack();
     action.payload(completedAction.payload);
 }
 

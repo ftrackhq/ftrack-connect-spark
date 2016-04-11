@@ -10,6 +10,10 @@ import {
     openNoteForm, hideNoteForm, submitNoteForm, removeNote, notesLoadNextPage,
 } from 'action/note';
 
+import { openPreviewMedia } from 'action/preview_media';
+
+import { session } from '../../ftrack_api';
+
 import components from 'component/note';
 
 const { EditableNote, ReplyForm, NoteForm } = components;
@@ -47,6 +51,17 @@ function editableNoteDispatchToProps() {
                 dispatch(submitNoteForm(formKey, data));
             },
             onRemove: () => dispatch(removeNote(props.note.id)),
+            onAttachmentClick: (attachmentArea, componentId, isMedia) => {
+                if (isMedia) {
+                    const items = attachmentArea.getMediaComponents();
+                    const index = items.findIndex(
+                        (component) => component.id === componentId
+                    );
+                    dispatch(openPreviewMedia(Math.max(index, 0), items));
+                } else {
+                    window.location = session.getComponent(componentId);
+                }
+            },
         };
     };
 }
