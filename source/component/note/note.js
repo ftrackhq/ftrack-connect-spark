@@ -9,6 +9,8 @@ import style from './style.scss';
 import AttachmentArea from './attachment_area.js';
 
 import ContextCard from 'component/context_card';
+import Markdown from 'component/markdown';
+
 
 /** Display user information. */
 function User({ data }) {
@@ -60,7 +62,7 @@ function Note({ data, category, onAttachmentClick }) {
         </span>
     );
 
-    let card = '';
+    let card = false;
 
     if (data.extraInformation) {
         card = (<ContextCard
@@ -105,7 +107,7 @@ function Note({ data, category, onAttachmentClick }) {
                 </span>
                 {categoryItem}
                 {card}
-                <span>{data.content}</span>
+                <Markdown source={data.content} />
                 <AttachmentArea onAttachmentClick={onAttachmentClick} components={
                         data.note_components.map(
                             noteComponent => noteComponent.component
