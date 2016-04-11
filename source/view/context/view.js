@@ -8,6 +8,7 @@ import ContextCard from 'component/context_card';
 import RouteTabs from 'container/route_tabs';
 
 import { session } from '../../ftrack_api';
+import { queryOperation } from '../../ftrack_api/operation';
 
 import style from './style';
 
@@ -31,22 +32,52 @@ class ContextView extends React.Component {
         }
     }
 
-    /** Load context entity. */
-    _loadContext() {
+    _getTypedContextQuery() {
         const select = [
-            'thumbnail_id', 'type.color', 'type.is_billable', 'type.name',
-            'type.sort', 'priority.sort', 'end_date', 'name', 'status',
-            'type.name', 'assignments', 'assignments.resource_id', 'project',
-            'description', 'priority.name', '_link', 'object_type_id',
-            'status.sort', 'status.name', 'status.color',
+            'thumbnail_id', 'link', 'status.sort', 'status.name',
+            'status.color',
         ];
+
         const queryString = (
             `select ${select.join(', ')} from TypedContext where ` +
             `id is "${this.props.params.context}" limit 1`
         );
 
-        const promise = session._query(queryString).then((result) => {
-            const entity = result.data[0];
+        return queryString;
+    }
+
+    _getProjectQuery() {
+        const select = [
+            'thumbnail_id', 'link',
+        ];
+
+        const queryString = (
+            `select ${select.join(', ')} from Project where ` +
+            `id is "${this.props.params.context}" limit 1`
+        );
+
+        return queryString;
+    }
+
+    /** Load context entity. */
+    _loadContext() {
+        const typedContextQuery = this._getTypedContextQuery();
+        const projectQuery = this._getProjectQuery();
+
+        const queries = [
+            queryOperation(typedContextQuery),
+            queryOperation(projectQuery),
+        ];
+
+        const promise = session._call(queries).then((results) => {
+            let entity = null;
+
+            for (const result of results) {
+                if (result.data.length) {
+                    entity = result.data[0];
+                }
+            }
+
             if (!entity) {
                 return Promise.reject(new Error('Failed to find entity.'));
             }
