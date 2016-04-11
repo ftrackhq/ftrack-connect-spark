@@ -173,37 +173,42 @@ function* loadNotes(action) {
 
     const reviewSessionInviteeAuthors = {};
 
+    function processNoteMeta(note) {
+        note.metadata.forEach(
+            item => {
+                if (item.key === 'inviteeId') {
+                    if (!reviewSessionInviteeAuthors[item.value]) {
+                        reviewSessionInviteeAuthors[item.value] = [];
+                    }
+                    reviewSessionInviteeAuthors[item.value].push(note);
+                }
+
+                if (item.key === 'reviewFrame') {
+                    try {
+                        note.frame = JSON.parse(item.value).number;
+                    } catch (error) {
+                        // Frame number has not been set correctly, do
+                        // nothing.
+                    }
+                }
+            }
+        );
+    }
+
     response.data.forEach(
         note => {
             if (extraInformation[note.parent_id]) {
                 note.extraInformation = extraInformation[note.parent_id];
             }
 
-            note.metadata.forEach(
-                item => {
-                    if (item.key === 'inviteeId') {
-                        if (!reviewSessionInviteeAuthors[item.value]) {
-                            reviewSessionInviteeAuthors[item.value] = [];
-                        }
-                        reviewSessionInviteeAuthors[item.value].push(note);
-                    }
-
-                    if (item.key === 'reviewFrame') {
-                        try {
-                            note.frame = JSON.parse(item.value).number;
-                        } catch (error) {
-                            // Frame number has not been set correctly, do
-                            // nothing.
-                        }
-                    }
-                }
-            );
+            processNoteMeta(note);
 
             // Note replies has a category in the model that is not visible to
             // the end-user.
             // TODO: Change this when displaying frame numbers as tags.
             note.replies.forEach(
                 reply => {
+                    processNoteMeta(reply);
                     delete reply.category;
                 }
             );
