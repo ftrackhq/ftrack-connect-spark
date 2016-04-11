@@ -7,6 +7,7 @@ import { session } from '../ftrack_api';
 import {
     createOperation, updateOperation, deleteOperation, queryOperation,
 } from '../ftrack_api/operation';
+import { notificationWarning } from 'action/notification';
 
 
 import loglevel from 'loglevel';
@@ -39,10 +40,15 @@ function* removeNote(action) {
         [action.payload.id]
     );
 
-    yield call(
-        [session, session._call],
-        [operation]
-    );
+    try {
+        yield call(
+            [session, session._call],
+            [operation]
+        );
+    } catch (error) {
+        yield put(notificationWarning('Could not remove note'));
+        return;
+    }
 
     yield put(
         noteRemoved(action.payload.id)
@@ -75,10 +81,16 @@ function* submitNote(action) {
         );
     }
 
-    const submitResponse = yield call(
-        [session, session._call],
-        [operation]
-    );
+    let submitResponse;
+    try {
+        submitResponse = yield call(
+            [session, session._call],
+            [operation]
+        );
+    } catch (error) {
+        yield put(notificationWarning('Could not submit note'));
+        return;
+    }
 
     const noteId = submitResponse[0].data.id;
 
