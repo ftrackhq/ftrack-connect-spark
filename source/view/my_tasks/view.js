@@ -27,7 +27,7 @@ class MyTasks extends React.Component {
 
     /** Navigate to the task. */
     _selectContext(item) {
-        hashHistory.push(`/context/${item.id}`);
+        hashHistory.push(`/context/${item.id}/${item.__entity_type__}`);
     }
 
     /** Load more items. */

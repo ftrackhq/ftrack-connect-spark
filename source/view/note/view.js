@@ -269,7 +269,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => ({
     onFetchMore: (entity, nextOffset) => {
-        dispatch(notesLoadNextPage(entity.id, nextOffset));
+        dispatch(notesLoadNextPage(entity.id, entity.type, nextOffset));
     },
 });
 

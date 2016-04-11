@@ -13,26 +13,26 @@ const NOTE_SUBMITTED = 'NOTE_SUBMITTED';
 const NOTE_REMOVED = 'NOTE_REMOVED';
 
 /** Load notes action creator. */
-export function notesLoad(id) {
+export function notesLoad(id, type) {
     return {
         type: NOTES_LOAD,
         payload: {
             entity: {
                 id,
-                type: 'TypedContext',
+                type,
             },
         },
     };
 }
 
 /** Load next page of notes action creator. */
-export function notesLoadNextPage(id, nextOffset) {
+export function notesLoadNextPage(id, type, nextOffset) {
     return {
         type: NOTES_LOAD_NEXT_PAGE,
         payload: {
             entity: {
                 id,
-                type: 'TypedContext',
+                type,
             },
             nextOffset,
         },

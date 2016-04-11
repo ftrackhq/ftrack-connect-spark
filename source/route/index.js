@@ -33,12 +33,12 @@ export default (store) => (
             <Route path="browse-all" component={BrowseAllView} />
         </Route>
 
-        <Route path="/context/:context" component={ContextView}>
+        <Route path="/context/:id/:type" component={ContextView}>
             <IndexRedirect to="notes" />
             <Route path="notes" component={NotesListView}
                 onEnter={
                     // eslint-disable-next-line react/prop-types
-                    ({ params }) => store.dispatch(notesLoad(params.context))
+                    ({ params }) => store.dispatch(notesLoad(params.id, params.type))
                 }
             />
             <Route path="versions" component={VersionsView}
