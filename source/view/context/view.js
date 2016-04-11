@@ -66,21 +66,10 @@ class ContextView extends React.Component {
             { route: 'notes', label: 'Notes' },
             { route: 'versions', label: 'Versions' },
         ];
-        let entityElement = null;
-        if (this.state.entity) {
-            entityElement = <ContextCard entity={entity} flat />;
-        } else if (this.state.loading) {
-            entityElement = (
-                <div className={style.loader}>
-                    <ProgressBar mode="indeterminate" />
-                </div>
-            );
-        }
-
         return (
             <div>
                 <HomeHeader back context={contextId} />
-                {entityElement}
+                {<ContextCard entity={entity} flat />}
                 <RouteTabs items={tabs} baseRoute={`/context/${contextId}/`} />
                 {this.props.children}
             </div>
