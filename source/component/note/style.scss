@@ -62,6 +62,16 @@
             margin-top: -25px;
         }
     }
+
+    textarea {
+        resize: none;
+    }
+
+    &.expanded {
+        textarea {
+            height: 6em;
+        }
+    }
 }
 
 .reply-button {
