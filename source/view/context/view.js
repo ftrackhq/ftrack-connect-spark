@@ -1,15 +1,12 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
-import ProgressBar from 'react-toolbox/lib/progress_bar';
 
 import HomeHeader from 'container/home_header';
 import ContextCard from 'component/context_card';
 import RouteTabs from 'container/route_tabs';
 
 import { session } from '../../ftrack_api';
-
-import style from './style';
 
 
 /** Context view */
@@ -69,7 +66,7 @@ class ContextView extends React.Component {
         return (
             <div>
                 <HomeHeader back context={contextId} />
-                {<ContextCard entity={entity} flat />}
+                <ContextCard entity={entity} flat />
                 <RouteTabs items={tabs} baseRoute={`/context/${contextId}/`} />
                 {this.props.children}
             </div>
