@@ -31,6 +31,7 @@ class ContextView extends React.Component {
         }
     }
 
+    /** Return query string to get a TypedContext. */
     _getTypedContextQuery() {
         const select = [
             'thumbnail_id', 'link', 'status.sort', 'status.name',
@@ -45,6 +46,7 @@ class ContextView extends React.Component {
         return queryString;
     }
 
+    /** Return a query string to get Project. */
     _getProjectQuery() {
         const select = [
             'thumbnail_id', 'link',
