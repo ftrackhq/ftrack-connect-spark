@@ -1,6 +1,8 @@
 // :copyright: Copyright (c) 2016 ftrack
 import { loadComponents, resolveComponentPaths } from '../lib/import';
 
+import { notificationInfo } from 'action/notification';
+
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('adobe:mediator');
 
@@ -129,6 +131,15 @@ export class AdobeMediator {
         });
 
         return promise;
+    }
+
+    /** Download file from *url* or show a notification with *dispatch* if not supported. */
+    downloadFileFromUrl(url, dispatch) {
+        dispatch(
+            notificationInfo(
+                'Go to the ftrack web application to download this file'
+            )
+        );
     }
 
 }

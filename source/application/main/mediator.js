@@ -101,6 +101,10 @@ export class MainMediator {
         return credentials;
     }
 
+    /** Download file from *url* or show a notification with *dispatch* if not supported. */
+    downloadFileFromUrl(url) {
+        window.location = url;
+    }
 }
 
 /** Export *MainMediator* instance. */
