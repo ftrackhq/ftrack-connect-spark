@@ -1,6 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-import startupSaga from './startup';
+import { startupSaga } from './startup';
 import { quickReviewSubmitSaga } from './quick_review';
 import { publishLoadSaga, publishSubmitSaga, publishResolveContextSaga } from './publish';
 import { notesLoadSaga, notesLoadNextPageSaga, noteSubmitSaga, noteRemoveSaga } from './note';

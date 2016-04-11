@@ -147,6 +147,7 @@ export class Session {
         this._apiUser = apiUser;
         this._apiKey = apiKey;
         this._serverUrl = serverUrl;
+        this.initialized = false;
         this.eventHub = new EventHub(serverUrl, apiUser, apiKey);
 
         if (autoConnectEventHub) {
@@ -169,6 +170,7 @@ export class Session {
             (responses) => {
                 this._serverInformation = responses[0];
                 this._schemas = responses[1];
+                this.initialized = true;
             }
         );
 

@@ -1,5 +1,5 @@
 import { takeEvery } from 'redux-saga';
-import { type } from 'action/application';
+import actions from 'action/application';
 
 import { session } from '../../../ftrack_api';
 import Event from '../../../ftrack_api/event';
@@ -12,7 +12,7 @@ function* showDebugMessage(action) {
 
 function* cinema4dSaga() {
     yield* takeEvery(
-        type.APPLICATION_SHOW_DEBUG_MESSAGE, showDebugMessage
+        actions.APPLICATION_SHOW_DEBUG_MESSAGE, showDebugMessage
     );
 }
 
