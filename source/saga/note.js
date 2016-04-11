@@ -187,6 +187,15 @@ function* loadNotes(action) {
                         }
                         reviewSessionInviteeAuthors[item.value].push(note);
                     }
+
+                    if (item.key === 'reviewFrame') {
+                        try {
+                            note.frame = JSON.parse(item.value).number;
+                        } catch (error) {
+                            // Frame number has not been set correctly, do
+                            // nothing.
+                        }
+                    }
                 }
             );
 

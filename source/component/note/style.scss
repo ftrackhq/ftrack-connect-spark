@@ -1,9 +1,13 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-.category {
+.tags {
     color: $color-text-secondary;
     font-style: italic;
     display: block;
+}
+
+.review-session-category {
+    color: $palette-blue-400;
 }
 
 .user {

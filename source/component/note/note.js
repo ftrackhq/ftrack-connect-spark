@@ -12,6 +12,9 @@ import ContextCard from 'component/context_card';
 import Markdown from 'component/markdown';
 
 
+const REVIEW_SESSION_NOTE_CATEGORY = '42983ba0-53b0-11e4-916c-0800200c9a66';
+
+
 /** Display user information. */
 function User({ data }) {
     return (
@@ -56,11 +59,26 @@ Author.propTypes = {
 
 /** Note component to display note data. */
 function Note({ data, category, onAttachmentClick }) {
-    const categoryItem = (category !== true) ? '' : (
-        <span className={style.category}>
-            {data.category && data.category.name}
-        </span>
-    );
+    const tags = [];
+
+    if (category && data.category) {
+        if (data.category.id === REVIEW_SESSION_NOTE_CATEGORY) {
+            tags.push(
+                <span className={style['review-session-category']}>
+                    {data.category.name}
+                </span>
+            );
+        } else {
+            tags.push(data.category.name);
+        }
+    }
+
+    if (data.frame) {
+        if (tags.length > 0) {
+            tags.push(', ');
+        }
+        tags.push(`Frame ${data.frame}`);
+    }
 
     let card = false;
 
@@ -105,7 +123,9 @@ function Note({ data, category, onAttachmentClick }) {
                     <Author data={author} />
                     <TimeAgo className={style.datetime} date={data.date.toDate()} />
                 </span>
-                {categoryItem}
+                <div className={style.tags}>
+                    {tags}
+                </div>
                 {card}
                 <Markdown source={data.content} />
                 <AttachmentArea onAttachmentClick={onAttachmentClick} components={
