@@ -1,15 +1,12 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
-import ProgressBar from 'react-toolbox/lib/progress_bar';
 
 import HomeHeader from 'container/home_header';
 import ContextCard from 'component/context_card';
 import RouteTabs from 'container/route_tabs';
 
 import { session } from '../../ftrack_api';
-
-import style from './style';
 
 
 /** Context view */
@@ -93,21 +90,10 @@ class ContextView extends React.Component {
             { route: 'notes', label: 'Notes' },
             { route: 'versions', label: 'Versions' },
         ];
-        let entityElement = null;
-        if (this.state.entity) {
-            entityElement = <ContextCard entity={entity} flat />;
-        } else if (this.state.loading) {
-            entityElement = (
-                <div className={style.loader}>
-                    <ProgressBar mode="indeterminate" />
-                </div>
-            );
-        }
-
         return (
             <div>
                 <HomeHeader back context={contextId} />
-                {entityElement}
+                <ContextCard entity={entity} flat />
                 <RouteTabs
                     items={tabs}
                     baseRoute={`/context/${contextType}/${contextId}/`}
