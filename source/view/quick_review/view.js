@@ -158,13 +158,7 @@ class QuickReviewView extends React.Component {
     }
 
     _onChange(value) {
-        if (value && value.length >= 1) {
-            this._loadCollaborators(value);
-        } else {
-            this.setState({
-                availableCollaborators: [],
-            });
-        }
+        this._loadCollaborators(value);
 
         this.props.fields.collaborator.onChange(value);
 
@@ -201,6 +195,14 @@ class QuickReviewView extends React.Component {
 
     /** Load collaborators from server based on *value*. */
     _loadCollaborators(value) {
+        // Clear state and return early if nothing to query.
+        if (!value || !value.length) {
+            this.setState({
+                availableCollaborators: [],
+            });
+            return;
+        }
+
         const parts = value.split(' ');
 
         const inviteeQuery = (
