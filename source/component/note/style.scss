@@ -1,9 +1,13 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-.category {
+.tags {
     color: $color-text-secondary;
     font-style: italic;
     display: block;
+}
+
+.review-session-category {
+    color: $palette-blue-400;
 }
 
 .user {
@@ -42,6 +46,11 @@
     .attachments-area {
         margin-top: $spacing;
     }
+
+    .context-card {
+        background-color: $color-dark-300;
+        margin: $spacing 0;
+    }
 }
 
 .note-form {
@@ -51,6 +60,16 @@
         .progressbar {
             transform: scale(0.5);
             margin-top: -25px;
+        }
+    }
+
+    textarea {
+        resize: none;
+    }
+
+    &.expanded {
+        textarea {
+            height: 6em;
         }
     }
 }

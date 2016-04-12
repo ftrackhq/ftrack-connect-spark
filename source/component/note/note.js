@@ -8,6 +8,13 @@ import { session } from '../../ftrack_api';
 import style from './style.scss';
 import AttachmentArea from './attachment_area.js';
 
+import ContextCard from 'component/context_card';
+import Markdown from 'component/markdown';
+
+
+const REVIEW_SESSION_NOTE_CATEGORY = '42983ba0-53b0-11e4-916c-0800200c9a66';
+
+
 /** Display user information. */
 function User({ data }) {
     return (
@@ -52,11 +59,36 @@ Author.propTypes = {
 
 /** Note component to display note data. */
 function Note({ data, category, onAttachmentClick }) {
-    const categoryItem = (category !== true) ? '' : (
-        <span className={style.category}>
-            {data.category && data.category.name}
-        </span>
-    );
+    const tags = [];
+
+    if (category && data.category) {
+        if (data.category.id === REVIEW_SESSION_NOTE_CATEGORY) {
+            tags.push(
+                <span key={data.category.id} className={style['review-session-category']}>
+                    {data.category.name}
+                </span>
+            );
+        } else {
+            tags.push(data.category.name);
+        }
+    }
+
+    if (data.frame) {
+        if (tags.length > 0) {
+            tags.push(', ');
+        }
+        tags.push(`Frame ${data.frame}`);
+    }
+
+    let card = false;
+
+    if (data.extraInformation) {
+        card = (<ContextCard
+            className={style['context-card']}
+            entity={data.extraInformation}
+            flat
+        />);
+    }
 
     // TODO: Break out as a separate component.
     const author = data.author;
@@ -91,8 +123,11 @@ function Note({ data, category, onAttachmentClick }) {
                     <Author data={author} />
                     <TimeAgo className={style.datetime} date={data.date.toDate()} />
                 </span>
-                {categoryItem}
-                <span>{data.content}</span>
+                <div className={style.tags}>
+                    {tags}
+                </div>
+                {card}
+                <Markdown source={data.content} />
                 <AttachmentArea onAttachmentClick={onAttachmentClick} components={
                         data.note_components.map(
                             noteComponent => noteComponent.component

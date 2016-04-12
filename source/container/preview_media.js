@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { hidePreviewMedia } from 'action/preview_media';
 import { PreviewMedia, PreviewImage } from 'component/preview_media';
 import { session } from '../ftrack_api';
+import { mediator } from '../application';
 
 /** Preview media component used to preview media components. */
 function PreviewMediaComponents(props) {
@@ -58,7 +59,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         onDownload: (downloadUrl) => {
-            window.location = downloadUrl;
+            mediator.downloadFileFromUrl(downloadUrl, dispatch);
         },
         onDismiss: () => dispatch(hidePreviewMedia()),
     };
