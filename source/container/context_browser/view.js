@@ -98,7 +98,7 @@ class ContextBrowser extends React.Component {
 
     _onSelectContextClick(item, event) {
         event.stopPropagation();
-        this.props.onSelectContext(item.id);
+        this.props.onSelectContext(item.id, item.__entity_type__);
     }
 
     /** Render item. */

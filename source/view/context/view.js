@@ -28,22 +28,48 @@ class ContextView extends React.Component {
         }
     }
 
-    /** Load context entity. */
-    _loadContext() {
+    /** Return query string to get a TypedContext. */
+    _getTypedContextQuery() {
         const select = [
-            'thumbnail_id', 'type.color', 'type.is_billable', 'type.name',
-            'type.sort', 'priority.sort', 'end_date', 'name', 'status',
-            'type.name', 'assignments', 'assignments.resource_id', 'project',
-            'description', 'priority.name', '_link', 'object_type_id',
-            'status.sort', 'status.name', 'status.color',
+            'thumbnail_id', 'link', 'status.sort', 'status.name',
+            'status.color',
         ];
+
         const queryString = (
             `select ${select.join(', ')} from TypedContext where ` +
-            `id is "${this.props.params.context}" limit 1`
+            `id is "${this.props.params.id}" limit 1`
         );
+
+        return queryString;
+    }
+
+    /** Return a query string to get Project. */
+    _getProjectQuery() {
+        const select = [
+            'thumbnail_id', 'link',
+        ];
+
+        const queryString = (
+            `select ${select.join(', ')} from Project where ` +
+            `id is "${this.props.params.id}" limit 1`
+        );
+
+        return queryString;
+    }
+
+    /** Load context entity. */
+    _loadContext() {
+        let queryString = null;
+
+        if (this.props.params.type === 'Project') {
+            queryString = this._getProjectQuery();
+        } else {
+            queryString = this._getTypedContextQuery();
+        }
 
         const promise = session._query(queryString).then((result) => {
             const entity = result.data[0];
+
             if (!entity) {
                 return Promise.reject(new Error('Failed to find entity.'));
             }
@@ -57,7 +83,8 @@ class ContextView extends React.Component {
     }
 
     render() {
-        const contextId = this.props.params.context;
+        const contextId = this.props.params.id;
+        const contextType = this.props.params.type;
         const entity = this.state.entity;
         const tabs = [
             { route: 'notes', label: 'Notes' },
@@ -67,7 +94,10 @@ class ContextView extends React.Component {
             <div>
                 <HomeHeader back context={contextId} />
                 <ContextCard entity={entity} flat />
-                <RouteTabs items={tabs} baseRoute={`/context/${contextId}/`} />
+                <RouteTabs
+                    items={tabs}
+                    baseRoute={`/context/${contextType}/${contextId}/`}
+                />
                 {this.props.children}
             </div>
         );
