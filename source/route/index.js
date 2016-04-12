@@ -33,7 +33,7 @@ function dispatchRequiresAuth(dispatch) {
     return (nextState, replace) => {
         if (!session || !session.initialized) {
             const nextPathName = nextState.location.pathname;
-            replace({ pathname: '/' });
+            replace({ pathname: '/login' });
             dispatch(applicationAuthenticate(nextPathName));
         }
     };
@@ -41,7 +41,9 @@ function dispatchRequiresAuth(dispatch) {
 
 export default (store) => (
     <Route path="/" component={RootLayout}>
+        <Route path="/login" />
         <Route onEnter={dispatchRequiresAuth(store.dispatch)}>
+            <IndexRedirect to="/home/my-tasks" />
 
             <Route path="/home" component={HomeView}>
                 <IndexRedirect to="my-tasks" />
