@@ -1,5 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 
+import { takeLatest } from 'redux-saga';
 import { call, put } from 'redux-saga/effects';
 import { hashHistory } from 'react-router';
 
@@ -9,6 +10,8 @@ import {
     ftrackApiUserAuthenticated,
     ftrackApiAuthenticationFailed,
 } from 'action/ftrack_api';
+import actions from 'action/application';
+
 import {
     showProgress, hideOverlay, showFailure,
 } from './lib/overlay';
@@ -37,10 +40,20 @@ function queryUserExpression(apiUser) {
  *     FTRACK_API_USER_AUTHENTICATE
  *     FTRACK_API_AUTHENTICATION_FAILED
  */
-function* startupSaga() {
+function* startup(action) {
+    const { payload: { nextPathName } } = action;
+    yield showProgress(null, { dismissable: false, message: null });
+    let credentials = null;
+
     try {
-        yield showProgress(null, { dismissable: false, message: null });
-        const credentials = yield call([mediator, mediator.getCredentials]);
+        credentials = yield call([mediator, mediator.getCredentials]);
+    } catch (error) {
+        yield hideOverlay();
+        hashHistory.replace('/connect-missing');
+        return;
+    }
+
+    try {
         yield configureSharedApiSession(
             credentials.serverUrl,
             credentials.apiUser,
@@ -51,7 +64,9 @@ function* startupSaga() {
             queryUserExpression(credentials.apiUser)
         );
         yield put(ftrackApiUserAuthenticated(users.data[0]));
+
         yield hideOverlay();
+        hashHistory.replace(nextPathName || '/home');
     } catch (error) {
         yield put(ftrackApiAuthenticationFailed(error));
         yield call(showFailure, {
@@ -59,7 +74,9 @@ function* startupSaga() {
             error,
         });
     }
-    hashHistory.push('/home');
 }
 
-export default startupSaga;
+/** Run startup after each `APPLICATION_AUTHENTICATE`. */
+export function* startupSaga() {
+    yield takeLatest(actions.APPLICATION_AUTHENTICATE, startup);
+}

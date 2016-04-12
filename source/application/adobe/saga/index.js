@@ -1,6 +1,6 @@
 import { takeEvery } from 'redux-saga';
 import { call } from 'redux-saga/effects';
-import { type } from 'action/application';
+import actions from 'action/application';
 
 function emptyFn() {}
 
@@ -16,7 +16,7 @@ function* showDebugMessageAdobe(action) {
 
 function* adobeSaga() {
     yield* takeEvery(
-        type.APPLICATION_SHOW_DEBUG_MESSAGE, showDebugMessageAdobe
+        actions.APPLICATION_SHOW_DEBUG_MESSAGE, showDebugMessageAdobe
     );
 }
 
