@@ -4,7 +4,10 @@ import { call, put } from 'redux-saga/effects';
 import { takeEvery } from 'redux-saga';
 import actions, { notesLoaded, noteSubmitted, noteRemoved } from 'action/note';
 import { session } from '../ftrack_api';
-import { createOperation, updateOperation, deleteOperation } from '../ftrack_api/operation';
+import {
+    createOperation, updateOperation, deleteOperation, queryOperation,
+} from '../ftrack_api/operation';
+import { notificationWarning } from 'action/notification';
 
 
 import loglevel from 'loglevel';
@@ -37,10 +40,15 @@ function* removeNote(action) {
         [action.payload.id]
     );
 
-    yield call(
-        [session, session._call],
-        [operation]
-    );
+    try {
+        yield call(
+            [session, session._call],
+            [operation]
+        );
+    } catch (error) {
+        yield put(notificationWarning('Could not remove note'));
+        return;
+    }
 
     yield put(
         noteRemoved(action.payload.id)
@@ -73,10 +81,16 @@ function* submitNote(action) {
         );
     }
 
-    const submitResponse = yield call(
-        [session, session._call],
-        [operation]
-    );
+    let submitResponse;
+    try {
+        submitResponse = yield call(
+            [session, session._call],
+            [operation]
+        );
+    } catch (error) {
+        yield put(notificationWarning('Could not submit note'));
+        return;
+    }
 
     const noteId = submitResponse[0].data.id;
 
@@ -100,9 +114,50 @@ function* loadNotes(action) {
         offset = action.payload.nextOffset;
     }
 
+    const entityId = action.payload.entity.id;
+    const relatedEntitiesSelect = 'id, link, status.color, thumbnail_id';
+
+    // Gather all version ids of assets publish on entity.
+    const assetVersionsQuery = (
+        `select ${relatedEntitiesSelect} from AssetVersion where asset.context_id is "${entityId}"`
+    );
+
+    // Gather all version ids of assets publish on entity.
+    const taskVersionsQuery = (
+        `select ${relatedEntitiesSelect} from AssetVersion where task_id is "${entityId}"`
+    );
+
+    // Gather all tasks that are direct children to entity.
+    const tasksQuery = (
+        `select ${relatedEntitiesSelect} from Task where parent_id is "${entityId}"`
+    );
+
+    const relatedEntitiesResponse = yield call(
+        [session, session._call],
+        [
+            queryOperation(assetVersionsQuery),
+            queryOperation(taskVersionsQuery),
+            queryOperation(tasksQuery),
+        ]
+    );
+
+    const ids = [entityId];
+    const extraInformation = {};
+
+    relatedEntitiesResponse.forEach(
+        (item) => {
+            item.data.forEach(
+                (entity) => {
+                    ids.push(entity.id);
+                    extraInformation[entity.id] = entity;
+                }
+            );
+        }
+    );
+
     const query = (
-        `${noteSelect()} where parent_id is ` +
-        `"${action.payload.entity.id}" and not in_reply_to has () ` +
+        `${noteSelect()} where parent_id in ` +
+        `(${ids.join(',')}) and not in_reply_to has () ` +
         `order by thread_activity desc offset ${offset} limit 10`
     );
 
@@ -118,24 +173,42 @@ function* loadNotes(action) {
 
     const reviewSessionInviteeAuthors = {};
 
-    response.data.forEach(
-        note => {
-            note.metadata.forEach(
-                item => {
-                    if (item.key === 'inviteeId') {
-                        if (!reviewSessionInviteeAuthors[item.value]) {
-                            reviewSessionInviteeAuthors[item.value] = [];
-                        }
-                        reviewSessionInviteeAuthors[item.value].push(note);
+    function processNoteMeta(note) {
+        note.metadata.forEach(
+            item => {
+                if (item.key === 'inviteeId') {
+                    if (!reviewSessionInviteeAuthors[item.value]) {
+                        reviewSessionInviteeAuthors[item.value] = [];
+                    }
+                    reviewSessionInviteeAuthors[item.value].push(note);
+                }
+
+                if (item.key === 'reviewFrame') {
+                    try {
+                        note.frame = JSON.parse(item.value).number;
+                    } catch (error) {
+                        // Frame number has not been set correctly, do
+                        // nothing.
                     }
                 }
-            );
+            }
+        );
+    }
+
+    response.data.forEach(
+        note => {
+            if (extraInformation[note.parent_id]) {
+                note.extraInformation = extraInformation[note.parent_id];
+            }
+
+            processNoteMeta(note);
 
             // Note replies has a category in the model that is not visible to
             // the end-user.
             // TODO: Change this when displaying frame numbers as tags.
             note.replies.forEach(
                 reply => {
+                    processNoteMeta(reply);
                     delete reply.category;
                 }
             );
@@ -184,7 +257,7 @@ function* loadNotes(action) {
     yield put(
         notesLoaded(
             {
-                id: action.payload.entity.id,
+                id: entityId,
                 type: action.payload.entity.type,
             },
             response.data,

@@ -1,7 +1,8 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
-import { IconMenu, MenuItem } from 'react-toolbox';
+import { IconMenu, MenuItem } from 'react-toolbox/lib/menu';
+import Dialog from 'react-toolbox/lib/dialog';
 
 import Note from './note.js';
 import NoteForm from './form.js';
@@ -16,53 +17,93 @@ import style from './style.scss';
 * props are passed ot the note form.
 *
 */
-function EditableNote(props) {
-    const {
-        note, collapsed, pending, content, author, onShowForm, onHideForm,
-        onSubmitForm, onRemove, onAttachmentClick,
-    } = props;
+class EditableNote extends React.Component {
 
-    if (!collapsed) {
+    constructor() {
+        super();
+
+        this.state = {
+            confirmRemove: false,
+        };
+    }
+
+    /** Handle dialog interaction and remove note if *remove* is true. */
+    handleDialog(remove) {
+        if (remove === true) {
+            this.props.onRemove();
+        }
+
+        this.setState({ confirmRemove: false });
+    }
+
+    render() {
+        const {
+            note, collapsed, pending, content, author, onShowForm, onHideForm,
+            onSubmitForm, onAttachmentClick,
+        } = this.props;
+
+        const actions = [
+            { label: 'Cancel', onClick: this.handleDialog.bind(this, false) },
+            { label: 'Remove', onClick: this.handleDialog.bind(this, true) },
+        ];
+
+        if (!collapsed) {
+            return (
+                <NoteForm
+                    pending={pending}
+                    content={content}
+                    onClickOutside={onHideForm}
+                    onSubmit={onSubmitForm}
+                    autoFocus
+                    edit
+                />
+            );
+        }
+
+        let menu = false;
+
+        if (author && note.author && author.id === note.author.id) {
+            menu = (
+                <IconMenu icon="more_vert" menuRipple>
+                    <MenuItem value="edit" icon="edit" caption="Edit"
+                        onClick={onShowForm}
+                    />
+                    <MenuItem value="delete" icon="delete" caption="Remove"
+                        onClick={
+                            () => this.setState({ confirmRemove: true })
+                        }
+                    />
+                </IconMenu>
+            );
+        }
+
+        let confirmationDialog = false;
+        if (this.state.confirmRemove) {
+            confirmationDialog = (
+                <Dialog
+                    title="Are you sure want to remove the note?"
+                    actions={actions}
+                    onEscKeyDown={() => this.handleDialog(false)}
+                    active
+                />
+            );
+        }
+
         return (
-            <NoteForm
-                pending={pending}
-                content={content}
-                onClickOutside={onHideForm}
-                onSubmit={onSubmitForm}
-                autoFocus
-                edit
-            />
-        );
-    }
-
-    let menu = false;
-
-    if (author && note.author && author.id === note.author.id) {
-        menu = (
-            <IconMenu icon="more_vert" menuRipple>
-                <MenuItem value="edit" icon="edit" caption="Edit"
-                    onClick={onShowForm}
+            <div className={style['editable-note-container']}>
+                {confirmationDialog}
+                <Note
+                    data={note}
+                    key={note.id}
+                    category
+                    onAttachmentClick={onAttachmentClick}
                 />
-                <MenuItem value="delete" icon="delete" caption="Remove"
-                    onClick={onRemove}
-                />
-            </IconMenu>
-        );
-    }
-
-    return (
-        <div className={style['editable-note-container']}>
-            <Note
-                data={note}
-                key={note.id}
-                category
-                onAttachmentClick={onAttachmentClick}
-            />
-            <div className={style['icon-menu']}>
-                {menu}
+                <div className={style['icon-menu']}>
+                    {menu}
+                </div>
             </div>
-        </div>
-    );
+        );
+    }
 }
 
 EditableNote.propTypes = {
