@@ -29,6 +29,7 @@ function Form(props) {
                     <Button
                         label="Cancel"
                         onClick={props.onCancel}
+                        type="button"
                     />
                     <Button
                         label={props.submitLabel}
