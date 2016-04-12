@@ -144,8 +144,29 @@ function* createQuickReview(values, media) {
         componentVersions.push({ componentId, versionId });
     }
 
+    const collaborators = values.collaborators.slice();
+
+    // Add current user as invitee.
+    const response = yield call(
+        [session, session._query],
+        `select first_name, last_name, email from User where username is "${session._apiUser}"`
+    );
+    if (response && response.data && response.data.length) {
+        const user = response.data[0];
+        const exists = collaborators.find(
+            collaborator => collaborator.email === user.email
+        );
+
+        if (!exists) {
+            collaborators.push({
+                name: `${user.first_name} ${user.last_name}`,
+                email: user.email,
+            });
+        }
+    }
+
     const reviewSessionInviteeIds = [];
-    for (const invitee of values.collaborators) {
+    for (const invitee of collaborators) {
         if (invitee.email.includes('@')) {
             const reviewSessionInviteeId = uuid.v4();
             reviewSessionInviteeIds.push(reviewSessionInviteeId);
