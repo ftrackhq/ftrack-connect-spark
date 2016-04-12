@@ -224,7 +224,7 @@ class QuickReviewView extends React.Component {
 
         promise.then((responses) => {
             const results = {};
-            const collaborators = [];
+            let collaborators = [];
             const invitees = responses[0].data;
             const users = responses[1].data;
 
@@ -256,6 +256,16 @@ class QuickReviewView extends React.Component {
                 if (!this.collaboratorExists(email)) {
                     collaborators.push(results[email]);
                 }
+            });
+            collaborators = collaborators.slice(0, 5);
+
+            collaborators.sort((a, b) => {
+                if (a.name < b.name) {
+                    return -1;
+                } else if (a.name > b.name) {
+                    return 1;
+                }
+                return 0;
             });
 
             this.setState({
