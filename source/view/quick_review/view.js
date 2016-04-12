@@ -100,11 +100,12 @@ class QuickReviewView extends React.Component {
         this._loadCollaborators = debounce(
             this._loadCollaborators.bind(this), 500
         );
-        this._onChange = this._onChange.bind(this);
+        this._onCollaboratorsChange = this._onCollaboratorsChange.bind(this);
         this.addCollaborator = this.addCollaborator.bind(this);
-        this._changeName = this._changeName.bind(this);
+        this._onNameChange = this._onNameChange.bind(this);
         this._addNewCollaborator = this._addNewCollaborator.bind(this);
         this._renderCollaborators = this._renderCollaborators.bind(this);
+        this._onCollaboratorsKeyDown = this._onCollaboratorsKeyDown.bind(this);
 
         const _projects = session._query(
             'select id, full_name from Project where status is "active"'
@@ -157,7 +158,8 @@ class QuickReviewView extends React.Component {
         this.props.createProject(this._updateProject);
     }
 
-    _onChange(value) {
+    /** Handle changes to the collaborators field. */
+    _onCollaboratorsChange(value) {
         this._loadCollaborators(value);
 
         this.props.fields.collaborator.onChange(value);
@@ -271,6 +273,7 @@ class QuickReviewView extends React.Component {
         return exists;
     }
 
+    /** Add collaborator from *item*. */
     addCollaborator(item) {
         // User already exists.
         const exists = this.collaboratorExists(item.email);
@@ -293,12 +296,14 @@ class QuickReviewView extends React.Component {
         );
     }
 
+    /** Remove collaborator *item*. */
     removeCollaborator(item) {
         this.props.fields.collaborators.onChange(
             without(this.props.fields.collaborators.value, item)
         );
     }
 
+    /** Add a new collaborator from the form. */
     _addNewCollaborator() {
         const email = this.props.fields.collaborator.value;
         const name = this.state.name;
@@ -314,12 +319,14 @@ class QuickReviewView extends React.Component {
         });
     }
 
-    _changeName(name) {
+    /** Update the name in state. */
+    _onNameChange(name) {
         this.setState({
             name,
         });
     }
 
+    /** Render collaborators. */
     _renderCollaborators() {
         const collaborators = this.props.fields.collaborators.value;
 
@@ -344,6 +351,18 @@ class QuickReviewView extends React.Component {
         return false;
     }
 
+    /** Handle key press in collaborators. */
+    _onCollaboratorsKeyDown(event) {
+        if (event.key === 'Enter') {
+            if (this.state.availableCollaborators.length) {
+                this.addCollaborator(this.state.availableCollaborators[0]);
+            } else if (this.state.name !== '') {
+                this._addNewCollaborator();
+            }
+        }
+    }
+
+    /** Render *collaborators*. */
     renderResult(collaborators) {
         const result = [];
 
@@ -365,7 +384,7 @@ class QuickReviewView extends React.Component {
                     <div>
                         <Input
                             value={ this.state.name }
-                            onChange={ this._changeName }
+                            onChange={ this._onNameChange }
                         />
                         <Button
                             className={ style.addButton }
@@ -439,8 +458,9 @@ class QuickReviewView extends React.Component {
                     name="collaborator"
                     {...collaborator}
                     error={this._errorMessage(collaborator)}
-                    onChange={this._onChange}
+                    onChange={this._onCollaboratorsChange}
                     autoComplete="off"
+                    onKeyDown={this._onCollaboratorsKeyDown}
                 />
                 { this.renderResult(this.state.availableCollaborators) }
                 <Reveal label="Add description">
