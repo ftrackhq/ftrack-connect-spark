@@ -1,9 +1,5 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-.user {
-    padding: 10px;
-}
-
 .addButton {
     margin-left: auto;
     display: block;
@@ -15,8 +11,23 @@
     color: $input-text-label-color;
 }
 
-.result {
-    background-color: $color-dark-300;
+.collaborator-footer {
+    margin-top: -2rem;
+}
+
+.collaborator-info {
+    padding: $spacing-small 0 $spacing;
+    color: $input-text-label-color;
+}
+
+.collaborator-add-new {
+    padding: $spacing;
+    background: $color-dark-300;
+}
+
+.collaborator-matches {
+    padding: $spacing;
+    background: $color-dark-300;
 }
 
 .selected-collaborators {
@@ -27,8 +38,8 @@
     margin-right: $spacing-small;
     margin-bottom: $spacing;
 
+    // Duplicated styles from react-toolbox to match custom avatar component.
     padding-left: 0;
-
     > [data-react-toolbox="avatar"] {
         height: $chip-height;
         margin-right: $chip-icon-margin-right;

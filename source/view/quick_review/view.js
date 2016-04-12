@@ -46,7 +46,7 @@ const validateForm = (values) => {
     return errors;
 };
 
-function ResultList({ items, onClick }) {
+function ResultList({ items, onClick, className }) {
     if (items.length) {
         const result = items.map((item) => {
             const handleClick = onClick.bind(null, item);
@@ -63,6 +63,7 @@ function ResultList({ items, onClick }) {
 
         return (
             <List
+                className={className}
                 selectable
                 ripple
             >
@@ -77,6 +78,7 @@ function ResultList({ items, onClick }) {
 }
 
 ResultList.propTypes = {
+    className: React.PropTypes.strin,
     items: React.PropTypes.array,
     onClick: React.PropTypes.func,
 };
@@ -346,14 +348,14 @@ class QuickReviewView extends React.Component {
         if (collaborators.length) {
             result.push(
                 <ResultList
-                    className={ style.result }
+                    className={style['collaborator-matches']}
                     items={ this.state.availableCollaborators }
                     onClick={this.addCollaborator}
                 />
             );
         } else if (this.state.name !== '') {
             result.push(
-                <div className={ style.user }>
+                <div className={style['collaborator-add-new']}>
                     <p className="text-faded">
                         Invite {this.state.name}? {this.state.name} will
                         automatically recieve an invitation email.
@@ -375,8 +377,8 @@ class QuickReviewView extends React.Component {
             );
         } else {
             if (this.props.fields.collaborator.active) {
-                return (
-                    <p className="text-more-faded">
+                result.push(
+                    <p className={style['collaborator-info']}>
                         Search for a person by name or email address, or enter an
                         email address to invite someone new.
                     </p>
@@ -384,15 +386,14 @@ class QuickReviewView extends React.Component {
             }
         }
 
-        if (result) {
+        if (result && result.length) {
             return (
-                <div className={ style.result }>
+                <div className={style['collaborator-footer']}>
                     { result }
                 </div>
             );
         }
-
-        return '';
+        return null;
     }
 
     render() {
