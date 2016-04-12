@@ -111,7 +111,7 @@ class ContextCard extends React.Component {
 
 ContextCard.propTypes = {
     className: React.PropTypes.string,
-    entity: React.PropTypes.object.isRequired,
+    entity: React.PropTypes.object,
     flat: React.PropTypes.bool,
     onClick: React.PropTypes.func,
     actions: React.PropTypes.node,
