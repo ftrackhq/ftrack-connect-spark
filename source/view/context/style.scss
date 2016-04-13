@@ -7,6 +7,12 @@
     flex-direction: column;
 }
 
+.info {
+    background: $color-dark-300;
+    padding: $spacing $spacing 0 0;
+}
+
 .tabs {
     flex-shrink: 0;
+    background: $color-dark-300;
 }

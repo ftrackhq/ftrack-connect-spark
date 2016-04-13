@@ -86,6 +86,7 @@ function Note({ data, category, onAttachmentClick }) {
         card = (<ContextCard
             className={style['context-card']}
             entity={data.extraInformation}
+            small
             flat
         />);
     }

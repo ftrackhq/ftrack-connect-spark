@@ -1,8 +1,10 @@
-
+// :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
 import { Tab, Tabs } from 'react-toolbox';
 import { hashHistory } from 'react-router';
+
+import style from './style.scss';
 
 
 /**
@@ -44,7 +46,7 @@ class RouteTabs extends React.Component {
     /** Render component. */
     render() {
         return (
-            <Tabs index={this.state.index} onChange={this._handleTabChange}>
+            <Tabs index={this.state.index} onChange={this._handleTabChange} className={style.tabs} >
                 {this.props.items.map(
                     (tab) => <Tab key={tab.route} label={tab.label}><div /></Tab>
                 )}
