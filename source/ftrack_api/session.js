@@ -15,6 +15,7 @@ const logger = loglevel.getLogger('ftrack_api');
 const COMBINED_PRIMARY_KEY_MAP = {
     NoteComponent: ['note_id', 'component_id'],
     Metadata: ['parent_id', 'key'],
+    SchemaStatus: ['status_id', 'schema_id'],
 };
 
 /* Return the identity of *item*. */
@@ -216,6 +217,54 @@ export class Session {
         });
 
         return request;
+    }
+
+    getStatuses(projectSchemaId, entityType, typeId = null) {
+        let response;
+
+        const select = [
+            '_task_workflow.statuses.name',
+            '_task_workflow.statuses.color',
+            '_overrides.type_id',
+            '_overrides.workflow_schema.statuses.name',
+            '_overrides.workflow_schema.statuses.sort',
+            '_overrides.workflow_schema.statuses.color',
+            '_overrides.workflow_schema.statuses.sort',
+            '_schemas.type_id',
+            '_schemas.statuses.task_status.name',
+            '_schemas.statuses.task_status.color',
+            '_schemas.statuses.task_status.sort',
+        ];
+
+        response = this._query(
+            `select ${select.join(', ')} from ProjectSchema where id is ${projectSchemaId}`
+        );
+        response = response.then(
+            (result) => {
+                const data = result.data[0];
+                let statuses;
+                if (entityType === 'Task') {
+                    statuses = null;
+
+                    if (typeId !== null && data._overrides.length > 0) {
+                        for (const index in data._overrides) {
+                            if (data._overrides[index].type_id === typeId) {
+                                statuses = data._overrides[index].workflow_schema.statuses;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (statuses === null) {
+                        statuses = data._task_workflow.statuses;
+                    }
+                }
+                debugger;
+                return Promise.resolve(statuses);
+            }
+        );
+
+        return response;
     }
 
     /**

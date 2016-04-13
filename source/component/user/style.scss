@@ -1,0 +1,19 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+.user {
+    display: flex;
+
+    .avatar {
+        margin-right: 4px;
+
+        .image {
+            width: 100%;
+            height: 100%;
+            background-size: cover;        
+        }
+    }
+
+    .unassigned-name {
+        color: $color-text-secondary;
+    }
+}
