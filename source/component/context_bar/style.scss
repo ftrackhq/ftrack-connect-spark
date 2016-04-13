@@ -1,0 +1,14 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+.context-bar {
+    padding: $spacing-small;
+    display: flex;
+
+    > div {
+        margin-right: 10px;
+        line-height: $avatar-size;
+    }
+
+    margin-bottom: $spacing;
+    border-bottom: 1px solid $color-dark-400;
+}
