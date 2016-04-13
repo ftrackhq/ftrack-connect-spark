@@ -17,6 +17,9 @@ class _NoteForm extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        if (this.refs.content && nextProps.autoFocus && !this.props.autoFocus) {
+            this.refs.content.focus();
+        }
         this.setState({ content: nextProps.content });
     }
 
