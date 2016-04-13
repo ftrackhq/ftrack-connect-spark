@@ -8,6 +8,7 @@ import RouteTabs from 'container/route_tabs';
 
 import { session } from '../../ftrack_api';
 
+import style from './style.scss';
 
 /** Context view */
 class ContextView extends React.Component {
@@ -91,13 +92,15 @@ class ContextView extends React.Component {
             { route: 'versions', label: 'Versions' },
         ];
         return (
-            <div>
+            <div className={style.view}>
                 <HomeHeader back context={contextId} />
                 <ContextCard entity={entity} flat />
-                <RouteTabs
-                    items={tabs}
-                    baseRoute={`/context/${contextType}/${contextId}/`}
-                />
+                <div className={style.tabs}>
+                    <RouteTabs
+                        items={tabs}
+                        baseRoute={`/context/${contextType}/${contextId}/`}
+                    />
+                </div>
                 {this.props.children}
             </div>
         );
