@@ -147,11 +147,32 @@ class ContextBar extends React.Component {
             return <noscript />;
         }
 
+        const items = [];
+
+        if (entity.__entity_type__ === 'Task') {
+            items.push(<AssigneeField assignees={entity.assignments} />);
+            items.push(
+                <DateField date={entity.end_date} />
+            );
+        }
+
+        if (entity.status) {
+            items.push(
+                <StatusField
+                    selected={entity.status}
+                    statuses={statuses}
+                    onSelect={this.onStatusChange}
+                />
+            );
+        }
+
+        if (items.length === 0) {
+            return <noscript />;
+        }
+
         return (
             <div className={style['context-bar']}>
-                <AssigneeField assignees={entity.assignments} />
-                <DateField date={entity.end_date} />
-                <StatusField selected={entity.status} statuses={statuses} onSelect={this.onStatusChange} />
+                {items}
             </div>
         );
     }
