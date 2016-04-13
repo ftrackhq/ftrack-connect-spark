@@ -3,7 +3,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import loglevel from 'loglevel';
-import { ProgressBar } from 'react-toolbox';
+import Button from 'react-toolbox/lib/button';
+import ProgressBar from 'react-toolbox/lib/progress_bar';
 import Waypoint from 'react-waypoint';
 
 import {
@@ -13,6 +14,7 @@ import { mediator } from '../../application';
 import { openPreviewMedia } from 'action/preview_media';
 import { session } from '../../ftrack_api';
 import components from 'component/note';
+import EmptyState from 'component/empty_state';
 
 const { EditableNote, ReplyForm, NoteForm } = components;
 
@@ -121,6 +123,7 @@ function newNoteStateToProps() {
         const collapsed = !form.state || form.state === 'hidden';
 
         return {
+            autoFocus: !collapsed,
             content: collapsed ? '' : form.content,
             pending: form.state === 'pending',
             collapsed,
@@ -156,6 +159,49 @@ const NewNoteFormContainer = connect(
     newNoteStateToProps,
     newNoteDispatchToProps
 )(NoteForm);
+
+
+function _NotesListEmptyState({ onActionButtonClick }) {
+    const message = (
+        <span>
+            Start a conversation. <br />
+            Write something in the field above.
+        </span>
+    );
+    return (
+        <EmptyState
+            className={style.empty}
+            icon="message"
+            message={message}
+        >
+            <Button
+                label="Start a conversation"
+                onClick={onActionButtonClick}
+                type="button"
+                primary
+                raised
+            />
+        </EmptyState>
+    );
+}
+
+_NotesListEmptyState.propTypes = {
+    onActionButtonClick: React.PropTypes.func,
+    entity: React.PropTypes.object,
+};
+
+function mapEmptyStateDispatchToProps(dispatch, props) {
+    const formKey = `new-${props.entity.id}`;
+    return {
+        onActionButtonClick: () => dispatch(openNoteForm(formKey, {})),
+    };
+}
+
+const NotesListEmptyState = connect(
+    null,
+    mapEmptyStateDispatchToProps
+)(_NotesListEmptyState);
+
 
 /** List an array of note *items* with support for editing and creating notes.
 *
@@ -222,6 +268,10 @@ function NotesList({ items, entity, user, loading, nextOffset, onFetchMore }) {
                 <ProgressBar type="circular" mode="indeterminate" />
             </div>
         );
+    }
+
+    if (!loading && !items.length) {
+        content.push(<NotesListEmptyState entity={entity} />);
     }
 
     if (loading === false && nextOffset !== null && items.length) {
