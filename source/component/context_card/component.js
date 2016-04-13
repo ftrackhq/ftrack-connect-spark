@@ -27,13 +27,39 @@ class ContextCard extends React.Component {
         this.setState({ expanded: !this.state.expanded });
     }
 
+    /** Return empty state */
+    renderEmptyState() {
+        const _classNames = classNames(style['empty-state'], this.props.className);
+        return (
+            <div className={_classNames}>
+                <div className={style.contents}>
+                    <div className={style.side}>
+                        <div className={style.placeholder} />
+                    </div>
+                    <div className={style.main}>
+                        <ul className={style.placeholderList}>
+                            <li className={style.placeholder} />
+                            <li className={style.placeholder} />
+                            <li className={style.placeholder} />
+                            <li className={style.placeholder} />
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     render() {
+        const entity = this.props.entity;
+        if (!entity) {
+            return this.renderEmptyState();
+        }
+
         const _classNames = classNames(
             style.root, {
                 [style.clickable]: !!this.props.onClick,
             }, this.props.className
         );
-        const entity = this.props.entity;
         const expandIcon = this.state.expanded ? 'expand_less' : 'expand_more';
         const isExpandable = !!entity.description;
         const statusColor = entity.status && entity.status.color;
@@ -85,7 +111,7 @@ class ContextCard extends React.Component {
 
 ContextCard.propTypes = {
     className: React.PropTypes.string,
-    entity: React.PropTypes.object.isRequired,
+    entity: React.PropTypes.object,
     flat: React.PropTypes.bool,
     onClick: React.PropTypes.func,
     actions: React.PropTypes.node,

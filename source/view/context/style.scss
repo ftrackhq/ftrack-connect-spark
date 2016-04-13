@@ -1,13 +1,4 @@
 // :copyright: Copyright (c) 2016 ftrack
-@import '~style/_mixin.scss';
-
-.loader {
-    display: flex;
-    align-items: flex-start;
-    justify-content: stretch;
-
-    min-height: 17.5rem;
-}
 
 .context-bar {
     padding: $spacing-small;

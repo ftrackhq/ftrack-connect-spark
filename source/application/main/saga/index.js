@@ -2,7 +2,7 @@
 
 import { takeEvery } from 'redux-saga';
 import { call } from 'redux-saga/effects';
-import { type } from 'action/application';
+import actions from 'action/application';
 
 function* showDebugMessage(action) {
     yield call(window.alert, action.payload.message);
@@ -10,7 +10,7 @@ function* showDebugMessage(action) {
 
 function* mockSaga() {
     yield* takeEvery(
-        type.APPLICATION_SHOW_DEBUG_MESSAGE, showDebugMessage
+        actions.APPLICATION_SHOW_DEBUG_MESSAGE, showDebugMessage
     );
 }
 

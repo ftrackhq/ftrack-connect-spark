@@ -1,7 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
-import ProgressBar from 'react-toolbox/lib/progress_bar';
+
 import { MenuItem } from 'react-toolbox/lib/menu';
 import { connect } from 'react-redux';
 
@@ -22,7 +22,7 @@ function AssigneeField({ assignees }) {
     if (assignees.length === 0) {
         return (
             <div>
-                <PlaceholderUser title="Unassigned"/>
+                <PlaceholderUser title="Unassigned" />
             </div>
         );
     }
@@ -162,6 +162,7 @@ ContextBar.propTypes = {
     onEntityUpdate: React.PropTypes.func,
 };
 
+
 /** Context view */
 class _ContextView extends React.Component {
 
@@ -267,17 +268,6 @@ class _ContextView extends React.Component {
             { route: 'notes', label: 'Notes' },
             { route: 'versions', label: 'Versions' },
         ];
-        let entityElement = null;
-        if (this.state.entity) {
-            entityElement = <ContextCard entity={entity} flat />;
-        } else if (this.state.loading) {
-            entityElement = (
-                <div className={style.loader}>
-                    <ProgressBar mode="indeterminate" />
-                </div>
-            );
-        }
-
         return (
             <div>
                 <HomeHeader back context={contextId} />
@@ -289,7 +279,7 @@ class _ContextView extends React.Component {
                     />
                     : <noscript />
                 }
-                {entityElement}
+                <ContextCard entity={entity} flat />
                 <RouteTabs
                     items={tabs}
                     baseRoute={`/context/${contextType}/${contextId}/`}
