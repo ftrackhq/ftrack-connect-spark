@@ -6,6 +6,15 @@
     cursor: pointer;
 }
 
+.assignees {
+    display: flex;
+    align-items: center;
+
+    .additional {
+        padding-left: $spacing-tiny;
+    }
+}
+
 .date {
     display: flex;
     > span {

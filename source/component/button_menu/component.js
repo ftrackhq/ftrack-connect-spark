@@ -24,7 +24,13 @@ export default class ButtonMenu extends React.Component {
         return (
             <div className={style.wrapper}>
                 {clonedButton}
-                <Menu position="auto" ref="menu" onSelect={onSelect} menuRipple>
+                <Menu
+                    position="auto"
+                    ref="menu"
+                    onSelect={onSelect}
+                    menuRipple
+                    className={style.menu}
+                >
                     {children}
                 </Menu>
             </div>

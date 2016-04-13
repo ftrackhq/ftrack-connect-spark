@@ -24,6 +24,7 @@ class ContextBar extends React.Component {
 
         this.state = {
             statuses: [],
+            assignees: [],
         };
     }
 
@@ -56,16 +57,33 @@ class ContextBar extends React.Component {
 
     /** Load necessary data for presentation. */
     _loadData() {
-        const response = session.getStatuses(
+        const statusesResponse = session.getStatuses(
             this.props.entity.project.project_schema_id,
             this.props.entity.__entity_type__,
             this.props.entity.type_id
         );
 
-        response.then(
+        statusesResponse.then(
             (statuses) => {
                 this.setState({
                     statuses,
+                });
+            }
+        );
+
+        const resourceIds = this.props.entity.assignments.map(
+            (assignment) => assignment.resource.id
+        );
+
+        const assigneesResponse = session._query(
+            'select first_name, last_name, thumbnail_id from User where id in ' +
+            `(${resourceIds.join(', ')})`
+        );
+
+        assigneesResponse.then(
+            (result) => {
+                this.setState({
+                    assignees: result.data,
                 });
             }
         );
@@ -73,7 +91,7 @@ class ContextBar extends React.Component {
 
     render() {
         const { entity } = this.props;
-        const { statuses } = this.state;
+        const { statuses, assignees } = this.state;
 
         if (!entity) {
             return <noscript />;
@@ -82,7 +100,7 @@ class ContextBar extends React.Component {
         const items = [];
 
         if (entity.__entity_type__ === 'Task') {
-            items.push(<AssigneeField assignees={entity.assignments} />);
+            items.push(<AssigneeField assignees={assignees} />);
             items.push(
                 <DateField date={entity.end_date} />
             );

@@ -19,12 +19,21 @@ export function AssigneeField({ assignees }) {
         );
     }
 
+    const primary = <User data={assignees[0]} thumbnail />;
+    const names = assignees.map(
+        (user) => `${user.first_name} ${user.last_name}`
+    );
+
     return (
-        <div>
+        <div className={style.assignees} title={`${names.join(', ')}`}>
+            {primary}
             {
-                assignees.map(
-                    asignee => <User data={asignee.resource} thumbnail />
-                )
+                assignees.length > 1 ?
+                (
+                    <span className={style.additional}>
+                        {`+${assignees.length - 1}`}
+                    </span>
+                ) : ''
             }
         </div>
     );
