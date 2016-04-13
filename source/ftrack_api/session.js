@@ -221,12 +221,27 @@ export class Session {
         return request;
     }
 
-    getStatuses(projectSchemaId, entityType, typeId = null) {
+    /** Return schema with id or null if not existing. */
+    getSchema(schemaId) {
+        for (const index in this._schemas) {
+            if (this._schemas[index].id === schemaId) {
+                return this._schemas[index];
+            }
+        }
+
+        return null;
+    }
+
+    getStatuses(projectSchemaId, schemaId, typeId = null) {
         let response;
 
         const select = [
             '_task_workflow.statuses.name',
             '_task_workflow.statuses.color',
+            '_task_workflow.statuses.sort',
+            '_version_workflow.statuses.name',
+            '_version_workflow.statuses.color',
+            '_version_workflow.statuses.sort',
             '_overrides.type_id',
             '_overrides.workflow_schema.statuses.name',
             '_overrides.workflow_schema.statuses.sort',
@@ -244,8 +259,8 @@ export class Session {
         response = response.then(
             (result) => {
                 const data = result.data[0];
-                let statuses;
-                if (entityType === 'Task') {
+                let statuses = [];
+                if (schemaId === 'Task') {
                     statuses = null;
 
                     if (typeId !== null && data._overrides.length > 0) {
@@ -260,8 +275,24 @@ export class Session {
                     if (statuses === null) {
                         statuses = data._task_workflow.statuses;
                     }
+                } else if (schemaId === 'AssetVersion') {
+                    statuses = data._version_workflow.statuses;
+                } else {
+                    const schema = this.getSchema(schemaId);
+
+                    if (schema && schema.alias_for && schema.alias_for.id === 'Task') {
+                        const objectTypeId = schema.alias_for.classifiers.object_typeid;
+
+                        for (const index in data._schemas) {
+                            if (data._schemas[index].type_id === objectTypeId) {
+                                statuses = data._schemas[index].statuses.map(
+                                    (status) => status.task_status
+                                );
+                            }
+                        }
+                    }
                 }
-                debugger;
+
                 return Promise.resolve(statuses);
             }
         );
