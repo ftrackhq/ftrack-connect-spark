@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { Menu } from 'react-toolbox/lib/menu';
-import { Button } from 'react-toolbox/lib/button';
 import style from './style.scss';
 
 
@@ -13,19 +12,17 @@ export default class ButtonMenu extends React.Component {
     }
 
     render() {
-        const { label, children, onSelect, className } = this.props;
-        const buttonStyle = this.props.style;
+        const { children, onSelect, button } = this.props;
+        const clonedButton = React.cloneElement(
+            button,
+            {
+                onClick: () => this.showMenu(),
+            }
+        );
 
         return (
             <div className={style.wrapper}>
-                <Button
-                    onClick={
-                        () => this.showMenu()
-                    }
-                    label={label}
-                    className={className}
-                    style={buttonStyle}
-                />
+                {clonedButton}
                 <Menu position="auto" ref="menu" onSelect={onSelect} menuRipple>
                     {children}
                 </Menu>
@@ -35,9 +32,7 @@ export default class ButtonMenu extends React.Component {
 }
 
 ButtonMenu.propTypes = {
+    button: React.PropTypes.node.isRequired,
     children: React.PropTypes.array,
-    label: React.PropTypes.string.isRequired,
     onSelect: React.PropTypes.func.isRequired,
-    className: React.PropTypes.string,
-    style: React.PropTypes.object,
 };

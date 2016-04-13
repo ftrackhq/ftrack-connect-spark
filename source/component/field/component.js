@@ -6,6 +6,7 @@ import { User, PlaceholderUser } from 'component/user';
 import { MenuItem } from 'react-toolbox/lib/menu';
 import ButtonMenu from 'component/button_menu';
 import FontIcon from 'react-toolbox/lib/font_icon';
+import { Button } from 'react-toolbox/lib/button';
 
 import style from './style.scss';
 
@@ -35,22 +36,13 @@ AssigneeField.propTypes = {
 };
 
 export function DateField({ date }) {
-    const className = date ? '' : style['empty-date'];
-    let item;
-
-    if (!date) {
-        item = (
-             <span className={className}>
-                Due date
-                <FontIcon className={style.icon} value="insert_invitation" />
-            </span>
-        );
-    } else {
-        item = <span>{date.toDate().toDateString()}</span>;
-    }
+    const text = date ? date.toDate().toDateString() : 'Due date';
 
     return (
-        <div>{item}</div>
+        <div className={style.date}>
+            <FontIcon className={style.icon} value="insert_invitation" />
+            {text}
+        </div>
     );
 }
 
@@ -61,10 +53,15 @@ DateField.propTypes = {
 export function StatusField({ selected, statuses, onSelect }) {
     return (
         <ButtonMenu
-            label={selected.name}
-            className={style['status-field']}
-            style={{ borderColor: selected.color }}
             onSelect={onSelect}
+            button={
+                <span
+                    className={style['status-field']}
+                    style={{ borderColor: selected.color }}
+                >
+                    {selected.name}
+                </span>
+            }
         >
             {
                 statuses.map(

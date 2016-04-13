@@ -45,7 +45,7 @@ User.propTypes = {
 export function PlaceholderUser({ title }) {
     return (
         <div className={style.user}>
-            <Avatar title={name} className={style.avatar} icon="face" />
+            <Avatar title={name} className={style.avatar} icon="person" />
             <span className={style['unassigned-name']}>
             {title}
             </span>

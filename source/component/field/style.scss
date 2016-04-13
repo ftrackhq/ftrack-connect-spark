@@ -1,24 +1,19 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 .status-field {
-    padding: $spacing-tiny;
-    padding-bottom: 0px;
-    font-size: inherit;
     border-bottom: 1px solid;
-    text-transform: none;
-    min-width: 0px;
-    font-weight: inherit;
+    padding-bottom: 2px;
+    cursor: pointer;
 }
 
-.empty-date {
-    .icon {
-        position: relative;
-        font-size: $input-icon-font-size-small;
-        line-height: inherit;
-        float: left;
+.date {
+    display: flex;
+    > span {
+        margin: auto 0;
     }
-
-    padding: $spacing-tiny;
-    border-bottom: 1px dashed $color-dark-400;
+    .icon {
+        font-size: $input-icon-font-size-small;
+        margin-right: 2px;
+    }
     color: $color-text-secondary;
 }
