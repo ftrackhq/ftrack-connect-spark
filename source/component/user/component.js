@@ -1,7 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
-import FontIcon from 'react-toolbox/lib/font_icon';
 import { Avatar } from 'react-toolbox';
 
 import style from './style.scss';

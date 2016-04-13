@@ -150,8 +150,8 @@ _ContextView.defaultProps = {};
 
 const ContextView = connect(
     null,
-    (dispatch) => {
-        return {
+    (dispatch) => (
+        {
             onError: (error, entity) => {
                 const type = entity.__entity_type__;
                 let errorMessage = `Failed to update the ${type}`;
@@ -160,8 +160,8 @@ const ContextView = connect(
                 }
                 dispatch(notificationWarning(errorMessage));
             },
-        };
-    }
+        }
+    )
 )(_ContextView);
 
 export default ContextView;
