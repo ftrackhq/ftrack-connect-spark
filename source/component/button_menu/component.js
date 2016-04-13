@@ -4,9 +4,10 @@ import React from 'react';
 import { Menu } from 'react-toolbox/lib/menu';
 import style from './style.scss';
 
-
+/** Button menu component used to display a button that trigger a menu. */
 export default class ButtonMenu extends React.Component {
 
+    /** Show the menu. */
     showMenu() {
         this.refs.menu.show();
     }

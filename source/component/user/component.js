@@ -41,7 +41,7 @@ User.propTypes = {
     thumbnail: React.PropTypes.bool,
 };
 
-/** Display user information. */
+/** Display user placeholder. */
 export function PlaceholderUser({ title }) {
     return (
         <div className={style.user}>

@@ -6,12 +6,11 @@ import { User, PlaceholderUser } from 'component/user';
 import { MenuItem } from 'react-toolbox/lib/menu';
 import ButtonMenu from 'component/button_menu';
 import FontIcon from 'react-toolbox/lib/font_icon';
-import { Button } from 'react-toolbox/lib/button';
 
 import style from './style.scss';
 
+/** Assignee field to display assignees or an unassigned placeholder. */
 export function AssigneeField({ assignees }) {
-
     if (assignees.length === 0) {
         return (
             <div>
@@ -35,8 +34,9 @@ AssigneeField.propTypes = {
     assignees: React.PropTypes.array.isRequired,
 };
 
+/** Date field to display a date or an empty string. */
 export function DateField({ date }) {
-    const text = date ? date.toDate().toDateString() : 'Due date';
+    const text = date ? date.toDate().toDateString() : 'No due date';
 
     return (
         <div className={style.date}>
@@ -50,6 +50,7 @@ DateField.propTypes = {
     date: React.PropTypes.object,
 };
 
+/** Status field to display a status and allow selection of statuses. */
 export function StatusField({ selected, statuses, onSelect }) {
     return (
         <ButtonMenu

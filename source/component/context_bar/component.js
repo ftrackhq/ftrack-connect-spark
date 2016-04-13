@@ -1,12 +1,20 @@
 // :copyright: Copyright (c) 2016 ftrack
 
+// TODO: Consider rewriting this component to take advantage of redux and saga.
+
 import React from 'react';
 import { session } from '../../ftrack_api';
 
 import { AssigneeField, StatusField, DateField } from 'component/field';
 import style from './style.scss';
 
-
+/** Context bar component with fields depending on *entity* in props.
+*
+* This component will fetch necessary data from the api when props are updated
+* or the component mounts. As such it should be used with care to not spam the
+* server with requests.
+*
+*/
 class ContextBar extends React.Component {
 
     constructor() {
@@ -29,6 +37,7 @@ class ContextBar extends React.Component {
         }
     }
 
+    /* Handle status changed and update entity status with *newStatusId*. */
     onStatusChange(newStatusId) {
         const statuses = this.state.statuses;
         const entity = Object.assign(
@@ -45,6 +54,7 @@ class ContextBar extends React.Component {
         this.props.onEntityUpdate(entity);
     }
 
+    /** Load necessary data for presentation. */
     _loadData() {
         const response = session.getStatuses(
             this.props.entity.project.project_schema_id,

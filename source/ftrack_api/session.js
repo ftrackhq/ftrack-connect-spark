@@ -232,6 +232,14 @@ export class Session {
         return null;
     }
 
+    /** Return statuses from *projectSchemaId* for *schemaId* and *typeId*.
+    *
+    * *schemaId* should be a valid ftrack api schema, .e.g. 'AssetVersion' or
+    * 'Task'.
+    *
+    * *typeId* can be used to get overridden statuses for a certain task type.
+    *
+    */
     getStatuses(projectSchemaId, schemaId, typeId = null) {
         let response;
 

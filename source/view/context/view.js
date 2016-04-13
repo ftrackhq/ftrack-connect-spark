@@ -32,6 +32,7 @@ class _ContextView extends React.Component {
         }
     }
 
+    /** Handle update of *entity* and commit it to the remote. */
     _onEntityUpdate(newEntity) {
         const oldEntity = this.state.entity;
 
