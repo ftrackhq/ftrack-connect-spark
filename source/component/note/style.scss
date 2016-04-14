@@ -46,6 +46,8 @@
 }
 
 .note-form {
+    flex-shrink: 0;
+
     .toolbar {
         display: flex;
         flex-direction: row-reverse;
