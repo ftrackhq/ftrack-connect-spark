@@ -1,7 +1,25 @@
 // :copyright: Copyright (c) 2016 ftrack
 
+.view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+}
+
+.navigation {
+    flex-shrink: 0;
+    flex-grow: 0;
+    padding: $spacing-small;
+}
+
+.empty {
+    flex-grow: 1;
+    display: flex;
+}
+
 .context-list {
-    padding: $spacing;
+    padding: 0 $spacing;
 }
 
 .item {

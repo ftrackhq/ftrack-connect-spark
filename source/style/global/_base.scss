@@ -1,0 +1,21 @@
+// :copyright: Copyright (c) 2016 ftrack
+:global {
+
+    /** Tweak global react-toolbox sizing */
+    html {
+        // font-size: 62.5%;
+        font-size: 56%;
+    }
+
+    /** Set global colors */
+    body {
+        background: $color-background;
+        color: $color-text;
+    }
+
+    /** Link color */
+    a {
+        color: $color-primary;
+    }
+
+}

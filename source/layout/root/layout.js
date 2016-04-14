@@ -9,12 +9,12 @@ import ApplicationSnackbar from 'container/application_snackbar';
 
 // Include global application styles
 import 'react-toolbox/components/commons.scss';
-import './style.scss';
+import style from './style.scss';
 
 /** A root layout. */
 function RootLayout({ children }) {
     return (
-        <ToolboxApp>
+        <ToolboxApp className={style.app}>
             {children}
             <ApplicationOverlay />
             <PreviewMediaContainer />

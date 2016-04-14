@@ -29,6 +29,7 @@ import { createProject } from 'action/create_project';
 
 import style from './style.scss';
 
+
 /** Validate form values and return error object. */
 const validateForm = (values) => {
     const errors = {};
@@ -448,7 +449,9 @@ class QuickReviewView extends React.Component {
                     query={this._projects}
                     {...project}
                 />
-                <p>Or, <a href="#" onClick={ this._createProject }>create a new project</a>.</p>
+                <p className={style['create-project-link']}>
+                    <a href="#" onClick={ this._createProject }>Create a new project</a>
+                </p>
                 <Input
                     type="text"
                     label="Review session name"

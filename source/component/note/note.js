@@ -10,23 +10,11 @@ import EntityAvatar from 'component/entity_avatar';
 
 import ContextCard from 'component/context_card';
 import Markdown from 'component/markdown';
+import { User } from 'component/user';
 
 
 const REVIEW_SESSION_NOTE_CATEGORY = '42983ba0-53b0-11e4-916c-0800200c9a66';
 
-
-/** Display user information. */
-function User({ data }) {
-    return (
-        <span className={style.user}>
-            {`${data.first_name} ${data.last_name}`}
-        </span>
-    );
-}
-
-User.propTypes = {
-    data: React.PropTypes.object.isRequired,
-};
 
 /** Display review session invitee information. */
 function ReviewSessionInvitee({ data }) {
@@ -86,6 +74,7 @@ function Note({ data, category, onAttachmentClick }) {
         card = (<ContextCard
             className={style['context-card']}
             entity={data.extraInformation}
+            small
             flat
         />);
     }
@@ -97,7 +86,9 @@ function Note({ data, category, onAttachmentClick }) {
             </div>
             <div className={style['body-column']}>
                 <span className={style.top}>
-                    <Author data={data.author} />
+                    <div className={style.author}>
+                        <Author data={data.author} />
+                    </div>
                     <TimeAgo className={style.datetime} date={data.date.toDate()} />
                 </span>
                 <div className={style.tags}>

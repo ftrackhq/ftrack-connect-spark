@@ -16,7 +16,9 @@ function HomeView({ children }) {
     return (
         <div className={style.root}>
             <HomeHeader />
-            <RouteTabs items={tabs} baseRoute="/home/" />
+            <div className={style.tabs}>
+                <RouteTabs items={tabs} baseRoute="/home/" />
+            </div>
             {children}
         </div>
     );
