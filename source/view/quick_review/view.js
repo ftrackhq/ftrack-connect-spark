@@ -78,7 +78,7 @@ function ResultList({ items, onClick, className }) {
 }
 
 ResultList.propTypes = {
-    className: React.PropTypes.strin,
+    className: React.PropTypes.string,
     items: React.PropTypes.array,
     onClick: React.PropTypes.func,
 };
@@ -469,7 +469,6 @@ class QuickReviewView extends React.Component {
                     {...collaborator}
                     error={this._errorMessage(collaborator)}
                     onChange={this._onCollaboratorsChange}
-                    autoComplete="off"
                     onKeyDown={this._onCollaboratorsKeyDown}
                 />
                 { this.renderResult(this.state.availableCollaborators) }

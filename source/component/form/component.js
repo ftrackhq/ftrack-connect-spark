@@ -22,6 +22,7 @@ function Form(props) {
             <ClosableHeader title={props.header} color={props.headerColor} />
             <form
                 className={_classNames}
+                autoComplete="off"
             >
                 {props.children}
                 <div className={style.actions}>
