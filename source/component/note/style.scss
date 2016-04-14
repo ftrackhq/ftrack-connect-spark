@@ -10,10 +10,6 @@
     color: $palette-blue-400;
 }
 
-.user {
-    font-weight: bold;
-}
-
 .datetime {
     color: $color-text-secondary;
 }
@@ -50,6 +46,10 @@
     .context-card {
         background-color: $color-dark-400;
         margin: $spacing 0;
+    }
+
+    .author {
+        font-weight: bold;
     }
 }
 

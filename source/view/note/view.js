@@ -226,10 +226,12 @@ function NotesList({ items, entity, user, loading, nextOffset, onFetchMore }) {
 
     items.forEach(
         note => {
+            // Add note components for each reply.
             const replies = (note.replies || []).map(
                 reply => <EditableNoteContainer note={reply} key={reply.id} author={user} />
             );
 
+            // Add primary note component.
             notes.push(
                 <div className={style['parent-note-item']} key={note.id}>
                     <EditableNoteContainer note={note} author={user} />
@@ -263,6 +265,7 @@ function NotesList({ items, entity, user, loading, nextOffset, onFetchMore }) {
     ];
 
     if (loading) {
+        // Add loading indicator.
         content.push(
             <div key="loading" className={style.loading}>
                 <ProgressBar type="circular" mode="indeterminate" />
@@ -275,8 +278,7 @@ function NotesList({ items, entity, user, loading, nextOffset, onFetchMore }) {
     }
 
     if (loading === false && nextOffset !== null && items.length) {
-        // Only add way point if not loading, there are items already loaded
-        // and there are more pages to load.
+        // Only add way point if not loading and there are more items to load.
         notes.push(
             <Waypoint
                 onEnter={
