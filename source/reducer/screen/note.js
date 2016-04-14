@@ -15,7 +15,7 @@ export default function notesReducer(state = {}, action) {
             {
                 entity: action.payload.entity,
                 items: [],
-                nextOffset: 0,
+                nextOffset: null,
                 loading: true,
             }
         );
@@ -136,9 +136,12 @@ export default function notesReducer(state = {}, action) {
                 );
             } else {
                 items = [action.payload.note, ...state.items];
-                // Add one to the offset since next page will start on +1 after
-                // the new note was added.
-                nextOffset += 1;
+                if (nextOffset !== null) {
+                    // Add one to the offset since next page will start on +1 after
+                    // the new note was added. Only do this if there are more pages
+                    // to load.
+                    nextOffset += 1;
+                }
             }
         }
 
@@ -179,9 +182,12 @@ export default function notesReducer(state = {}, action) {
                         note.replies = replies;
                     }
                 } else {
-                    // Subtract one from the offset since next page will start
-                    // on -1 after the note was removed.
-                    nextOffset -= 1;
+                    if (nextOffset !== null) {
+                        // Subtract one from the offset since next page will start
+                        // on -1 after the note was removed. Only do this if there
+                        //  are more pages to load.
+                        nextOffset -= 1;
+                    }
                 }
             }
         );
