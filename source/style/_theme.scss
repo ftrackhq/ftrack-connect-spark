@@ -16,6 +16,7 @@ $color-divider: rgba($color-white, 0.30) !default;
 
 $color-text: $color-white !default;
 $color-text-secondary: rgba($color-white, 0.7) !default;
+$color-text-faded: rgba($color-white, 0.5) !default;
 $color-text-error: rgb(222, 50, 38) !default;
 
 $color-primary: $color-green !default;
@@ -31,9 +32,9 @@ $unit: 1rem !default;
 
 $spacing-tiny: 0.4 * $unit;
 $spacing-small: 0.8 * $unit;
-$spacing: 1.6 * $unit;
+$spacing-normal: 1.6 * $unit;
 $spacing-large: 2.4 * $unit;
-
+$spacing: $spacing-normal;
 
 // -- Fonts
 $preferred-font: "Roboto", "Helvetica", "Arial", sans-serif !default;

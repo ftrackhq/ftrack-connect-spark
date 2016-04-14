@@ -12,6 +12,8 @@ import { session } from '../../ftrack_api';
 import { updateOperation } from '../../ftrack_api/operation';
 import { notificationWarning } from 'action/notification';
 
+import style from './style.scss';
+
 /** Context view */
 class _ContextView extends React.Component {
 
@@ -119,7 +121,7 @@ class _ContextView extends React.Component {
             { route: 'versions', label: 'Versions' },
         ];
         return (
-            <div>
+            <div className={style.view}>
                 <HomeHeader back context={contextId} />
                 {
                     entity ?
@@ -130,10 +132,12 @@ class _ContextView extends React.Component {
                     : <noscript />
                 }
                 <ContextCard entity={entity} flat />
-                <RouteTabs
-                    items={tabs}
-                    baseRoute={`/context/${contextType}/${contextId}/`}
-                />
+                <div className={style.tabs}>
+                    <RouteTabs
+                        items={tabs}
+                        baseRoute={`/context/${contextType}/${contextId}/`}
+                    />
+                </div>
                 {this.props.children}
             </div>
         );

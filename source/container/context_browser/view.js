@@ -5,6 +5,7 @@ import React from 'react';
 import InfiniteScroll from 'component/infinite_scroll';
 import Button from 'react-toolbox/lib/button';
 import ContextCard from 'component/context_card';
+import EmptyState from 'component/empty_state';
 
 import style from './style';
 import { session } from '../../ftrack_api';
@@ -27,10 +28,13 @@ class ContextBrowser extends React.Component {
 
         this._history = [this.state.parentId];
         this._resetQuery('projects');
+
+        this.state = { empty: true, loading: true };
     }
 
     /** Reset the query. */
     _resetQuery(parentId) {
+        this.setState({ empty: true, loading: true });
         const lastItem = this._history[this._history.length - 1];
         if (parentId !== lastItem) {
             this._history.push(parentId);
@@ -59,6 +63,11 @@ class ContextBrowser extends React.Component {
 
         // Calculate new offset.
         query = query.then((result) => {
+            if (this.state.loading) {
+                const isEmpty = !(result && result.data && result.data.length);
+                this.setState({ loading: false, empty: isEmpty });
+            }
+
             if (
                 result.metadata &&
                 result.metadata.next &&
@@ -124,23 +133,57 @@ class ContextBrowser extends React.Component {
         );
     }
 
-    /** Render. */
-    render() {
+    /** Render empty state */
+    _renderEmptyState() {
+        const message = (
+            <span>
+                There are no tasks or objects here. <br />
+                Try navigating somewhere else.
+            </span>
+        );
         return (
-            <div>
+            <EmptyState
+                className={style.empty}
+                icon="error_outline"
+                message={message}
+            >
                 <Button
-                    label="Back"
-                    icon="chevron_left"
+                    label="Go back"
                     disabled={this._history.length <= 1}
                     onClick={this._onBackClick}
                     type="button"
+                    primary
+                    raised
                 />
-                <InfiniteScroll
-                    key={this.state.parentId}
-                    className={style['context-list']}
-                    loadItems={ this._loadItems }
-                    renderItem={ this._renderItem }
-                />
+            </EmptyState>
+        );
+    }
+
+    /** Render. */
+    render() {
+        return (
+            <div className={style.view}>
+                <div className={style.navigation}>
+                    <Button
+                        label="Back"
+                        icon="chevron_left"
+                        disabled={this._history.length <= 1}
+                        onClick={this._onBackClick}
+                        type="button"
+                    />
+                </div>
+                {
+                    (!this.state.loading && this.state.empty)
+                    ? this._renderEmptyState()
+                    : (
+                        <InfiniteScroll
+                            key={this.state.parentId}
+                            className={style['context-list']}
+                            loadItems={ this._loadItems }
+                            renderItem={ this._renderItem }
+                        />
+                    )
+                }
             </div>
         );
     }
