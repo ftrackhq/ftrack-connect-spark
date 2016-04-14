@@ -24,17 +24,17 @@ class ContextBar extends React.Component {
 
         this.state = {
             statuses: [],
-            assignees: [],
+            assignees: undefined,
         };
     }
 
     componentDidMount() {
-        this._loadData();
+        this._loadData(this.props.entity);
     }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.entity.id !== this.props.entity.id) {
-            this._loadData();
+            this._loadData(this.props.entity);
         }
     }
 
@@ -56,37 +56,48 @@ class ContextBar extends React.Component {
     }
 
     /** Load necessary data for presentation. */
-    _loadData() {
-        const statusesResponse = session.getStatuses(
-            this.props.entity.project.project_schema_id,
-            this.props.entity.__entity_type__,
-            this.props.entity.type_id
-        );
+    _loadData(entity) {
+        if (entity.status) {
+            const statusesResponse = session.getStatuses(
+                entity.project.project_schema_id,
+                entity.__entity_type__,
+                entity.type_id
+            );
 
-        statusesResponse.then(
-            (statuses) => {
+            statusesResponse.then(
+                (statuses) => {
+                    this.setState({
+                        statuses,
+                    });
+                }
+            );
+        }
+
+        if (entity.__entity_type__ === 'Task') {
+            const resourceIds = entity.assignments.map(
+                (assignment) => assignment.resource.id
+            );
+
+            if (resourceIds.length > 0) {
+                const assigneesResponse = session._query(
+                    'select first_name, last_name, thumbnail_id from User where id in ' +
+                    `(${resourceIds.join(', ')})`
+                );
+
+                this.setState({ assignees: undefined });
+                assigneesResponse.then(
+                    (result) => {
+                        this.setState({
+                            assignees: result.data,
+                        });
+                    }
+                );
+            } else {
                 this.setState({
-                    statuses,
+                    assignees: [],
                 });
             }
-        );
-
-        const resourceIds = this.props.entity.assignments.map(
-            (assignment) => assignment.resource.id
-        );
-
-        const assigneesResponse = session._query(
-            'select first_name, last_name, thumbnail_id from User where id in ' +
-            `(${resourceIds.join(', ')})`
-        );
-
-        assigneesResponse.then(
-            (result) => {
-                this.setState({
-                    assignees: result.data,
-                });
-            }
-        );
+        }
     }
 
     render() {
@@ -100,15 +111,22 @@ class ContextBar extends React.Component {
         const items = [];
 
         if (entity.__entity_type__ === 'Task') {
-            items.push(<AssigneeField assignees={assignees} />);
             items.push(
-                <DateField date={entity.end_date} />
+                <AssigneeField
+                    key="assignees"
+                    assignees={assignees || []}
+                    loading={assignees === undefined}
+                />
+            );
+            items.push(
+                <DateField key="date" date={entity.end_date} />
             );
         }
 
         if (entity.status) {
             items.push(
                 <StatusField
+                    key="status"
                     selected={entity.status}
                     statuses={statuses}
                     onSelect={this.onStatusChange}

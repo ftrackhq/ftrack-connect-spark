@@ -10,11 +10,15 @@ import FontIcon from 'react-toolbox/lib/font_icon';
 import style from './style.scss';
 
 /** Assignee field to display assignees or an unassigned placeholder. */
-export function AssigneeField({ assignees }) {
-    if (assignees.length === 0) {
+export function AssigneeField({ assignees, loading }) {
+    if (loading === true || assignees.length === 0) {
         return (
             <div>
-                <PlaceholderUser title="Unassigned" />
+                <PlaceholderUser
+                    title={
+                        loading ? '' : 'Unassigned'
+                    }
+                />
             </div>
         );
     }
@@ -41,6 +45,7 @@ export function AssigneeField({ assignees }) {
 
 AssigneeField.propTypes = {
     assignees: React.PropTypes.array.isRequired,
+    loading: React.PropTypes.bool,
 };
 
 /** Date field to display a date or an empty string. */
