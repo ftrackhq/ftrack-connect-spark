@@ -1,17 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
-@import "../../style/_theme.scss";
 @import "../../style/core.scss";
 
-body {
-    background: $color-background;
-    color: $color-text;
-}
-
-a {
-    color: $color-primary;
-}
-
-html {
-    font-size: 50%;
-
+.app {
+    overflow-x: hidden;
+    overflow-y: auto;
 }
