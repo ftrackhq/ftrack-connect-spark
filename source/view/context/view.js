@@ -131,7 +131,7 @@ class _ContextView extends React.Component {
                     />
                     : <noscript />
                 }
-                <ContextCard entity={entity} flat />
+                <ContextCard entity={entity} flat className={style.info} />
                 <div className={style.tabs}>
                     <RouteTabs
                         items={tabs}

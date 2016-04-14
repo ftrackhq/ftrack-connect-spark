@@ -1,0 +1,9 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+.tabs {
+    // TODO: Remove this once upgraded to react-toolbox 0.16
+    // Removes dummy element added to avoid JS errors.
+    > section {
+        display: none !important;
+    }
+}

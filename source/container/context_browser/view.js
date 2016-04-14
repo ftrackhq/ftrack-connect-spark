@@ -161,14 +161,21 @@ class ContextBrowser extends React.Component {
 
     /** Render. */
     render() {
+        const isRoot = this._history.length <= 1;
+        const isBackDisabled = this.props.disableRootBack && isRoot;
+        let onBackClick = this._onBackClick;
+        if (isRoot && !this.props.disableRootBack) {
+            onBackClick = this.props.onRootBack;
+        }
+
         return (
             <div className={style.view}>
                 <div className={style.navigation}>
                     <Button
                         label="Back"
                         icon="chevron_left"
-                        disabled={this._history.length <= 1}
-                        onClick={this._onBackClick}
+                        disabled={isBackDisabled}
+                        onClick={onBackClick}
                         type="button"
                     />
                 </div>
@@ -191,6 +198,12 @@ class ContextBrowser extends React.Component {
 
 ContextBrowser.propTypes = {
     onSelectContext: React.PropTypes.func,
+    disableRootBack: React.PropTypes.bool,
+    onRootBack: React.PropTypes.func,
+};
+
+ContextBrowser.defaultProps = {
+    disableRootBack: true,
 };
 
 export default ContextBrowser;

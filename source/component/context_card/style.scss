@@ -34,7 +34,7 @@
 
 .main {
     flex: 1;
-    padding-top: $spacing-small;
+    padding: $spacing-small $spacing;
 }
 
 .clickable {
@@ -46,19 +46,25 @@
     }
 }
 
-.entity-type,
-.entity-link {
-    padding: 0 $spacing;
+.large .entity-link {
+    min-height: 5rem;
 }
 
-.entity-link {
-    min-height: 5rem;
+.card-actions {
+    padding: 0;
 }
 
 .side {
     display: flex;
     flex-direction: row;
-    height: 12rem;
+
+    .small & {
+        height: 5.6rem;
+    }
+
+    .large & {
+        height: 12rem;
+    }
 }
 
 .expand-button {
@@ -89,8 +95,17 @@
 
     .side {
         order: 2;
-        width: 17.5rem;
-        height: auto;
         flex-shrink: 0;
+
+        .large & {
+            height: auto;
+            min-height: 10rem;
+            width: 17.5rem;
+        }
+        .small & {
+            height: auto;
+            min-height: 5.6rem;
+            width: 8rem;
+        }
     }
 }

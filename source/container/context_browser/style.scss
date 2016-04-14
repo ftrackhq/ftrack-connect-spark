@@ -10,6 +10,7 @@
 .navigation {
     flex-shrink: 0;
     flex-grow: 0;
+    padding: $spacing-small;
 }
 
 .empty {
@@ -18,7 +19,7 @@
 }
 
 .context-list {
-    padding: $spacing;
+    padding: 0 $spacing;
 }
 
 .item {

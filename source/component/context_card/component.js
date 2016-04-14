@@ -58,6 +58,8 @@ class ContextCard extends React.Component {
         const _classNames = classNames(
             style.root, {
                 [style.clickable]: !!this.props.onClick,
+                [style.large]: !this.props.small,
+                [style.small]: !!this.props.small,
             }, this.props.className
         );
         const expandIcon = this.state.expanded ? 'expand_less' : 'expand_more';
@@ -74,6 +76,21 @@ class ContextCard extends React.Component {
                 />
             );
         }
+        let cardActions = null;
+        if (actions.length) {
+            cardActions = (
+                <CardActions className={style['card-actions']}>
+                    {actions}
+                </CardActions>
+            );
+        }
+
+        const isSmall = !!this.props.small;
+        const linkProps = {
+            size: (isSmall) ? 'medium' : 'large',
+            parent: !isSmall,
+            ancestors: !isSmall,
+        };
 
         const contents = [
             <div key="context-contents" className={style.contents}>
@@ -88,12 +105,10 @@ class ContextCard extends React.Component {
                     <EntityType entity={entity} className={style['entity-type']} />
                     <EntityLink
                         link={entity.link}
-                        size="large"
                         className={style['entity-link']}
+                        {...linkProps}
                     />
-                    <CardActions>
-                        {actions}
-                    </CardActions>
+                    {cardActions}
                 </div>
             </div>,
             <Reveal key="context-reveal" active={this.state.expanded}>
@@ -113,6 +128,7 @@ ContextCard.propTypes = {
     className: React.PropTypes.string,
     entity: React.PropTypes.object,
     flat: React.PropTypes.bool,
+    small: React.PropTypes.bool,
     onClick: React.PropTypes.func,
     actions: React.PropTypes.node,
 };
@@ -120,6 +136,7 @@ ContextCard.propTypes = {
 ContextCard.defaultProps = {
     className: '',
     flat: false,
+    small: false,
     actions: [],
 };
 
