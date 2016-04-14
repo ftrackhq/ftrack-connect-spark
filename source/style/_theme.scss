@@ -144,6 +144,15 @@ $checkbox-text-font-size: $font-size-small !default;
 $checkbox-total-height: 1.8 * $unit !default;
 $checkbox-transition-duration: .2s !default;
 
+$chip-background: $color-dark-300 !default;
+$chip-color: $color-text-secondary !default;
+$chip-remove-background: $color-dark-400 !default;
+$chip-remove-background-hover: $color-dark-500 !default;
+$chip-remove-color: rgba($color-white, 0.25) !default;
+$chip-height: 3.2 * $unit !default;
+$chip-icon-font-size: 2.0 * $unit !default;
+$chip-icon-margin-right: 0.8 * $unit !default;
+
 $datepicker-primary: $color-primary;
 $datepicker-primary-contrast: $color-primary-contrast;
 $datepicker-primary-dark: $color-primary-dark;

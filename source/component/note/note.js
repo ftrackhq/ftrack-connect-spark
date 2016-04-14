@@ -1,12 +1,12 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
-import { Avatar } from 'react-toolbox';
 import TimeAgo from 'react-timeago';
 
-import { session } from '../../ftrack_api';
 import style from './style.scss';
 import AttachmentArea from './attachment_area.js';
+import EntityAvatar from 'component/entity_avatar';
+
 
 import ContextCard from 'component/context_card';
 import Markdown from 'component/markdown';
@@ -79,38 +79,15 @@ function Note({ data, category, onAttachmentClick }) {
         />);
     }
 
-    // TODO: Break out as a separate component.
-    const author = data.author;
-    let avatar = false;
-    if (author) {
-        let image = false;
-        if (author.thumbnail_id) {
-            const url = session.thumbnail(author.thumbnail_id, 100);
-            image = (
-                <div
-                    className={style.image}
-                    style={{ backgroundImage: `url('${url}')` }}
-                />
-            );
-        }
-
-        const title = author.name || `${author.first_name} ${author.last_name}`;
-        avatar = (
-            <Avatar title={title} className={style.avatar}>
-                {image}
-            </Avatar>
-        );
-    }
-
     return (
         <div className={style['note-item']}>
             <div className={style['avatar-column']}>
-                {avatar}
+                {data.author ? <EntityAvatar entity={data.author} /> : null}
             </div>
             <div className={style['body-column']}>
                 <span className={style.top}>
                     <div className={style.author}>
-                        <Author data={author} />
+                        <Author data={data.author} />
                     </div>
                     <TimeAgo className={style.datetime} date={data.date.toDate()} />
                 </span>
