@@ -206,7 +206,10 @@ $input-text-disabled-color: $input-text-bottom-border-color !default;
 $input-text-disabled-text-color: $input-text-label-color !default;
 $input-text-error-color: rgb(222, 50, 38) !default;
 $input-underline-height:  2 * $unit;
+
 $input-icon-font-size: 2.4 * $unit;
+$input-icon-font-size-small: 2.0 * $unit;
+
 $input-icon-size: 2 * $input-icon-font-size;
 $input-icon-offset: 1.6 * $unit;
 $input-chevron-offset: .8 * $unit;
