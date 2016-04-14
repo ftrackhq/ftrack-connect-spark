@@ -2,7 +2,6 @@
 @import "./atom/_background.scss";
 @import "./atom/_layout.scss";
 
+@import "./global/_scrollbar.scss";
+@import "./global/_text.scss";
 
-p {
-    line-height: 2.0rem;
-}

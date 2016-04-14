@@ -1,0 +1,11 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+:global {
+
+    // Adjust line-height for body text.
+    // TODO: Remove once fixed in react-toolbox
+    p {
+        line-height: 2.0rem;
+    }
+
+}
