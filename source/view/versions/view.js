@@ -4,10 +4,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Button from 'react-toolbox/lib/button';
 import { Menu, MenuItem } from 'react-toolbox/lib/menu';
+import { hashHistory } from 'react-router';
 
 import { importGetComponents, importComponent } from 'action/import';
 import InfiniteScroll from 'component/infinite_scroll';
 import ContextCard from 'component/context_card';
+import EmptyState from 'component/empty_state';
 
 import { session } from '../../ftrack_api';
 
@@ -25,7 +27,8 @@ class VersionsView extends React.Component {
         this._loadItems = this._loadItems.bind(this);
         this._renderItem = this._renderItem.bind(this);
         this._renderImportMenu = this._renderImportMenu.bind(this);
-        this.state = { components: [] };
+        this._onPublishClicked = this._onPublishClicked.bind(this);
+        this.state = { empty: true, loading: true, components: [] };
     }
 
     /** Load more items. */
@@ -48,6 +51,11 @@ class VersionsView extends React.Component {
 
         // Calculate new offset.
         query = query.then((result) => {
+            if (this.state.loading) {
+                const isEmpty = !(result && result.data && result.data.length);
+                this.setState({ loading: false, empty: isEmpty });
+            }
+
             if (
                 result.metadata &&
                 result.metadata.next &&
@@ -131,8 +139,38 @@ class VersionsView extends React.Component {
         );
     }
 
+    /** Navigate to publish view on publish clicked. */
+    _onPublishClicked() {
+        const contextId = this.props.params.id;
+        hashHistory.replace(`/publish/${contextId}`);
+    }
+
+    /** Render empty state */
+    _renderEmptyState() {
+        return (
+            <EmptyState
+                className={style.empty}
+                icon="layers"
+                message="There are no versions published yet."
+            >
+                <Button
+                    label="Publish a new version"
+                    onClick={this._onPublishClicked}
+                    type="button"
+                    primary
+                    raised
+                />
+            </EmptyState>
+        );
+    }
+
+
     /** Render. */
     render() {
+        if (!this.state.loading && this.state.empty) {
+            return this._renderEmptyState();
+        }
+
         return (
             <InfiniteScroll
                 className={style['task-list']}

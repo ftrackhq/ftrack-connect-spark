@@ -3,12 +3,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { hashHistory } from 'react-router';
-import style from './style';
+import { Link } from 'react-router';
 
 import InfiniteScroll from 'component/infinite_scroll';
 import ContextCard from 'component/context_card';
+import EmptyState from 'component/empty_state';
 
 import { session } from '../../ftrack_api';
+
+import style from './style';
 
 /** My Tasks. */
 /* eslint-disable react/prefer-stateless-function */
@@ -23,6 +26,8 @@ class MyTasks extends React.Component {
         this._hideDoneTasks = true;
         this._loadItems = this._loadItems.bind(this);
         this._renderItem = this._renderItem.bind(this);
+
+        this.state = { empty: true, loading: true };
     }
 
     /** Navigate to the task. */
@@ -56,6 +61,11 @@ class MyTasks extends React.Component {
 
         // Calculate new offset.
         query = query.then((result) => {
+            if (this.state.loading) {
+                const isEmpty = !(result && result.data && result.data.length);
+                this.setState({ loading: false, empty: isEmpty });
+            }
+
             if (
                 result.metadata &&
                 result.metadata.next &&
@@ -86,8 +96,23 @@ class MyTasks extends React.Component {
         );
     }
 
+    /** Render empty state */
+    _renderEmptyState() {
+        const message = (
+            <span>
+                You don't have any tasks assigned to you. <br />
+                Try <Link to="/home/browse-all">browsing</Link> all projects and tasks.
+            </span>
+        );
+        return (<EmptyState className={style.empty} icon="assignment" message={message} />);
+    }
+
     /** Render. */
     render() {
+        if (!this.state.loading && this.state.empty) {
+            return this._renderEmptyState();
+        }
+
         return (
             <InfiniteScroll
                 className={style['task-list']}

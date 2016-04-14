@@ -2,30 +2,39 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import FontIcon from 'react-toolbox/lib/font_icon';
 import Button from 'react-toolbox/lib/button';
 
 import { applicationAuthenticate } from 'action/application';
-import style from './style.scss';
+import EmptyState from 'component/empty_state';
 
 
 /** Connect missing view. */
 function _ConnectMissingView({ onRetryClicked }) {
     return (
-        <div className={style.view}>
-            <FontIcon value="cloud_off" className={style.icon} />
-            <h6>
-                You don't seem to have <a href="https://www.ftrack.com/portfolio/connect" target="_blank">ftrack Connect</a> installed.
-                <br />
-                Connect is required to communicate with ftrack.
-            </h6>
-            <Button
-                label="Retry"
-                raised
-                primary
-                onClick={onRetryClicked}
-            />
-        </div>
+        <EmptyState
+            icon="cloud_off"
+            message={(
+                <span>
+                    You don't seem to have <a href="https://www.ftrack.com/portfolio/connect" target="_blank">ftrack Connect</a> installed.
+                    <br />
+                    Connect is required to communicate with ftrack.
+                </span>
+            )}
+        >
+            <div>
+                <Button
+                    label="Retry"
+                    raised
+                    primary
+                    onClick={onRetryClicked}
+                />
+                <p className="padding-normal">
+                    <a href="http://support.ftrack.com/adobe" target="_blank">
+                        Why do I need this?
+                    </a>
+                </p>
+            </div>
+        </EmptyState>
     );
 }
 
