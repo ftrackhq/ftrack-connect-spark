@@ -2,8 +2,10 @@
 
 .user {
     display: flex;
+    min-width: 3rem;
 
     .avatar {
+        flex-shrink: 0;
         margin-right: 4px;
 
         height: 3rem;
@@ -16,18 +18,22 @@
         .image {
             width: 100%;
             height: 100%;
-            background-size: cover;    
+            background-size: cover;
+            background-position: center center;
         }
     }
 
     .name {
+        flex-shrink: 1;
+        min-width: 0;
         margin-top: auto;
         margin-bottom: auto;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
     }
 
     .unassigned-name {
-        margin-top: auto;
-        margin-bottom: auto;
         color: $color-text-secondary;
     }
 }

@@ -33,8 +33,11 @@ class ContextBar extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.entity.id !== this.props.entity.id) {
-            this._loadData(this.props.entity);
+        const currentEntityId = this.props.entity && this.props.entity.id || null;
+        const nextEntityId = nextProps.entity && nextProps.entity.id || null;
+
+        if (currentEntityId !== nextEntityId) {
+            this._loadData(nextProps.entity);
         }
     }
 
@@ -57,6 +60,10 @@ class ContextBar extends React.Component {
 
     /** Load necessary data for presentation. */
     _loadData(entity) {
+        if (!entity) {
+            return;
+        }
+
         if (entity.status) {
             const statusesResponse = session.getStatuses(
                 entity.project.project_schema_id,
@@ -104,13 +111,9 @@ class ContextBar extends React.Component {
         const { entity } = this.props;
         const { statuses, assignees } = this.state;
 
-        if (!entity) {
-            return <noscript />;
-        }
-
         const items = [];
 
-        if (entity.__entity_type__ === 'Task') {
+        if (entity && entity.__entity_type__ === 'Task') {
             items.push(
                 <AssigneeField
                     key="assignees"
@@ -123,7 +126,7 @@ class ContextBar extends React.Component {
             );
         }
 
-        if (entity.status) {
+        if (entity && entity.status) {
             items.push(
                 <StatusField
                     key="status"
@@ -132,10 +135,6 @@ class ContextBar extends React.Component {
                     onSelect={this.onStatusChange}
                 />
             );
-        }
-
-        if (items.length === 0) {
-            return <noscript />;
         }
 
         return (
@@ -147,7 +146,7 @@ class ContextBar extends React.Component {
 }
 
 ContextBar.propTypes = {
-    entity: React.PropTypes.object.isRequired,
+    entity: React.PropTypes.object,
     onEntityUpdate: React.PropTypes.func,
 };
 

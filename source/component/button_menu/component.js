@@ -2,6 +2,8 @@
 
 import React from 'react';
 import { Menu } from 'react-toolbox/lib/menu';
+import classNames from 'classnames';
+
 import style from './style.scss';
 
 /** Button menu component used to display a button that trigger a menu. */
@@ -13,7 +15,8 @@ export default class ButtonMenu extends React.Component {
     }
 
     render() {
-        const { children, onSelect, button } = this.props;
+        const { children, onSelect, button, className } = this.props;
+        const _classNames = classNames(style.wrapper, className);
         const clonedButton = React.cloneElement(
             button,
             {
@@ -22,7 +25,7 @@ export default class ButtonMenu extends React.Component {
         );
 
         return (
-            <div className={style.wrapper}>
+            <div className={_classNames}>
                 {clonedButton}
                 <Menu
                     position="auto"
@@ -39,7 +42,13 @@ export default class ButtonMenu extends React.Component {
 }
 
 ButtonMenu.propTypes = {
+    className: React.PropTypes.string,
     button: React.PropTypes.node.isRequired,
     children: React.PropTypes.array,
     onSelect: React.PropTypes.func.isRequired,
 };
+
+ButtonMenu.defaultProps = {
+    className: '',
+};
+
