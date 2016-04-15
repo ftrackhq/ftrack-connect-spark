@@ -95,7 +95,7 @@ function Note({ data, category, onAttachmentClick }) {
                     {tags}
                 </div>
                 {card}
-                <Markdown source={data.content} />
+                <Markdown source={data.content || ''} />
                 <AttachmentArea onAttachmentClick={onAttachmentClick} components={
                         data.note_components.map(
                             noteComponent => noteComponent.component
