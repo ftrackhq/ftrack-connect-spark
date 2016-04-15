@@ -8,7 +8,7 @@ const markdown = new MarkdownIt('commonmark');
 /** Render markdown from *source*. */
 export default function Markdown({ source }) {
     const html = {
-        __html: markdown.render(source),
+        __html: markdown.render(source || ''),
     };
 
     return <span dangerouslySetInnerHTML={html} />;
