@@ -4,7 +4,7 @@ import { call } from 'redux-saga/effects';
 
 import { session } from '../../ftrack_api';
 import {
-    createOperation, queryOperation, updateOperation,
+    createOperation, updateOperation,
 } from '../../ftrack_api/operation';
 import { mediator } from '../../application';
 
@@ -15,52 +15,43 @@ const logger = loglevel.getLogger('saga:lib:share');
 // This is the `Upload` asset type, which is guaranteed to exist.
 const _uploadTypeId = '8f4144e0-a8e6-11e2-9e96-0800200c9a66';
 
-/**
- * Return promise which will be resolved with an array of two elements:
- *
- * Assets
- *     Array of assets either existing or to be created.
- * createOperations
- *     Array of API operations to create assets not existing on server.
- */
-export function gatherAssets(assets) {
-    const result = [...assets];
+/** Return array with assetId and create operations for *contextId* and *name*. */
+export function getAsset(contextId, name, typeId) {
+    let assetId = null;
+    const assetTypeId = typeId || _uploadTypeId;
 
-    const operations = [];
-    for (const asset of result) {
-        asset.type_id = asset.type_id || _uploadTypeId;
-        operations.push(queryOperation(
-            `select id from Asset where
-            context_id is "${asset.context_id}" and
-            type_id is "${asset.type_id}" and
-            name is "${asset.name}"
-            limit 1`
-        ));
-    }
+    const query = (
+        `select id from Asset where
+        context_id is "${contextId}" and
+        type_id is "${assetTypeId}" and
+        name is "${name}"
+        limit 1`
+    );
 
-    const request = session._call(operations);
+    const request = session._query(query);
     const createOperations = [];
-    const promise = request.then((responses) => {
-        for (let i = 0; i < responses.length; i += 1) {
-            const asset = responses[i].data && responses[i].data[0];
-            if (asset) {
-                result[i].id = asset.id;
-                logger.info('Existing asset', result[i].id);
-            } else {
-                result[i].id = uuid.v4();
-                logger.info('New asset', result[i].id);
+    const promise = request.then((response) => {
+        logger.info(response);
+        const asset = response.data.length && response.data[0];
+        if (asset) {
+            logger.info('Asset ', asset.id);
+            assetId = asset.id;
+        } else {
+            logger.info('No asset ');
 
-                createOperations.push(createOperation(
-                    'Asset', Object.assign({}, result[i])
-                ));
-            }
+            assetId = uuid.v4();
+            createOperations.push(createOperation('Asset', {
+                id: assetId,
+                name,
+                context_id: contextId,
+                type_id: assetTypeId,
+            }));
         }
-        return Promise.resolve([result, createOperations]);
+        return Promise.resolve([assetId, createOperations]);
     });
 
     return promise;
 }
-
 
 /**
  * Create file components and retrieve upload meta data for array of *media*.
@@ -124,6 +115,62 @@ export function* uploadMedia(uploadMeta) {
     yield Promise.all(promises);
 }
 
+/** Finalize *uploadMeta* by adding components to location and setting metadata for review. */
+export function* finalizeUpload(uploadMeta) {
+    const operations = [];
+    const serverLocationId = '3a372bde-05bc-11e4-8908-20c9d081909b';
+    const componentIds = Object.keys(uploadMeta);
+
+    for (const componentId of componentIds) {
+        operations.push(
+            createOperation('ComponentLocation', {
+                component_id: componentId,
+                location_id: serverLocationId,
+                resource_identifier: componentId,
+            })
+        );
+
+        const componentData = uploadMeta[componentId];
+        logger.debug(componentData.media.use);
+        if (componentData.media.use === 'video-review') {
+            const metadata = componentData.media.metadata;
+            operations.push(updateOperation(
+                'FileComponent', [componentId], { name: 'ftrackreview-mp4' }
+            ));
+            operations.push(
+                createOperation('Metadata', {
+                    parent_id: componentId,
+                    parent_type: 'FileComponent',
+                    key: 'ftr_meta',
+                    value: JSON.stringify(
+                        {
+                            frameRate: metadata.fps,
+                            frameIn: 0,
+                            frameOut: metadata.frames - 1,
+                        }
+                    ),
+                })
+            );
+        } else if (componentData.media.use === 'image-review') {
+            operations.push(updateOperation(
+                'FileComponent', [componentId], { name: 'ftrackreview-image' }
+            ));
+            operations.push(
+                createOperation('Metadata', {
+                    parent_id: componentId,
+                    parent_type: 'FileComponent',
+                    key: 'ftr_meta',
+                    value: '{"format": "image"}',
+                })
+            );
+        }
+    }
+
+    yield call(
+        [session, session._call], operations
+    );
+}
+
 /**
  * Upload *media* for review.
  *
@@ -139,7 +186,7 @@ export function* uploadReviewMedia(media) {
 
     const componentIds = Object.keys(uploadMeta);
     responses = yield call(
-        finalizeUpload, componentIds, { name: 'ftrackreview-image' }
+        finalizeUpload, uploadMeta
     );
     logger.debug('Finalized upload', responses);
     return componentIds;

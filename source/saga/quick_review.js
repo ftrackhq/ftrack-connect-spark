@@ -9,14 +9,12 @@ import { hashHistory } from 'react-router';
 import { reset } from 'redux-form';
 
 import { session } from '../ftrack_api';
-import {
-    createOperation, updateOperation,
-} from '../ftrack_api/operation';
+import { createOperation } from '../ftrack_api/operation';
 import actions from 'action/quick_review';
 
 import { showProgress, showCompletion, showFailure } from './lib/overlay';
 import {
-    getUploadMetadata, uploadMedia, updateComponentVersions,
+    getUploadMetadata, uploadMedia, updateComponentVersions, finalizeUpload, getAsset,
 } from './lib/share';
 
 import { mediator } from '../application';
@@ -24,45 +22,6 @@ import { mediator } from '../application';
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('saga:quick_review');
 
-
-/** Return array with assetId and create operations for *contextId* and *name*. */
-function getAsset(contextId, name) {
-    // This is the `Upload` asset type, which is guaranteed to exist.
-    const assetTypeId = '8f4144e0-a8e6-11e2-9e96-0800200c9a66';
-    let assetId = null;
-
-    const query = (
-        `select id from Asset where
-        context_id is "${contextId}" and
-        type_id is "${assetTypeId}" and
-        name is "${name}"
-        limit 1`
-    );
-
-    const request = session._query(query);
-    const createOperations = [];
-    const promise = request.then((response) => {
-        logger.info(response);
-        const asset = response.data.length && response.data[0];
-        if (asset) {
-            logger.info('Asset ', asset.id);
-            assetId = asset.id;
-        } else {
-            logger.info('No asset ');
-
-            assetId = uuid.v4();
-            createOperations.push(createOperation('Asset', {
-                id: assetId,
-                name,
-                context_id: contextId,
-                type_id: assetTypeId,
-            }));
-        }
-        return Promise.resolve([assetId, createOperations]);
-    });
-
-    return promise;
-}
 
 /**
  * Create quick review from form *values* and *media*.
@@ -208,62 +167,6 @@ function* sendInvites(reviewSessionInviteeIds) {
         operations
     );
     logger.debug('Send invites responses', responses);
-}
-
-/** Finalize *uploadMeta* by adding components to location and setting metadata for review. */
-export function* finalizeUpload(uploadMeta) {
-    const operations = [];
-    const serverLocationId = '3a372bde-05bc-11e4-8908-20c9d081909b';
-    const componentIds = Object.keys(uploadMeta);
-
-    for (const componentId of componentIds) {
-        operations.push(
-            createOperation('ComponentLocation', {
-                component_id: componentId,
-                location_id: serverLocationId,
-                resource_identifier: componentId,
-            })
-        );
-
-        const componentData = uploadMeta[componentId];
-        logger.debug(componentData.media.use);
-        if (componentData.media.use === 'video-review') {
-            const metadata = componentData.media.metadata;
-            operations.push(updateOperation(
-                'FileComponent', [componentId], { name: 'ftrackreview-mp4' }
-            ));
-            operations.push(
-                createOperation('Metadata', {
-                    parent_id: componentId,
-                    parent_type: 'FileComponent',
-                    key: 'ftr_meta',
-                    value: JSON.stringify(
-                        {
-                            frameRate: metadata.fps,
-                            frameIn: 0,
-                            frameOut: metadata.frames - 1,
-                        }
-                    ),
-                })
-            );
-        } else if (componentData.media.use === 'image-review') {
-            operations.push(updateOperation(
-                'FileComponent', [componentId], { name: 'ftrackreview-image' }
-            ));
-            operations.push(
-                createOperation('Metadata', {
-                    parent_id: componentId,
-                    parent_type: 'FileComponent',
-                    key: 'ftr_meta',
-                    value: '{"format": "image"}',
-                })
-            );
-        }
-    }
-
-    yield call(
-        [session, session._call], operations
-    );
 }
 
 /**
