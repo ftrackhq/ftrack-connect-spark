@@ -71,8 +71,11 @@ export function* getUploadMetadata(media) {
     const operations = [];
 
     const result = {};
+    const mediaLookup = {};
+
     for (const file of media) {
         const componentId = uuid.v4();
+        mediaLookup[componentId] = file;
         result[componentId] = Object.assign({}, file);
         operations.push(
             createOperation('FileComponent', {
@@ -97,6 +100,9 @@ export function* getUploadMetadata(media) {
         const uploadMetadataResult = responses[i + 1];
         result[uploadMetadataResult.component_id].component = componentResult;
         result[uploadMetadataResult.component_id].upload = uploadMetadataResult;
+        result[uploadMetadataResult.component_id].media = mediaLookup[
+            uploadMetadataResult.component_id
+        ];
     }
     logger.debug('Get upload metadata result', result);
     return result;
@@ -116,46 +122,6 @@ export function* uploadMedia(uploadMeta) {
         );
     });
     yield Promise.all(promises);
-}
-
-/**
- * Finalize uploaded component data.
- *
- * Create ComponentLocation objects.
- * Create review-specific Metadata.
- */
-export function* finalizeUpload(componentIds, updateData = null) {
-    const operations = [];
-    const serverLocationId = '3a372bde-05bc-11e4-8908-20c9d081909b';
-
-    for (const componentId of componentIds) {
-        operations.push(
-            createOperation('ComponentLocation', {
-                component_id: componentId,
-                location_id: serverLocationId,
-                resource_identifier: componentId,
-            })
-        );
-
-        // TODO: Update this if components are being encoded.
-        if (updateData) {
-            operations.push(updateOperation(
-                'FileComponent', [componentId], updateData
-            ));
-        }
-        operations.push(
-            createOperation('Metadata', {
-                parent_id: componentId,
-                parent_type: 'FileComponent',
-                key: 'ftr_meta',
-                value: '{"format": "image"}',
-            })
-        );
-    }
-
-    yield call(
-        [session, session._call], operations
-    );
 }
 
 /**
