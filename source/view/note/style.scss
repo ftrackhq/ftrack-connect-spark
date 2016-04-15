@@ -9,13 +9,26 @@
 }
 
 .note-list {
+    flex: 1;
     display: flex;
     flex-direction: column;
     font-size: $font-size-small;
-    padding: 20px;
+    padding: 0 $spacing;
 
     > .new-note-form {
-        margin-bottom: 15px;
+        margin-bottom: $spacing;
+    }
+}
+
+.empty {
+    flex: 1;
+}
+
+// Empty state does not fit on small screens,
+// simply hide it.
+@media (max-height: 500px)  {
+    .empty {
+        display: none;
     }
 }
 

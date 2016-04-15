@@ -1,0 +1,28 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+.status-field {
+    border-bottom: 1px solid;
+    padding-bottom: 2px;
+    cursor: pointer;
+}
+
+.assignees {
+    display: flex;
+    align-items: center;
+
+    .additional {
+        padding-left: $spacing-tiny;
+    }
+}
+
+.date {
+    display: flex;
+    > span {
+        margin: auto 0;
+    }
+    .icon {
+        font-size: $input-icon-font-size-small;
+        margin-right: 2px;
+    }
+    color: $color-text-secondary;
+}

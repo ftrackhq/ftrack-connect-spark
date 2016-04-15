@@ -1,32 +1,20 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
-import { Avatar } from 'react-toolbox';
 import TimeAgo from 'react-timeago';
 
-import { session } from '../../ftrack_api';
 import style from './style.scss';
 import AttachmentArea from './attachment_area.js';
+import EntityAvatar from 'component/entity_avatar';
+
 
 import ContextCard from 'component/context_card';
 import Markdown from 'component/markdown';
+import { User } from 'component/user';
 
 
 const REVIEW_SESSION_NOTE_CATEGORY = '42983ba0-53b0-11e4-916c-0800200c9a66';
 
-
-/** Display user information. */
-function User({ data }) {
-    return (
-        <span className={style.user}>
-            {`${data.first_name} ${data.last_name}`}
-        </span>
-    );
-}
-
-User.propTypes = {
-    data: React.PropTypes.object.isRequired,
-};
 
 /** Display review session invitee information. */
 function ReviewSessionInvitee({ data }) {
@@ -86,41 +74,21 @@ function Note({ data, category, onAttachmentClick }) {
         card = (<ContextCard
             className={style['context-card']}
             entity={data.extraInformation}
+            small
             flat
         />);
-    }
-
-    // TODO: Break out as a separate component.
-    const author = data.author;
-    let avatar = false;
-    if (author) {
-        let image = false;
-        if (author.thumbnail_id) {
-            const url = session.thumbnail(author.thumbnail_id, 100);
-            image = (
-                <div
-                    className={style.image}
-                    style={{ backgroundImage: `url('${url}')` }}
-                />
-            );
-        }
-
-        const title = author.name || `${author.first_name} ${author.last_name}`;
-        avatar = (
-            <Avatar title={title} className={style.avatar}>
-                {image}
-            </Avatar>
-        );
     }
 
     return (
         <div className={style['note-item']}>
             <div className={style['avatar-column']}>
-                {avatar}
+                {data.author ? <EntityAvatar entity={data.author} /> : null}
             </div>
             <div className={style['body-column']}>
                 <span className={style.top}>
-                    <Author data={author} />
+                    <div className={style.author}>
+                        <Author data={data.author} />
+                    </div>
                     <TimeAgo className={style.datetime} date={data.date.toDate()} />
                 </span>
                 <div className={style.tags}>

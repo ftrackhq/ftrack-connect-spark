@@ -3,8 +3,10 @@
 
 .root {
     @include abs-pos(0,0,0,0);
+    display: flex;
+    flex-direction: column;
 }
 
-.tab {
-
+.tabs {
+    flex-shrink: 0;
 }

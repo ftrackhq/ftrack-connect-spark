@@ -22,18 +22,21 @@ function Form(props) {
             <ClosableHeader title={props.header} color={props.headerColor} />
             <form
                 className={_classNames}
-                onSubmit={props.onSubmit}
+                autoComplete="off"
             >
                 {props.children}
                 <div className={style.actions}>
                     <Button
                         label="Cancel"
                         onClick={props.onCancel}
+                        type="button"
                     />
                     <Button
                         label={props.submitLabel}
+                        onClick={props.onSubmit}
                         primary
                         disabled={props.submitDisabled}
+                        type="button"
                     />
                 </div>
             </form>

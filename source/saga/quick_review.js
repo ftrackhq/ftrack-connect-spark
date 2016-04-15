@@ -25,21 +25,6 @@ import loglevel from 'loglevel';
 const logger = loglevel.getLogger('saga:quick_review');
 
 
-/**
- * Return guessed invitee name from *email*
- *
- * Retrieves the part before the at sign, replaces separators with space
- * and transform to title case.
- */
-function guessInviteeName(email) {
-    let name = email.split('@')[0];
-    name = name.replace(/[._-]/g, ' ').replace(/\s\s+/g, ' ');
-    name = name.replace(
-        /\w\S*/g, (word) => word.charAt(0).toUpperCase() + word.substr(1).toLowerCase()
-    );
-    return name;
-}
-
 /** Return array with assetId and create operations for *contextId* and *name*. */
 function getAsset(contextId, name) {
     // This is the `Upload` asset type, which is guaranteed to exist.
@@ -155,19 +140,38 @@ function* createQuickReview(values, media) {
         review_session_id: reviewSessionId,
     }));
 
-    const emails = values.collaborators.split(',').map((value) => value.trim());
+    const collaborators = values.collaborators.slice();
+
+    // Add current user as invitee.
+    const response = yield call(
+        [session, session._query],
+        `select first_name, last_name, email from User where username is "${session._apiUser}"`
+    );
+    if (response && response.data && response.data.length) {
+        const user = response.data[0];
+        const exists = collaborators.find(
+            collaborator => collaborator.email === user.email
+        );
+
+        if (!exists) {
+            collaborators.push({
+                name: `${user.first_name} ${user.last_name}`,
+                email: user.email,
+            });
+        }
+    }
+
     const reviewSessionInviteeIds = [];
-    for (const email of emails) {
-        if (email.includes('@')) {
-            const inviteeName = guessInviteeName(email);
+    for (const invitee of collaborators) {
+        if (invitee.email.includes('@')) {
             const reviewSessionInviteeId = uuid.v4();
             reviewSessionInviteeIds.push(reviewSessionInviteeId);
 
             operations.push(createOperation('ReviewSessionInvitee', {
                 id: reviewSessionInviteeId,
                 review_session_id: reviewSessionId,
-                email,
-                name: inviteeName,
+                email: invitee.email,
+                name: invitee.name,
             }));
         }
     }
