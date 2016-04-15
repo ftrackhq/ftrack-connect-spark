@@ -9,14 +9,12 @@ import { hashHistory } from 'react-router';
 import { reset } from 'redux-form';
 
 import { session } from '../ftrack_api';
-import {
-    createOperation, queryOperation,
-} from '../ftrack_api/operation';
+import { createOperation } from '../ftrack_api/operation';
 import actions from 'action/quick_review';
 
 import { showProgress, showCompletion, showFailure } from './lib/overlay';
 import {
-    getUploadMetadata, uploadMedia, finalizeUpload, updateComponentVersions,
+    getUploadMetadata, uploadMedia, updateComponentVersions, finalizeUpload, getAsset,
 } from './lib/share';
 
 import { mediator } from '../application';
@@ -24,60 +22,6 @@ import { mediator } from '../application';
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('saga:quick_review');
 
-
-/**
- * Return promise which will be resolved with an array of two elements:
- *
- * componentAssets
- *     Array of objects containing { componentId, assetId } for existing and
- *     new assets.
- * createOperations
- *     Array of API operations to create assets not existing on server.
- */
-function gatherAssets(contextId, media) {
-    // This is the `Upload` asset type, which is guaranteed to exist.
-    const assetTypeId = '8f4144e0-a8e6-11e2-9e96-0800200c9a66';
-    const operations = [];
-    const componentAssets = Object.keys(media).map(
-        (componentId) => ({ componentId, name: media[componentId].name }));
-
-    for (const componentAsset of componentAssets) {
-        const name = componentAsset.name;
-        operations.push(queryOperation(
-            `select id from Asset where
-            context_id is "${contextId}" and
-            type_id is "${assetTypeId}" and
-            name is "${name}"
-            limit 1`
-        ));
-    }
-
-    const request = session._call(operations);
-    const createOperations = [];
-    const promise = request.then((responses) => {
-        for (let i = 0; i < responses.length; i += 1) {
-            logger.info(responses);
-            const asset = responses[i].data && responses[i].data[0];
-            if (asset) {
-                logger.info('Asset ', asset.id);
-                componentAssets[i].assetId = asset.id;
-            } else {
-                logger.info('No asset ');
-
-                componentAssets[i].assetId = uuid.v4();
-                createOperations.push(createOperation('Asset', {
-                    id: componentAssets[i].assetId,
-                    name: componentAssets[i].name,
-                    context_id: contextId,
-                    type_id: assetTypeId,
-                }));
-            }
-        }
-        return Promise.resolve([componentAssets, createOperations]);
-    });
-
-    return promise;
-}
 
 /**
  * Create quick review from form *values* and *media*.
@@ -98,10 +42,32 @@ function* createQuickReview(values, media) {
     const operations = [];
     const oneYear = moment().add(1, 'year');
 
+    const componentIds = Object.keys(media);
+    const versionId = uuid.v4();
+    let assetName = null;
+    let thumbnailId = null;
+    const componentVersions = [];
+
+    // Loop over components and find asset name based on media use.
+    for (const componentId of componentIds) {
+        const componentData = media[componentId];
+        logger.debug(componentData.media.use);
+        if (componentData.media.use === 'video-review') {
+            assetName = componentData.name;
+        } else if (componentData.media.use === 'image-review') {
+            assetName = componentData.name;
+            thumbnailId = componentId;
+        } else if (componentData.media.use === 'thumbnail') {
+            thumbnailId = componentId;
+        }
+
+        componentVersions.push({ componentId, versionId });
+    }
+
     // Get existing or create new assets for media.
-    const [componentAssets, createAssetOperations] = yield call(
-        gatherAssets,
-        values.project, media
+    const [assetId, createAssetOperations] = yield call(
+        getAsset,
+        values.project, assetName
     );
     operations.push(...createAssetOperations);
 
@@ -114,35 +80,24 @@ function* createQuickReview(values, media) {
         end_date: values.expiryDate || oneYear,
     }));
 
-    const componentVersions = [];
-    for (const componentAsset of componentAssets) {
-        const componentId = componentAsset.componentId;
-        const assetId = componentAsset.assetId;
-        const fileName = componentAsset.name;
+    // TODO: Update this once you can select task in spark.
+    const taskId = null;
 
-        const versionId = uuid.v4();
-        // TODO: Update this once you can select task in spark.
-        const taskId = null;
-        // TODO: Update this once a component is being encoded.
-        const thumbnailId = componentId;
-        operations.push(createOperation('AssetVersion', {
-            id: versionId,
-            thumbnail_id: thumbnailId,
-            asset_id: assetId,
-            status_id: null,
-            task_id: taskId,
-        }));
+    operations.push(createOperation('AssetVersion', {
+        id: versionId,
+        thumbnail_id: thumbnailId,
+        asset_id: assetId,
+        status_id: null,
+        task_id: taskId,
+    }));
 
-        operations.push(createOperation('ReviewSessionObject', {
-            name: fileName,
-            description: null,
-            version: null,
-            version_id: versionId,
-            review_session_id: reviewSessionId,
-        }));
-
-        componentVersions.push({ componentId, versionId });
-    }
+    operations.push(createOperation('ReviewSessionObject', {
+        name: assetName,
+        description: null,
+        version: null,
+        version_id: versionId,
+        review_session_id: reviewSessionId,
+    }));
 
     const collaborators = values.collaborators.slice();
 
@@ -232,7 +187,7 @@ function* submitQuickReview(action) {
             review: true,
             delivery: false,
         });
-        logger.debug('Gathered media', media);
+        logger.debug('Gathered media', media[0]);
 
         yield showProgress('Preparing upload...');
         const uploadMeta = yield call(getUploadMetadata, media);
@@ -243,9 +198,8 @@ function* submitQuickReview(action) {
         logger.debug('Uploaded', responses);
 
         yield showProgress('Finalizing upload...');
-        const componentIds = Object.keys(uploadMeta);
         responses = yield call(
-            finalizeUpload, componentIds, { name: 'ftrackreview-image' }
+            finalizeUpload, uploadMeta
         );
         logger.debug('Finalized upload', responses);
 
