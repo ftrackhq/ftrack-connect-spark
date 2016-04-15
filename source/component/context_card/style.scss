@@ -5,12 +5,12 @@
 .empty-state {
     .placeholderList {
         list-style-type: none;
-        padding: 0 $spacing;
+        padding: 0 $spacing-small;
 
         > li {
             display: block;
-            height: 1.2rem;
-            margin: 1.2rem 0;
+            height: 1.0rem;
+            margin-bottom: 1.0rem;
             width: 75%;
         }
 

@@ -13,13 +13,11 @@ import style from './style.scss';
 export function AssigneeField({ assignees, loading }) {
     if (loading === true || assignees.length === 0) {
         return (
-            <div>
-                <PlaceholderUser
-                    title={
-                        loading ? '' : 'Unassigned'
-                    }
-                />
-            </div>
+            <PlaceholderUser
+                title={
+                    loading ? '' : 'Unassigned'
+                }
+            />
         );
     }
 
@@ -68,14 +66,17 @@ DateField.propTypes = {
 export function StatusField({ selected, statuses, onSelect }) {
     return (
         <ButtonMenu
+            className={style['status-field-wrapper']}
             onSelect={onSelect}
             button={
-                <span
-                    className={style['status-field']}
-                    style={{ borderColor: selected.color }}
-                >
-                    {selected.name}
-                </span>
+                <div className={style['status-field']}>
+                    <span
+                        className={style['status-field-inner']}
+                        style={{ borderColor: selected.color }}
+                    >
+                        {selected.name}
+                    </span>
+                </div>
             }
         >
             {

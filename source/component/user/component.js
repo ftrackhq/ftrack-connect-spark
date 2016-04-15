@@ -1,7 +1,8 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
-import { Avatar } from 'react-toolbox';
+import Avatar from 'react-toolbox/lib/avatar';
+import classNames from 'classnames';
 
 import style from './style.scss';
 import { session } from '../../ftrack_api';
@@ -28,9 +29,9 @@ export function User({ data, thumbnail }) {
     return (
         <div className={style.user}>
             {avatar}
-            <span className={style.name}>
-            {name}
-            </span>
+            <div className={style.name}>
+                <span>{name}</span>
+            </div>
         </div>
     );
 }
@@ -42,12 +43,13 @@ User.propTypes = {
 
 /** Display user placeholder. */
 export function PlaceholderUser({ title }) {
+    const _classNames = classNames(style.name, style['unassigned-name']);
     return (
         <div className={style.user}>
-            <Avatar title={name} className={style.avatar} icon="person" />
-            <span className={style['unassigned-name']}>
-            {title}
-            </span>
+            <Avatar title={title} className={style.avatar} icon="person" />
+            <div className={_classNames}>
+                <span>{title}</span>
+            </div>
         </div>
     );
 }

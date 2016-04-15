@@ -7,6 +7,10 @@
     flex-direction: column;
 }
 
+.view-top {
+    flex-shrink: 0;
+}
+
 .info {
     background: $color-dark-300;
     padding: $spacing $spacing 0 0;
