@@ -122,17 +122,19 @@ class _ContextView extends React.Component {
         ];
         return (
             <div className={style.view}>
-                <HomeHeader back context={contextId} />
-                <ContextBar
-                    entity={entity}
-                    onEntityUpdate={this._onEntityUpdate}
-                />
-                <ContextCard entity={entity} flat className={style.info} />
-                <div className={style.tabs}>
-                    <RouteTabs
-                        items={tabs}
-                        baseRoute={`/context/${contextType}/${contextId}/`}
+                <div className={style['view-top']}>
+                    <HomeHeader back context={contextId} />
+                    <ContextBar
+                        entity={entity}
+                        onEntityUpdate={this._onEntityUpdate}
                     />
+                    <ContextCard entity={entity} flat className={style.info} />
+                    <div className={style.tabs}>
+                        <RouteTabs
+                            items={tabs}
+                            baseRoute={`/context/${contextType}/${contextId}/`}
+                        />
+                    </div>
                 </div>
                 {this.props.children}
             </div>
