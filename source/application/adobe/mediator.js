@@ -85,7 +85,8 @@ export class AdobeMediator extends AbstractMediator {
                 if (error) {
                     reject(error);
                 } else {
-                    resolve(response);
+                    // Recreate response since it may be an old Array prototype.
+                    resolve([...response]);
                 }
             });
         });

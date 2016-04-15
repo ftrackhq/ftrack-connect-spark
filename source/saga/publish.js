@@ -9,7 +9,7 @@ import actions, { publishOptions } from 'action/publish';
 import {
     showProgress, hideOverlay, showCompletion, showFailure,
 } from './lib/overlay';
-import { gatherAssets, uploadReviewMedia, updateComponentVersions } from './lib/share';
+import { getAsset, uploadReviewMedia, updateComponentVersions } from './lib/share';
 import { session } from '../ftrack_api';
 import Event from '../ftrack_api/event';
 import { createOperation } from '../ftrack_api/operation';
@@ -55,14 +55,10 @@ function* preparePublish() {
 
 /** Create version */
 function* createVersion(values, thumbnailId) {
-    const assetData = {
-        context_id: values.parent, name: values.name, type_id: values.type,
-    };
-    const [assets, createAssetsOperations] = yield call(
-        gatherAssets, [assetData]
+    const [assetId, createAssetsOperations] = yield call(
+        getAsset, values.parent, values.name, values.type
     );
 
-    const assetId = assets[0].id;
     const versionId = uuid.v4();
     const taskId = values.task;
 
@@ -120,7 +116,7 @@ function* submitPublish(action) {
             delivery: true,
         });
         logger.info('Exported media', media);
-        const reviewableMedia = media.filter((file) => file.use === 'review');
+        const reviewableMedia = media.filter((file) => file.use.includes('review'));
         const deliverableMedia = media.filter((file) => file.use === 'delivery');
 
         yield showProgress('Uploading review media...');
