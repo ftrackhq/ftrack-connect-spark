@@ -111,32 +111,6 @@ function merge(data) {
     return data;
 }
 
-/** Iterate *data* and decode entities with special encoding logic.
-*
-* This will translate objects with __type__ equal to 'datetime' into moment
-* datetime objects.
-*
-*/
-function decode(data) {
-    if (data && data.constructor === Array) {
-        return data.map(item => decode(item));
-    }
-
-    if (data && data.constructor === Object) {
-        if (data.__type__ === 'datetime') {
-            return moment(data.value);
-        }
-
-        const out = {};
-        forIn(data, (value, key) => {
-            out[key] = decode(value);
-        });
-
-        return out;
-    }
-
-    return data;
-}
 
 /**
  * ftrack API session
@@ -178,6 +152,44 @@ export class Session {
         return request;
     }
 
+    /** Iterate *data* and decode entities with special encoding logic.
+    *
+    * This will translate objects with __type__ equal to 'datetime' into moment
+    * datetime objects. If time zone support is enabled on the server the date
+    * will be assumed to be UTC and cast into the local time zone.
+    *
+    */
+    decode(data) {
+        if (data && data.constructor === Array) {
+            return data.map(item => this.decode(item));
+        }
+
+        if (data && data.constructor === Object) {
+            if (data.__type__ === 'datetime') {
+                let adjustedMoment;
+                if (
+                    this._serverInformation &&
+                    this._serverInformation.is_timezone_support_enabled
+                ) {
+                    adjustedMoment = moment.utc(data.value);
+                } else {
+                    adjustedMoment = moment(data.value);
+                }
+                adjustedMoment.local();
+                return adjustedMoment;
+            }
+
+            const out = {};
+            forIn(data, (value, key) => {
+                out[key] = this.decode(value);
+            });
+
+            return out;
+        }
+
+        return data;
+    }
+
     /**
      * Call API with array of operation objects in *operations*.
      *
@@ -204,7 +216,7 @@ export class Session {
         );
 
         request = request.then((data) => {
-            const result = decode(data);
+            const result = this.decode(data);
             return Promise.resolve(result);
         });
 
