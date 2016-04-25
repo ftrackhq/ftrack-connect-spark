@@ -7,14 +7,28 @@
         // https://github.com/eslint/eslint/blob/master/docs/rules/indent.md
         "indent": [2, 4, { "SwitchCase": 1, "VariableDeclarator": 1 }],
 
-        // Validate props indentation in JSX
-        // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-indent-props.md
+        // Validate indentation in JSX
         "react/jsx-indent-props": [2, 4],
+        "react/jsx-indent": [2, 4],
 
         // Require stateless functions when not using lifecycle methods, setState or ref
         // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/prefer-stateless-function.md
         "react/prefer-stateless-function": 1,
 
-        "no-param-reassign": [2, {"props": false}]
+        "no-param-reassign": [2, {"props": false}],
+
+        // disallow certain syntax forms
+        // http://eslint.org/docs/rules/no-restricted-syntax
+        //"ForInStatement",
+        "no-restricted-syntax": [
+          2,
+          "DebuggerStatement",
+          "LabeledStatement",
+          "WithStatement",
+        ],
+
+        "no-underscore-dangle": 0,
+
+        "import/no-unresolved": 0,
     }
 }
