@@ -65,10 +65,16 @@ class EditableNote extends React.Component {
         if (author && note.author && author.id === note.author.id) {
             menu = (
                 <IconMenu icon="more_vert" menuRipple>
-                    <MenuItem value="edit" icon="edit" caption="Edit"
+                    <MenuItem
+                        value="edit"
+                        icon="edit"
+                        caption="Edit"
                         onClick={onShowForm}
                     />
-                    <MenuItem value="delete" icon="delete" caption="Remove"
+                    <MenuItem
+                        value="delete"
+                        icon="delete"
+                        caption="Remove"
                         onClick={
                             () => this.setState({ confirmRemove: true })
                         }
