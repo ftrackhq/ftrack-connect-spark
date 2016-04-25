@@ -11,10 +11,12 @@ export default function configureStore(
 ) {
     // Compose redux middleware
     const middleware = [];
-    if (sagas && sagas.length) {
-        middleware.push(createSagaMiddleware(...sagas));
-    }
+
+    const sagaMiddleware = createSagaMiddleware();
+    middleware.push(sagaMiddleware);
+
     middleware.push(createLogger());
+
     const createStoreWithMiddleware = compose(
         applyMiddleware(...middleware),
         window.devToolsExtension ? window.devToolsExtension() : f => f
@@ -32,6 +34,9 @@ export default function configureStore(
             store.replaceReducer(nextRootReducer);
         });
     }
+
+    // Run sagas
+    sagas.map(saga => sagaMiddleware.run(saga));
 
     return store;
 }
