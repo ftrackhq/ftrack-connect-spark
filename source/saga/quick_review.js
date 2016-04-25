@@ -1,6 +1,5 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-import moment from 'moment';
 import uuid from 'uuid';
 
 import { takeEvery } from 'redux-saga';
@@ -40,7 +39,6 @@ const logger = loglevel.getLogger('saga:quick_review');
  */
 function* createQuickReview(values, media) {
     const operations = [];
-    const oneYear = moment().add(1, 'year');
 
     const componentIds = Object.keys(media);
     const versionId = uuid.v4();
@@ -77,7 +75,7 @@ function* createQuickReview(values, media) {
         project_id: values.project,
         name: values.name,
         description: values.description || '',
-        end_date: values.expiryDate || oneYear,
+        end_date: values.expiryDate,
     }));
 
     // TODO: Update this once you can select task in spark.

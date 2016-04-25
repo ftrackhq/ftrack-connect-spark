@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 import { debounce } from 'lodash/function';
 import { without } from 'lodash/array';
+import moment from 'moment';
 
 import Input from 'react-toolbox/lib/input';
 import DatePicker from 'react-toolbox/lib/date_picker';
@@ -536,6 +537,7 @@ QuickReviewView = reduxForm({
     initialValues: {
         collaborator: '',
         collaborators: [],
+        expiryDate: moment().add(1, 'year').toDate(),
     },
     validateForm,
     destroyOnUnmount: false,
