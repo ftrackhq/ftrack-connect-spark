@@ -55,7 +55,7 @@ export class EventHub {
             'max reconnection attempts': Infinity,
             'reconnection limit': 10000,
             'reconnection delay': 5000,
-            transports: ['websocket'],
+            transports: ['xhr-polling'],
             query: ''.concat(
                 'api_user=', this._apiUser, '&api_key=', this._apiKey
             ),

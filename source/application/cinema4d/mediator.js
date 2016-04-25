@@ -93,6 +93,16 @@ export class Cinema4dMediator extends AbstractMediator {
         logger.info('Upload media', options);
         return this._rpcEvent('upload_media', options);
     }
+
+    getImportComponents(options) {
+        logger.info('Get import components', options);
+        return this._rpcEvent('get_import_components', options);
+    }
+
+    importComponent(options) {
+        logger.info('Import component', options);
+        return this._rpcEvent('import_component', options);
+    }
 }
 
 const cinema4dMediator = new Cinema4dMediator();
