@@ -79,11 +79,14 @@ class _NoteForm extends React.Component {
                 {
                     collapsed ? [] : (
                         <div className={style.toolbar}>
-                            {
-                                pending ?
+                            {pending ? (
                                 <div className={style.progressbar}>
-                                    <ProgressBar type="circular" mode="indeterminate" />
-                                </div> :
+                                    <ProgressBar
+                                        type="circular"
+                                        mode="indeterminate"
+                                    />
+                                </div>
+                            ) : (
                                 <Button
                                     onClick={
                                         () => this.props.onSubmit(this)
@@ -92,7 +95,7 @@ class _NoteForm extends React.Component {
                                         edit ? 'Update' : 'Comment'
                                     }
                                 />
-                            }
+                            )}
                         </div>
                     )
                 }

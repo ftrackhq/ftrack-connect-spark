@@ -460,9 +460,9 @@ class QuickReviewView extends React.Component {
                     error={this._errorMessage(name)}
                 />
                 {
-                    collaborators.value && collaborators.value.length ?
-                    <p className={style.label}>Collaborators</p> :
-                    null
+                    (collaborators.value && collaborators.value.length) ? (
+                        <p className={style.label}>Collaborators</p>
+                    ) : null
                 }
                 {this._renderCollaborators()}
                 <Input
