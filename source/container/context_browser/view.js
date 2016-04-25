@@ -186,8 +186,8 @@ class ContextBrowser extends React.Component {
                         <InfiniteScroll
                             key={this.state.parentId}
                             className={style['context-list']}
-                            loadItems={ this._loadItems }
-                            renderItem={ this._renderItem }
+                            loadItems={this._loadItems}
+                            renderItem={this._renderItem}
                         />
                     )
                 }
