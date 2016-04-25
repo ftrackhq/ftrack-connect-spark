@@ -1,13 +1,20 @@
 // :copyright: Copyright (c) 2016 ftrack
 
+import { takeLatest } from 'redux-saga';
 import { call, put } from 'redux-saga/effects';
+import { hashHistory } from 'react-router';
 
-import { configureSharedApiSession, session } from '../ftrack_api';
+import { mediator } from '../application';
+import { session, configureSharedApiSession } from '../ftrack_api';
 import {
     ftrackApiUserAuthenticated,
     ftrackApiAuthenticationFailed,
 } from 'action/ftrack_api';
+import actions from 'action/application';
 
+import {
+    showProgress, hideOverlay, showFailure,
+} from './lib/overlay';
 
 /** Return API operation to query user details. */
 function queryUserExpression(apiUser) {
@@ -19,17 +26,6 @@ function queryUserExpression(apiUser) {
         select ${userFields.join()} from User
         where username is "${apiUser}"
     `;
-}
-
-/** Return ftrack API credentials. */
-function getCredentials() {
-    let credentials = null;
-    try {
-        credentials = require('../ftrack_api_credentials.json');
-    } catch (error) {
-        console.log(error); // eslint-disable-line no-console
-    }
-    return credentials;
 }
 
 /**
@@ -44,9 +40,20 @@ function getCredentials() {
  *     FTRACK_API_USER_AUTHENTICATE
  *     FTRACK_API_AUTHENTICATION_FAILED
  */
-function* startupSaga() {
+function* startup(action) {
+    const { payload: { nextPathName } } = action;
+    yield showProgress(null, { dismissable: false, message: null });
+    let credentials = null;
+
     try {
-        const credentials = yield call(getCredentials);
+        credentials = yield call([mediator, mediator.getCredentials]);
+    } catch (error) {
+        yield hideOverlay();
+        hashHistory.replace('/connect-missing');
+        return;
+    }
+
+    try {
         yield configureSharedApiSession(
             credentials.serverUrl,
             credentials.apiUser,
@@ -56,10 +63,20 @@ function* startupSaga() {
             [session, session._query],
             queryUserExpression(credentials.apiUser)
         );
-        yield put(ftrackApiUserAuthenticated(users[0]));
+        yield put(ftrackApiUserAuthenticated(users.data[0]));
+
+        yield hideOverlay();
+        hashHistory.replace(nextPathName || '/home');
     } catch (error) {
         yield put(ftrackApiAuthenticationFailed(error));
+        yield call(showFailure, {
+            header: 'Authentication failed',
+            error,
+        });
     }
 }
 
-export default startupSaga;
+/** Run startup after each `APPLICATION_AUTHENTICATE`. */
+export function* startupSaga() {
+    yield takeLatest(actions.APPLICATION_AUTHENTICATE, startup);
+}

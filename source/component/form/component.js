@@ -4,6 +4,7 @@ import React from 'react';
 import Button from 'react-toolbox/lib/button';
 import classNames from 'classnames';
 
+import ClosableHeader from 'container/closable_header';
 import style from './style';
 
 /**
@@ -16,27 +17,30 @@ function Form(props) {
     const _classNames = classNames(
         style.root, props.className
     );
-
     return (
-        <form
-            className={_classNames}
-            onSubmit={props.onSubmit}
-        >
-            <h2>{props.header}</h2>
-            {props.children}
-            <div className={style.actions}>
-                <Button
-                    label="Cancel"
-                    onClick={props.onCancel}
-                />
-                <Button
-                    label={props.submitLabel}
-                    raised
-                    primary
-                    disabled={props.submitDisabled}
-                />
-            </div>
-        </form>
+        <div>
+            <ClosableHeader title={props.header} color={props.headerColor} />
+            <form
+                className={_classNames}
+                autoComplete="off"
+            >
+                {props.children}
+                <div className={style.actions}>
+                    <Button
+                        label="Cancel"
+                        onClick={props.onCancel}
+                        type="button"
+                    />
+                    <Button
+                        label={props.submitLabel}
+                        onClick={props.onSubmit}
+                        primary
+                        disabled={props.submitDisabled}
+                        type="button"
+                    />
+                </div>
+            </form>
+        </div>
     );
 }
 
@@ -44,6 +48,7 @@ function Form(props) {
 Form.propTypes = {
     className: React.PropTypes.string,
     header: React.PropTypes.node,
+    headerColor: React.PropTypes.string,
     children: React.PropTypes.node,
     onSubmit: React.PropTypes.func,
     onCancel: React.PropTypes.func,
@@ -54,6 +59,7 @@ Form.propTypes = {
 Form.defaultProps = {
     className: '',
     header: '',
+    headerColor: 'grey',
     children: null,
     submitLabel: 'Submit',
     onSubmit: () => {},

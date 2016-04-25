@@ -1,0 +1,200 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>ftrack</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="">
+    <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width">
+    <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1" media="(device-height: 568px)">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="HandheldFriendly" content="True">
+    <meta http-equiv="cleartype" content="on">
+
+    <!-- Material design text font & icon font -->
+    <link href="../assets/font/Roboto/roboto.css" rel="stylesheet">
+    <link href="../assets/font/MaterialIcons/material-icons.css" rel="stylesheet">
+
+    <!-- Inline styling for page loader before application has been initialized -->
+    <style type="text/css">
+        html, body, div {
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            height: 100%;
+        }
+        body {
+            min-height: 100%;
+            background: #333;
+        }
+
+        .app-loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -30px;
+            margin-left: -30px;
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            -webkit-transform: rotate(-90deg);
+               -moz-transform: rotate(-90deg);
+                -ms-transform: rotate(-90deg);
+                 -o-transform: rotate(-90deg);
+                    transform: rotate(-90deg);
+        }
+
+        .app-loader-circle {
+            -webkit-animation: app-loader-circular-indeterminate-bar-rotate 2s linear infinite;
+               -moz-animation: app-loader-circular-indeterminate-bar-rotate 2s linear infinite;
+                 -o-animation: app-loader-circular-indeterminate-bar-rotate 2s linear infinite;
+                    animation: app-loader-circular-indeterminate-bar-rotate 2s linear infinite;
+            width: 100%;
+            height: 100%;
+        }
+
+        .app-loader-circle-path {
+            -webkit-animation: app-loader-circular-indeterminate-bar-dash 1.5s ease-in-out infinite;
+               -moz-animation: app-loader-circular-indeterminate-bar-dash 1.5s ease-in-out infinite;
+                 -o-animation: app-loader-circular-indeterminate-bar-dash 1.5s ease-in-out infinite;
+                    animation: app-loader-circular-indeterminate-bar-dash 1.5s ease-in-out infinite;
+            stroke-dasharray: 1.25, 250;
+            stroke-dashoffset: 0;
+
+            -webkit-transition: stroke-dasharray .35s cubic-bezier(0.4, 0, 0.2, 1);
+
+            -moz-transition: stroke-dasharray .35s cubic-bezier(0.4, 0, 0.2, 1);
+
+            -o-transition: stroke-dasharray .35s cubic-bezier(0.4, 0, 0.2, 1);
+
+            transition: stroke-dasharray .35s cubic-bezier(0.4, 0, 0.2, 1);
+            fill: none;
+
+            stroke-dasharray: 0, 250;
+            stroke-dashoffset: 0;
+            stroke-linecap: round;
+            stroke-miterlimit: 20;
+            stroke-width: 4;
+            stroke: #2bba90;
+        }
+
+
+        @-webkit-keyframes app-loader-circular-indeterminate-bar-rotate {
+          100% {
+            -webkit-transform: rotate(360deg);
+                    transform: rotate(360deg);
+          }
+        }
+
+
+        @-moz-keyframes app-loader-circular-indeterminate-bar-rotate {
+          100% {
+            -moz-transform: rotate(360deg);
+                 transform: rotate(360deg);
+          }
+        }
+
+
+        @-o-keyframes app-loader-circular-indeterminate-bar-rotate {
+          100% {
+            -o-transform: rotate(360deg);
+               transform: rotate(360deg);
+          }
+        }
+
+
+        @keyframes app-loader-circular-indeterminate-bar-rotate {
+          100% {
+            -webkit-transform: rotate(360deg);
+               -moz-transform: rotate(360deg);
+                 -o-transform: rotate(360deg);
+                    transform: rotate(360deg);
+          }
+        }
+
+        @-webkit-keyframes app-loader-circular-indeterminate-bar-dash {
+          0% {
+            stroke-dasharray: 1.25, 250;
+            stroke-dashoffset: 0;
+          }
+
+          50% {
+            stroke-dasharray: 111.25, 250;
+            stroke-dashoffset: -43.75;
+          }
+
+          100% {
+            stroke-dasharray: 111.25, 250;
+            stroke-dashoffset: -155;
+          }
+        }
+
+        @-moz-keyframes app-loader-circular-indeterminate-bar-dash {
+          0% {
+            stroke-dasharray: 1.25, 250;
+            stroke-dashoffset: 0;
+          }
+
+          50% {
+            stroke-dasharray: 111.25, 250;
+            stroke-dashoffset: -43.75;
+          }
+
+          100% {
+            stroke-dasharray: 111.25, 250;
+            stroke-dashoffset: -155;
+          }
+        }
+
+        @-o-keyframes app-loader-circular-indeterminate-bar-dash {
+          0% {
+            stroke-dasharray: 1.25, 250;
+            stroke-dashoffset: 0;
+          }
+
+          50% {
+            stroke-dasharray: 111.25, 250;
+            stroke-dashoffset: -43.75;
+          }
+
+          100% {
+            stroke-dasharray: 111.25, 250;
+            stroke-dashoffset: -155;
+          }
+        }
+
+        @keyframes app-loader-circular-indeterminate-bar-dash {
+          0% {
+            stroke-dasharray: 1.25, 250;
+            stroke-dashoffset: 0;
+          }
+
+          50% {
+            stroke-dasharray: 111.25, 250;
+            stroke-dashoffset: -43.75;
+          }
+
+          100% {
+            stroke-dasharray: 111.25, 250;
+            stroke-dashoffset: -155;
+          }
+        }
+    </style>
+    <!--/ End styling for page loader -->
+
+</head>
+
+<body>
+    <div id="app">
+        <div class="app-loader">
+            <svg class="app-loader-circle">
+                <circle class="app-loader-circle-path" cx='30' cy='30' r='25' />
+            </svg>
+        </div>
+    </div>
+
+    <script>__REACT_DEVTOOLS_GLOBAL_HOOK__ = parent.__REACT_DEVTOOLS_GLOBAL_HOOK__</script>
+    <script type="text/javascript" src="../assets/cinema4d.bundle.js"></script>
+</body>
+</html>

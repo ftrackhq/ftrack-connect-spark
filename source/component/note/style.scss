@@ -1,0 +1,131 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+.tags {
+    color: $color-text-secondary;
+    font-style: italic;
+    display: block;
+}
+
+.review-session-category {
+    color: $palette-blue-400;
+}
+
+.datetime {
+    color: $color-text-secondary;
+}
+
+.note-item {
+    display: flex;
+    margin-bottom: $spacing-small;
+
+    .avatar-column {
+        width: 5.2rem;
+    }
+
+    .body-column {
+        flex: 1;
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+        }
+    }
+
+    .attachments-area {
+        margin-top: $spacing;
+    }
+
+    .context-card {
+        background-color: $color-dark-400;
+        margin: $spacing 0;
+    }
+
+    .author {
+        font-weight: bold;
+    }
+}
+
+.note-form {
+    flex-shrink: 0;
+
+    .toolbar {
+        display: flex;
+        flex-direction: row-reverse;
+        .progressbar {
+            transform: scale(0.5);
+            margin-top: -25px;
+        }
+    }
+
+    textarea {
+        resize: none;
+    }
+
+    &.expanded {
+        textarea {
+            height: 6em;
+        }
+    }
+}
+
+.reply-button {
+    margin: -1.2rem;
+    min-width: 0px;
+}
+
+.editable-note-container {
+    display: flex;
+
+    .note-item {
+        flex: 1;
+    }
+
+    .icon-menu {
+        margin-top: -10px;
+        visibility: hidden;
+        width: 16px;
+        height: 36px;
+    }
+
+    &:hover {
+        .icon-menu {
+            visibility: visible;
+        }
+    }
+}
+
+.attachments-area {
+    .images {
+        .image {
+            height: 71px;
+            width: 126px;
+            margin: 0 $spacing-small $spacing-tiny 0;
+            cursor: pointer;
+            display: inline-block;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    }
+
+    .other {
+        p {
+            display: flex;
+            align-items: center;
+            color: $color-text-secondary;
+
+            .attachment-icon {
+                font-size: $font-size-big;
+                margin-right: $spacing-tiny;
+            }
+
+            .file-name:hover {
+                text-decoration: underline;
+            }
+
+            .file-name {
+                cursor: pointer;
+            }
+        }
+    }
+}

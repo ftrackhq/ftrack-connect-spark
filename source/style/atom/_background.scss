@@ -1,0 +1,39 @@
+@import "../_color.scss";
+
+@mixin background-color($color-name) {
+
+}
+
+:global {
+    $colors: (
+        red $palette-red-500,
+        pink $palette-pink-500,
+        purple $palette-purple-500,
+        deep-purple $palette-deep-purple-500,
+        indigo $palette-indigo-500,
+        blue $palette-blue-500,
+        light-blue $palette-light-blue-500,
+        cyan $palette-cyan-500,
+        teal $palette-teal-500,
+        green $palette-green-500,
+        light-green $palette-light-green-500,
+        lime $palette-lime-500,
+        yellow $palette-yellow-500,
+        amber $palette-amber-500,
+        orange $palette-orange-500,
+        deep-orange $palette-deep-orange-500,
+        brown $palette-brown-500,
+        grey $palette-grey-500,
+        blue-grey $palette-blue-grey-500,
+        dark-100 $color-dark-100,
+        dark-200 $color-dark-200,
+        dark-300 $color-dark-300,
+        dark-400 $color-dark-400
+    );
+    @each $color in $colors {
+        .background-#{nth($color, 1)} {
+            background-color: #{nth($color, 2)} !important;
+        }
+    }
+}
+

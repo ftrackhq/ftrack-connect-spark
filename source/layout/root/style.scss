@@ -1,10 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
+@import "../../style/core.scss";
 
-body {
-    background: #fff;
-    color: #333;
-}
-
-.main {
-    padding: 2rem;
+.app {
+    overflow-x: hidden;
+    overflow-y: auto;
 }

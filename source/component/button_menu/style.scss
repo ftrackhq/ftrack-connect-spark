@@ -1,0 +1,12 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+.wrapper {
+    position: relative;
+    .menu {
+
+        > ul {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    }
+}

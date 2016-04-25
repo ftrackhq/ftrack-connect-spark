@@ -1,0 +1,61 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+.addButton {
+    margin-left: auto;
+    display: block;
+}
+
+.label {
+    font-size: $input-field-font-size;
+    line-height: $input-field-font-size;
+    color: $input-text-label-color;
+}
+
+.collaborator-footer {
+    margin-top: -2rem;
+}
+
+.collaborator-info {
+    padding: $spacing-small 0 $spacing;
+    color: $input-text-label-color;
+}
+
+.collaborator-add-new {
+    padding: $spacing;
+    background: $color-dark-400;
+}
+
+.collaborator-matches {
+    background: $color-dark-400;
+}
+
+.selected-collaborators {
+    padding: $spacing 0 0;
+}
+
+.selected-collaborator-item {
+    margin-right: $spacing-small;
+    margin-bottom: $spacing;
+
+    // Duplicated styles from react-toolbox to match custom avatar component.
+    padding-left: 0;
+    > [data-react-toolbox="avatar"] {
+        height: $chip-height;
+        margin-right: $chip-icon-margin-right;
+        vertical-align: middle;
+        width: $chip-height;
+
+        > span {
+            font-size: $chip-icon-font-size;
+            line-height: $chip-height;
+        }
+    }
+}
+
+// Position Create project link next to field &
+// Ensure it is clickable
+.create-project-link {
+    position: relative;
+    text-align: right;
+    margin-top: -2.4rem;
+}

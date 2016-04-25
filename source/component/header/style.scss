@@ -1,0 +1,22 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+.root {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease;
+}
+
+.title {
+
+}
+
+.center {
+    position: absolute;
+    display: block;
+    line-height: $appbar-height;
+    right: 0;
+    left: 0;
+    text-align: center;
+}

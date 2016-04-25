@@ -1,0 +1,47 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+.status-field-wrapper {
+    min-width: 6rem;
+    display: inline-block;
+}
+
+.status-field {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-bottom: 2px;
+}
+
+.status-field-inner {
+    border-bottom: 1px solid;
+    cursor: pointer;
+}
+
+.assignees {
+    display: flex;
+    align-items: center;
+    min-width: 3rem;
+
+    .additional {
+        padding-left: $spacing-tiny;
+    }
+}
+
+.date {
+    flex-shrink: 1;
+    display: inline-block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    > span {
+        margin: auto 0;
+    }
+    .icon {
+        font-size: $input-icon-font-size-small;
+        vertical-align: middle;
+        margin-right: 2px;
+    }
+    color: $color-text-secondary;
+}

@@ -1,0 +1,111 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+@import '~style/_mixin.scss';
+
+.empty-state {
+    .placeholderList {
+        list-style-type: none;
+        padding: 0 $spacing-small;
+
+        > li {
+            display: block;
+            height: 1.0rem;
+            margin-bottom: 1.0rem;
+            width: 75%;
+        }
+
+        > li:nth-child(2n+1) {
+            width: 50%;
+        }
+
+        > li:first-child {
+            width: 33%;
+        }
+    }
+
+    .placeholder {
+        background: rgba($color-text, 0.1);
+    }
+
+    div.placeholder {
+        flex: 1;
+    }
+}
+
+.main {
+    flex: 1;
+    padding: $spacing-small $spacing;
+}
+
+.clickable {
+    .main {
+        cursor: pointer;
+        &:hover {
+            background-color: lighten($card-background-color, 5%);
+        }
+    }
+}
+
+.large .entity-link {
+    min-height: 5rem;
+}
+
+.card-actions {
+    padding: 0;
+}
+
+.side {
+    display: flex;
+    flex-direction: row;
+
+    .small & {
+        height: 5.6rem;
+    }
+
+    .large & {
+        height: 12rem;
+    }
+}
+
+.expand-button {
+    margin-left: auto !important;
+}
+
+.contents {
+    display: flex;
+    flex-direction: column;
+}
+
+.description {
+    padding: $spacing;
+}
+
+@include breakpoint(small) {
+    .contents {
+        display: flex;
+        flex-direction: row;
+        align-items: space-between;
+    }
+
+    .main {
+        order: 1;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .side {
+        order: 2;
+        flex-shrink: 0;
+
+        .large & {
+            height: auto;
+            min-height: 10rem;
+            width: 17.5rem;
+        }
+        .small & {
+            height: auto;
+            min-height: 5.6rem;
+            width: 8rem;
+        }
+    }
+}

@@ -3,22 +3,22 @@
 import React, { PropTypes } from 'react';
 import ToolboxApp from 'react-toolbox/lib/app';
 
-import HeaderContainer from 'container/header';
 import ApplicationOverlay from 'container/application_overlay';
+import PreviewMediaContainer from 'container/preview_media';
+import ApplicationSnackbar from 'container/application_snackbar';
 
+// Include global application styles
 import 'react-toolbox/components/commons.scss';
 import style from './style.scss';
-
 
 /** A root layout. */
 function RootLayout({ children }) {
     return (
-        <ToolboxApp>
-            <HeaderContainer />
-            <div className={style.main}>
-                {children}
-            </div>
+        <ToolboxApp className={style.app}>
+            {children}
             <ApplicationOverlay />
+            <PreviewMediaContainer />
+            <ApplicationSnackbar />
         </ToolboxApp>
     );
 }

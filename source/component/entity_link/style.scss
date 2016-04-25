@@ -1,0 +1,17 @@
+// :copyright: Copyright (c) 2016 ftrack
+@import '~style/_mixin.scss';
+
+.entity-parent,
+.entity-ancestors {
+    color: $color-text-secondary;
+}
+
+.entity-link {
+    padding-right: $spacing;
+}
+
+.entity,
+.entity-parent,
+.entity-ancestors {
+    @include text-truncate();
+}

@@ -1,19 +1,31 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
-import { Link } from 'react-router';
+import HomeHeader from 'container/home_header';
+import RouteTabs from 'container/route_tabs';
 
 import style from './style.scss';
 
-
 /** Home view */
-function HomeView() {
+
+function HomeView({ children }) {
+    const tabs = [
+        { route: 'my-tasks', label: 'My tasks' },
+        { route: 'browse-all', label: 'Browse all' },
+    ];
     return (
-        <div className={style.home}>
-            <h2>ftrack connect spark</h2>
-            <p><Link to="/example">To example view</Link></p>
+        <div className={style.root}>
+            <HomeHeader />
+            <div className={style.tabs}>
+                <RouteTabs items={tabs} baseRoute="/home/" />
+            </div>
+            {children}
         </div>
     );
 }
+
+HomeView.propTypes = {
+    children: React.PropTypes.element.isRequired,
+};
 
 export default HomeView;

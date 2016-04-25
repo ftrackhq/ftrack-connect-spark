@@ -13,10 +13,16 @@ import style from './style';
  * Shows a clickable link until active, then children.
  */
 class Reveal extends React.Component {
-    constructor() {
-        super();
-        this.state = { active: false };
+    constructor(props) {
+        super(props);
+        this.state = { active: props.active };
         this._onButtonClicked = this._onButtonClicked.bind(this);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.active !== this.props.active) {
+            this.setState({ active: nextProps.active });
+        }
     }
 
     _onButtonClicked() {
@@ -29,7 +35,7 @@ class Reveal extends React.Component {
         let content = null;
         if (this.state.active) {
             content = this.props.children;
-        } else {
+        } else if (this.props.label || this.props.icon) {
             content = (
                 <Link
                     className={className}
@@ -48,7 +54,8 @@ class Reveal extends React.Component {
 }
 
 Reveal.propTypes = {
-    children: React.PropTypes.node,
+    children: React.PropTypes.node.isRequired,
+    active: React.PropTypes.bool,
     className: React.PropTypes.string,
     label: React.PropTypes.string,
     icon: React.PropTypes.string,
@@ -56,7 +63,8 @@ Reveal.propTypes = {
 
 Reveal.defaultProps = {
     className: '',
-    label: 'show',
+    active: false,
+    label: null,
     icon: null,
 };
 

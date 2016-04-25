@@ -44,6 +44,7 @@ function getDefaultModules() {
             cssModulesLoader,
             'postcss',
             'sass?sourceMap',
+            'toolbox',
         ],
     });
 
