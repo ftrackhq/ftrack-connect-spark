@@ -2,8 +2,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { hashHistory } from 'react-router';
-import { Link } from 'react-router';
+import { hashHistory, Link } from 'react-router';
 
 import InfiniteScroll from 'component/infinite_scroll';
 import ContextCard from 'component/context_card';
