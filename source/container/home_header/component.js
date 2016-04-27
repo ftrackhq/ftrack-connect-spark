@@ -41,7 +41,7 @@ class HomeHeader extends React.Component {
                     menuRipple
                 >
                     <MenuItem
-                        value="quick-review"
+                        value={`quick-review/${this.props.projectId}`}
                         icon="play_circle_outline"
                         caption="Quick review"
                     />
@@ -62,10 +62,12 @@ class HomeHeader extends React.Component {
 
 HomeHeader.propTypes = {
     context: React.PropTypes.string,
+    projectId: React.PropTypes.string,
 };
 
 HomeHeader.defaultProps = {
     context: null,
+    projectId: null,
 };
 
 export default HomeHeader;
