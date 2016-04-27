@@ -121,8 +121,8 @@ class PublishView extends React.Component {
                 <Input
                     type="text"
                     label="Linked to"
-                    onFocus={ this._onBrowse }
-                    value={ this.props.link.join(' / ') }
+                    onFocus={this._onBrowse}
+                    value={this.props.link.join(' / ')}
                 />
                 <div className={style.asset}>
                     <Input

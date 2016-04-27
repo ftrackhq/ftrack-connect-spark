@@ -174,8 +174,8 @@ class VersionsView extends React.Component {
         return (
             <InfiniteScroll
                 className={style['task-list']}
-                loadItems={ this._loadItems }
-                renderItem={ this._renderItem }
+                loadItems={this._loadItems}
+                renderItem={this._renderItem}
             />
         );
     }

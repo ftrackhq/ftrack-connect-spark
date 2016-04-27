@@ -2,8 +2,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { hashHistory } from 'react-router';
-import { Link } from 'react-router';
+import { hashHistory, Link } from 'react-router';
 
 import InfiniteScroll from 'component/infinite_scroll';
 import ContextCard from 'component/context_card';
@@ -116,8 +115,8 @@ class MyTasks extends React.Component {
         return (
             <InfiniteScroll
                 className={style['task-list']}
-                loadItems={ this._loadItems }
-                renderItem={ this._renderItem }
+                loadItems={this._loadItems}
+                renderItem={this._renderItem}
             />
         );
     }

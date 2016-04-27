@@ -96,6 +96,7 @@ export class MainMediator extends AbstractMediator {
     getCredentials() {
         let credentials = null;
         try {
+            // eslint-disable-next-line global-require
             credentials = require('../../ftrack_api_credentials.json');
         } catch (error) {
             logger.error(error);

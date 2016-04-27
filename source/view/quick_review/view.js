@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 import { debounce } from 'lodash/function';
 import { without } from 'lodash/array';
+import moment from 'moment';
 
 import Input from 'react-toolbox/lib/input';
 import DatePicker from 'react-toolbox/lib/date_picker';
@@ -55,9 +56,9 @@ function ResultList({ items, onClick, className }) {
             return (
                 <ListItem
                     avatar={<EntityAvatar entity={item} />}
-                    caption={ item.name }
-                    legend={ item.email }
-                    onClick={ handleClick }
+                    caption={item.name}
+                    legend={item.email}
+                    onClick={handleClick}
                 />
             );
         });
@@ -68,7 +69,7 @@ function ResultList({ items, onClick, className }) {
                 selectable
                 ripple
             >
-                { result }
+                {result}
             </List>
         );
     }
@@ -381,7 +382,7 @@ class QuickReviewView extends React.Component {
             result.push(
                 <ResultList
                     className={style['collaborator-matches']}
-                    items={ this.state.availableCollaborators }
+                    items={this.state.availableCollaborators}
                     onClick={this.addCollaborator}
                 />
             );
@@ -394,14 +395,14 @@ class QuickReviewView extends React.Component {
                     </p>
                     <div>
                         <Input
-                            value={ this.state.name }
-                            onChange={ this._onNameChange }
+                            value={this.state.name}
+                            onChange={this._onNameChange}
                         />
                         <Button
-                            className={ style.addButton }
+                            className={style.addButton}
                             label="Add"
                             primary
-                            onClick={ this._addNewCollaborator }
+                            onClick={this._addNewCollaborator}
                             type="button"
                         />
                     </div>
@@ -421,7 +422,7 @@ class QuickReviewView extends React.Component {
         if (result && result.length) {
             return (
                 <div className={style['collaborator-footer']}>
-                    { result }
+                    {result}
                 </div>
             );
         }
@@ -450,7 +451,7 @@ class QuickReviewView extends React.Component {
                     {...project}
                 />
                 <p className={style['create-project-link']}>
-                    <a href="#" onClick={ this._createProject }>Create a new project</a>
+                    <a href="#" onClick={this._createProject}>Create a new project</a>
                 </p>
                 <Input
                     type="text"
@@ -460,11 +461,11 @@ class QuickReviewView extends React.Component {
                     error={this._errorMessage(name)}
                 />
                 {
-                    collaborators.value && collaborators.value.length ?
-                    <p className={ style.label }>Collaborators</p> :
-                    null
+                    (collaborators.value && collaborators.value.length) ? (
+                        <p className={style.label}>Collaborators</p>
+                    ) : null
                 }
-                { this._renderCollaborators() }
+                {this._renderCollaborators()}
                 <Input
                     label="Add collaborators"
                     type="text"
@@ -474,7 +475,7 @@ class QuickReviewView extends React.Component {
                     onChange={this._onCollaboratorsChange}
                     onKeyDown={this._onCollaboratorsKeyDown}
                 />
-                { this.renderResult(this.state.availableCollaborators) }
+                {this.renderResult(this.state.availableCollaborators)}
                 <Reveal label="Add description">
                     <Input
                         type="text"
@@ -536,6 +537,7 @@ QuickReviewView = reduxForm({
     initialValues: {
         collaborator: '',
         collaborators: [],
+        expiryDate: moment().add(1, 'year').toDate(),
     },
     validateForm,
     destroyOnUnmount: false,
