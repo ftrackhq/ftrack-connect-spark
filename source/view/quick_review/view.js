@@ -86,7 +86,6 @@ ResultList.propTypes = {
 };
 
 /** Quick review view */
-/* eslint-disable react/prefer-stateless-function */
 class QuickReviewView extends React.Component {
     constructor() {
         super();
@@ -120,6 +119,16 @@ class QuickReviewView extends React.Component {
             }
             return result;
         });
+    }
+
+    /** Update project when component is mounted. */
+    componentWillMount() {
+        this._updateProjectId(this.props.params.projectId);
+    }
+
+    /** Update project if route has changed. */
+    componentWillReciveProps(nextProps) {
+        this._updateProjectId(nextProps.params.projectId);
     }
 
     /** Navigate back on cancel clicked */
@@ -158,6 +167,14 @@ class QuickReviewView extends React.Component {
     _createProject(e) {
         e.preventDefault();
         this.props.createProject(this._updateProject);
+    }
+
+    /** Update current project to *projectId*.  */
+    _updateProjectId(projectId) {
+        const currentProjectId = this.props.values.project;
+        if (projectId && projectId !== currentProjectId) {
+            this._updateProject({ id: projectId });
+        }
     }
 
     /** Handle changes to the collaborators field. */
@@ -503,6 +520,7 @@ QuickReviewView.contextTypes = {
 };
 
 QuickReviewView.propTypes = {
+    params: React.PropTypes.object.isRequired,
     values: React.PropTypes.object.isRequired,
     fields: React.PropTypes.object.isRequired,
     handleSubmit: React.PropTypes.func.isRequired,
