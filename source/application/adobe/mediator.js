@@ -147,7 +147,11 @@ export class AdobeMediator extends AbstractMediator {
 
     /** Return identifier. */
     getIdentifier() {
-        return `adobe-${window.top.csInterface.getHostEnvironment().appId}`;
+        const appId = window.top.csInterface.getHostEnvironment().appId;
+
+        // TODO: Translate the appId into something more easy to read.
+
+        return `adobe-${appId}`;
     }
 
     /** Return host version. */
