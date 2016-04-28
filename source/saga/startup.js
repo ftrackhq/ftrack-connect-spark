@@ -65,6 +65,21 @@ function* startup(action) {
         );
         yield put(ftrackApiUserAuthenticated(users.data[0]));
 
+        // Track startup of plugin.
+        session._call([
+            {
+                action: '_track_usage',
+                data: {
+                    type: 'event',
+                    name: `STARTED-SPARK-${mediator.getIdentifier()}`,
+                    metadata: {
+                        pluginVersion: mediator.getPluginVersion(),
+                        hostVersion: mediator.getHostVersion(),
+                    },
+                },
+            },
+        ]);
+
         yield hideOverlay();
         hashHistory.replace(nextPathName || '/home');
     } catch (error) {

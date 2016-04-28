@@ -107,6 +107,23 @@ export class MainMediator extends AbstractMediator {
     downloadFileFromUrl(url) {
         window.location = url;
     }
+
+    /** Return identifier. */
+    getIdentifier() {
+        return 'SPARK';
+    }
+
+    /** Return host version. */
+    getHostVersion() {
+        // TODO: Send actual browser version.
+        return 'browser';
+    }
+
+    /** Return plugin version */
+    getPluginVersion() {
+        return 'undefined';
+    }
+
 }
 
 /** Export *MainMediator* instance. */

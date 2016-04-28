@@ -34,4 +34,23 @@ export default class AbstractMediator {
     importComponent(component) {
         throw new Error('Not implemented');
     }
+
+    /** Return identifier for current host. */
+    // eslint-disable-next-line no-unused-vars
+    getIdentifier() {
+        throw new Error('Not implemented');
+    }
+
+    /** Return version for host. */
+    // eslint-disable-next-line no-unused-vars
+    getHostVersion() {
+        throw new Error('Not implemented');
+    }
+
+    /** Return version for plugin. */
+    // eslint-disable-next-line no-unused-vars
+    getPluginVersion() {
+        throw new Error('Not implemented');
+    }
+
 }

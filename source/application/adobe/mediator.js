@@ -145,6 +145,20 @@ export class AdobeMediator extends AbstractMediator {
         );
     }
 
+    /** Return identifier. */
+    getIdentifier() {
+        return `adobe-${window.top.csInterface.getHostEnvironment().appId}`;
+    }
+
+    /** Return host version. */
+    getHostVersion() {
+        return window.top.csInterface.getHostEnvironment().appVersion;
+    }
+
+    /** Return plugin version */
+    getPluginVersion() {
+        return 'undefined';
+    }
 }
 
 const adobeMediator = new AdobeMediator();
