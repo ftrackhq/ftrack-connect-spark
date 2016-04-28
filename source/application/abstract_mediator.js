@@ -34,4 +34,22 @@ export default class AbstractMediator {
     importComponent(component) {
         throw new Error('Not implemented');
     }
+
+    /**
+     * Return if publish is supported by host application.
+     * If true, application will show publish menu item and view.
+     */
+    isPublishSupported() { return false; }
+
+    /**
+     * Return if Quick review is supported by host application.
+     * If true, application will show Quick review menu item and view.
+     */
+    isQuickReviewSupported() { return false; }
+
+    /**
+     * Return if file importing is supported by host application.
+     * If true, application will show import buttons on versions.
+     */
+    isImportFileSupported() { return false; }
 }
