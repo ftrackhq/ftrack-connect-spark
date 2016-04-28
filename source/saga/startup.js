@@ -10,7 +10,7 @@ import {
     ftrackApiUserAuthenticated,
     ftrackApiAuthenticationFailed,
 } from 'action/ftrack_api';
-import actions from 'action/application';
+import actions, { applicationConfiguration } from 'action/application';
 
 import {
     showProgress, hideOverlay, showFailure,
@@ -52,6 +52,12 @@ function* startup(action) {
         hashHistory.replace('/connect-missing');
         return;
     }
+
+    yield put(applicationConfiguration({
+        isPublishSupported: mediator.isPublishSupported(),
+        isQuickReviewSupported: mediator.isQuickReviewSupported(),
+        isImportFileSupported: mediator.isImportFileSupported(),
+    }));
 
     try {
         yield configureSharedApiSession(

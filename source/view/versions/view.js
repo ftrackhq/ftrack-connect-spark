@@ -100,8 +100,11 @@ class VersionsView extends React.Component {
         );
     }
 
-    /** Render item. */
-    _renderItem(item) {
+    _getCardActions(item) {
+        if (!this.props.enableImport) {
+            return null;
+        }
+
         const activeVersion = this.props.components;
         const isItemActiveVersion = (activeVersion.versionId === item.id);
 
@@ -123,18 +126,22 @@ class VersionsView extends React.Component {
             );
         }
 
-        const actions = [
+        return [
             <div className={style.import} key="action-import">
                 {button}
                 {menu}
             </div>,
         ];
+    }
+
+    /** Render item. */
+    _renderItem(item) {
         return (
             <ContextCard
                 key={item.id}
                 entity={item}
                 className={style.item}
-                actions={actions}
+                actions={this._getCardActions(item)}
             />
         );
     }
@@ -186,11 +193,15 @@ VersionsView.propTypes = {
     onImportComponent: React.PropTypes.func.isRequired,
     onGetImportComponents: React.PropTypes.func.isRequired,
     components: React.PropTypes.object,
+    enableImport: React.PropTypes.bool,
 };
 
 /** Map version state to components */
 function mapStateToProps(state) {
-    return { components: state.screen.version };
+    return {
+        components: state.screen.version,
+        enableImport: state.application.config.isImportFileSupported,
+    };
 }
 
 /** Map import actions to props */

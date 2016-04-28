@@ -4,7 +4,7 @@ import React from 'react';
 import Header from 'component/header';
 import { Button, Menu, MenuItem } from 'react-toolbox';
 import { hashHistory } from 'react-router';
-
+import { connect } from 'react-redux';
 import style from './style.scss';
 
 /** Push new route on item selected. */
@@ -15,7 +15,7 @@ const navigateToMenu = (value) => {
 /**
  * Home header component with actions.
  */
-class HomeHeader extends React.Component {
+class _HomeHeader extends React.Component {
 
     /** Instantiate home header. */
     constructor() {
@@ -28,9 +28,35 @@ class HomeHeader extends React.Component {
         this.refs.menu.show();
     }
 
-    /** Render component. */
-    render() {
-        const shareButton = (
+    /** Return share button */
+    _getShareButton() {
+        if (!this.props.publish && !this.props.quickReview) {
+            return null;
+        }
+
+        const menuItems = [];
+        if (this.props.quickReview) {
+            menuItems.push(
+                <MenuItem
+                    key="quickReview"
+                    value="quick-review"
+                    icon="play_circle_outline"
+                    caption="Quick review"
+                />
+            );
+        }
+        if (this.props.publish) {
+            menuItems.push(
+                <MenuItem
+                    key="publish"
+                    value={`publish/${this.props.context}`}
+                    icon="file_upload"
+                    caption="Publish"
+                />
+            );
+        }
+
+        return (
             <div className={style.share}>
                 <Button primary label="Share" onClick={this._onShareClick} />
                 <Menu
@@ -40,32 +66,45 @@ class HomeHeader extends React.Component {
                     onSelect={navigateToMenu}
                     menuRipple
                 >
-                    <MenuItem
-                        value="quick-review"
-                        icon="play_circle_outline"
-                        caption="Quick review"
-                    />
-                    <MenuItem
-                        value={`publish/${this.props.context}`}
-                        icon="file_upload"
-                        caption="Publish"
-                    />
+                    {menuItems}
                 </Menu>
             </div>
         );
+    }
 
+    /** Render component. */
+    render() {
         return (
-            <Header {...this.props} rightItems={shareButton} color="dark-200" />
+            <Header
+                {...this.props}
+                rightItems={this._getShareButton()}
+                color="dark-200"
+            />
         );
     }
 }
 
-HomeHeader.propTypes = {
+_HomeHeader.propTypes = {
+    publish: React.PropTypes.bool,
+    quickReview: React.PropTypes.bool,
     context: React.PropTypes.string,
 };
 
-HomeHeader.defaultProps = {
+_HomeHeader.defaultProps = {
+    publish: false,
+    quickReview: false,
     context: null,
 };
+
+/** Map application configuration to props. */
+function mapStateToProps(state) {
+    return {
+        publish: state.application.config.isPublishSupported,
+        quickReview: state.application.config.isQuickReviewSupported,
+    };
+}
+
+const HomeHeader = connect(mapStateToProps)(_HomeHeader);
+
 
 export default HomeHeader;

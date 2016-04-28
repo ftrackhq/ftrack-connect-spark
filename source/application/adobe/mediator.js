@@ -9,6 +9,27 @@ const logger = loglevel.getLogger('adobe:mediator');
 import AbstractMediator from '../abstract_mediator';
 
 /**
+ * Host Application support
+ */
+// eslint-disable-next-line no-unused-vars
+const APPLICATION_IDS = {
+    PHSP: 'Photoshop',
+    PHXS: 'Photoshop Extended',
+    IDSN: 'InDesign',
+    AICY: 'InCopy',
+    ILST: 'Illustrator',
+    PPRO: 'Premiere Pro',
+    PRLD: 'Prelude',
+    AEFT: 'After Effects',
+    FLPR: 'Flash Pro',
+    AUDT: 'Audition',
+    DRWV: 'Dreamweaver',
+};
+const PUBLISH_SUPPORTED_APP_IDS = ['PHSP', 'PHXS'];
+const QUICK_REVIEW_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO'];
+const IMPORT_FILE_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO', 'AEFT', 'ILST'];
+
+/**
  * Adobe Mediator
  *
  * Provides adobe-specific logic by calling methods in
@@ -145,6 +166,40 @@ export class AdobeMediator extends AbstractMediator {
         );
     }
 
+    /** Return host application environment. */
+    getHostEnvironment() {
+        if (!this._hostEnvironment) {
+            const main = window.top.FT.main;
+            this._hostEnvironment = Object.assign({}, main.getHostEnvironment());
+        }
+        return this._hostEnvironment;
+    }
+
+    /** Return application id */
+    getAppId() {
+        return this.getHostEnvironment().appId;
+    }
+
+    /**
+     * Return if publish is supported by host application.
+     */
+    isPublishSupported() {
+        return PUBLISH_SUPPORTED_APP_IDS.includes(this.getAppId());
+    }
+
+    /**
+     * Return if Quick review is supported by host application.
+     */
+    isQuickReviewSupported() {
+        return QUICK_REVIEW_SUPPORTED_APP_IDS.includes(this.getAppId());
+    }
+
+    /**
+     * Return if file importing is supported by host application.
+     */
+    isImportFileSupported() {
+        return IMPORT_FILE_SUPPORTED_APP_IDS.includes(this.getAppId());
+    }
 }
 
 const adobeMediator = new AdobeMediator();

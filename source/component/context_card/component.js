@@ -65,7 +65,7 @@ class ContextCard extends React.Component {
         const expandIcon = this.state.expanded ? 'expand_less' : 'expand_more';
         const isExpandable = !!entity.description;
         const statusColor = entity.status && entity.status.color;
-        const actions = [...this.props.actions];
+        const actions = this.props.actions && [...this.props.actions] || [];
         if (isExpandable) {
             actions.push(
                 <Button
