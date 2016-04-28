@@ -5,6 +5,7 @@ import { routerReducer } from 'react-router-redux';
 import { reducer as formReducer } from 'redux-form';
 
 import userReducer from './user';
+import applicationReducer from './application';
 import applicationOverlayReducer from './screen/application_overlay';
 import notificationReducer from './screen/notification';
 import publishReducer from './screen/publish';
@@ -16,6 +17,7 @@ export default combineReducers({
     routing: routerReducer,
     form: formReducer,
     user: userReducer,
+    application: applicationReducer,
     screen: combineReducers({
         notification: notificationReducer,
         overlay: applicationOverlayReducer,
