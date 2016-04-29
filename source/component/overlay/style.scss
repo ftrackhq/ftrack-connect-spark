@@ -36,8 +36,7 @@
     color: $color-text-secondary;
 }
 
-.error-message {
+.details {
     composes: message;
     font-size: small;
-    color: $color-text-error;
 }

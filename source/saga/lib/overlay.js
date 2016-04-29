@@ -30,11 +30,11 @@ export function* showCompletion({ header, message }, callback = () => {}) {
 }
 
 /** Show failure overlay. */
-export function* showFailure({ header, message }, callback = () => {}) {
+export function* showFailure({ header, message, details }, callback = () => {}) {
     yield put(overlayShow({
         header,
-        message: 'Please try again or contact support with the following details',
-        error: message || '',
+        message: message || 'Please try again or contact support with the following details',
+        details: details,
         dismissable: true,
     }));
     yield take(actions.OVERLAY_HIDE);

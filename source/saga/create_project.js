@@ -7,7 +7,6 @@ import { hashHistory } from 'react-router';
 import { session } from '../ftrack_api';
 import { createOperation } from '../ftrack_api/operation';
 import actions from 'action/create_project';
-import { notificationWarning } from 'action/notification';
 
 import { isPermissionError, isValidationError } from '../util/error';
 import { showProgress, showCompletion, showFailure } from './lib/overlay';

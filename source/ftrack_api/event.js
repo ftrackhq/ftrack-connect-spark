@@ -121,9 +121,16 @@ export class EventHub {
             this._runWhenConnected(resolve);
 
             if (timeout) {
-                setTimeout(() => reject(
-                    new Error('Unable to connect to event server within timeout.')
-                ), timeout * 1000);
+                setTimeout(
+                    () => {
+                        const error = new Error(
+                            'Unable to connect to event server within timeout.'
+                        );
+                        error.exception = 'EventServerTimeoutOnConnect';
+                        reject(error);
+                    },
+                    timeout * 1000
+                );
             }
         });
 
@@ -142,9 +149,15 @@ export class EventHub {
                 this._replyCallbacks[event.getData().id] = resolve;
 
                 if (timeout) {
-                    setTimeout(() => reject(
-                        new Error('No reply event received within timeout.')
-                    ), timeout * 1000);
+                    setTimeout(
+                        () => {
+                            const error = new Error(
+                                'No reply event received within timeout.'
+                            );
+                            error.exception = 'EventReplyTimeout';
+                            reject(error);
+                        }, timeout * 1000
+                    );
                 }
             });
 

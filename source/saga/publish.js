@@ -96,10 +96,20 @@ function* createComponents(versionId, media) {
     }
 
     logger.info('Creating components', components);
-    return session.eventHub.publish(
+    const reply = yield session.eventHub.publish(
         new Event('ftrack.connect.publish-components', { components }),
-        { reply: true, timeout: 240 }
+        { reply: true, timeout: 6 }
     );
+
+    if (!reply.success) {
+        const error = new Error(
+            `${reply.data.error_result.exception}: ${reply.data.error_result.content}`
+        );
+        error.exception = 'CreateComponentsError';
+        throw error;
+    }
+
+    return reply;
 }
 
 /**
@@ -139,10 +149,29 @@ function* submitPublish(action) {
             logger.info('Complete');
         });
     } catch (error) {
-        yield call(showFailure, {
-            header: 'Publish failed',
-            message: error.message,
-        });
+        let message;
+
+        if (error.exception === 'EventReplyTimeout') {
+            message = (
+                'No response from ftrack Connect. Please ensure that ' +
+                'ftrack Connect is running.'
+            );
+        }
+
+        if (error.exception === 'CreateComponentsError') {
+            message = (
+                'ftrack Connect failed to publish the versions.'
+            );
+        }
+
+        yield call(
+            showFailure,
+            {
+                header: 'Publish failed',
+                message,
+                details: error.message,
+            }
+        );
     }
 }
 
