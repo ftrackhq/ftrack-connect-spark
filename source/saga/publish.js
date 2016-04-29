@@ -100,7 +100,7 @@ function* createComponents(versionId, media) {
     logger.info('Creating components', components);
     const reply = yield session.eventHub.publish(
         new Event('ftrack.connect.publish-components', { components }),
-        { reply: true, timeout: 6 }
+        { reply: true, timeout: 3600 }
     );
 
     if (!reply.data.success) {
