@@ -13,6 +13,7 @@ import { getAsset, uploadReviewMedia, updateComponentVersions } from './lib/shar
 import { session } from '../ftrack_api';
 import Event from '../ftrack_api/event';
 import { createOperation } from '../ftrack_api/operation';
+import { CreateComponentsHookError, EventServerReplyTimeoutError } from '../error';
 
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('saga:publish');
@@ -35,7 +36,7 @@ function* preparePublish() {
         yield call(showFailure, {
             header: 'Failed communicate with Connect',
             message: 'Please ensure ftrack Connect is running.',
-            error,
+            details: error.message,
         });
     }
     // TODO: Get asset name
@@ -102,10 +103,9 @@ function* createComponents(versionId, media) {
     );
 
     if (!reply.success) {
-        const error = new Error(
+        const error = new CreateComponentsHookError(
             `${reply.data.error_result.exception}: ${reply.data.error_result.content}`
         );
-        error.exception = 'CreateComponentsError';
         throw error;
     }
 
@@ -151,14 +151,14 @@ function* submitPublish(action) {
     } catch (error) {
         let message;
 
-        if (error.exception === 'EventReplyTimeout') {
+        if (error instanceof EventServerReplyTimeoutError) {
             message = (
                 'No response from ftrack Connect. Please ensure that ' +
                 'ftrack Connect is running.'
             );
         }
 
-        if (error.exception === 'CreateComponentsError') {
+        if (error instanceof CreateComponentsHookError) {
             message = (
                 'ftrack Connect failed to publish the versions.'
             );
