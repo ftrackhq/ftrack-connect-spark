@@ -223,9 +223,10 @@ export class Session {
         // Reject promise on API exception.
         request = request.then((response) => {
             if (response.exception) {
-                return Promise.reject(
-                    new Error(`${response.exception}: ${response.content}`)
-                );
+                const error = new Error(`${response.exception}: ${response.content}`);
+                error.exception = response.exception;
+                error.content = response.content;
+                return Promise.reject(error);
             }
             return Promise.resolve(response);
         });

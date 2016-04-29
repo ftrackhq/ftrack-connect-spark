@@ -141,7 +141,7 @@ function* submitPublish(action) {
     } catch (error) {
         yield call(showFailure, {
             header: 'Publish failed',
-            error,
+            message: error.message,
         });
     }
 }

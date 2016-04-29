@@ -71,7 +71,7 @@ function* startup(action) {
         yield put(ftrackApiAuthenticationFailed(error));
         yield call(showFailure, {
             header: 'Authentication failed',
-            error,
+            message: error.message,
         });
     }
 }

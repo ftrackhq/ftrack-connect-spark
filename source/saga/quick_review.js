@@ -221,7 +221,12 @@ function* submitQuickReview(action) {
         // Reset the form.
         yield put(reset('quickReview'));
     } catch (error) {
-        yield call(showFailure, { header: 'Failed to create review session', error });
+        yield call(
+            showFailure,
+            {
+                header: 'Failed to create review session',
+                message: error.message,
+            });
     }
 }
 
