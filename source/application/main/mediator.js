@@ -66,7 +66,7 @@ export class MainMediator extends AbstractMediator {
     exportMedia(options) {
         logger.info('[MainMediator]', 'Exporting media', options);
         const media = [];
-        if (options.reviewable) {
+        if (options.review) {
             media.push({
                 use: 'review',
                 name: 'image',
@@ -75,7 +75,7 @@ export class MainMediator extends AbstractMediator {
                 size: 10403354,
             });
         }
-        if (options.deliverable) {
+        if (options.delivery) {
             media.push({
                 use: 'delivery',
                 name: 'photoshop-document',
