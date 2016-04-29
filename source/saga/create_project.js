@@ -8,7 +8,7 @@ import { session } from '../ftrack_api';
 import { createOperation } from '../ftrack_api/operation';
 import actions from 'action/create_project';
 
-import { ServerPermissionDeniedError, ServerValidationError } from '../error';
+import { ServerPermissionDeniedError, ServerValidationError } from '../ftrack_api/error';
 import { showProgress, showCompletion, showFailure } from './lib/overlay';
 
 import loglevel from 'loglevel';

@@ -15,7 +15,7 @@ import { showProgress, showCompletion, showFailure } from './lib/overlay';
 import {
     getUploadMetadata, uploadMedia, updateComponentVersions, finalizeUpload, getAsset,
 } from './lib/share';
-import { ServerPermissionDeniedError } from '../error';
+import { ServerPermissionDeniedError } from '../ftrack_api/error';
 
 import { mediator } from '../application';
 

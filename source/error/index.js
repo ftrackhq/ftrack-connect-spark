@@ -13,26 +13,5 @@ function _errorFactory(name) {
     return CustomError;
 }
 
-// Throw when a unknown server error occurs.
-export const ServerError = _errorFactory('ServerError');
-
-// Throw when a permission denied error occurs.
-export const ServerPermissionDeniedError = _errorFactory('ServerPermissionDeniedError');
-
-// Throw when a validation error occurs.
-export const ServerValidationError = _errorFactory('ServerValidationError');
-
-// Throw when a connect timeout error occurs.
-export const ConnectTimeoutError = _errorFactory('ConnectTimeoutError');
-
-// Throw when connect publish error occurs.
-export const ConnectPublishError = _errorFactory('ConnectPublishError');
-
-// Throw when event reply timeout occurs.
-export const EventServerReplyTimeoutError = _errorFactory('EventServerReplyTimeoutError');
-
-// Throw when event server connection timeout occurs.
-export const EventServerConnectionTimeout = _errorFactory('EventServerConnectionTimeout');
-
 // Throw when components hook failed.
 export const CreateComponentsHookError = _errorFactory('CreateComponentsError');

@@ -13,7 +13,8 @@ import { getAsset, uploadReviewMedia, updateComponentVersions } from './lib/shar
 import { session } from '../ftrack_api';
 import Event from '../ftrack_api/event';
 import { createOperation } from '../ftrack_api/operation';
-import { CreateComponentsHookError, EventServerReplyTimeoutError } from '../error';
+import { EventServerReplyTimeoutError } from '../ftrack_api/error';
+import { CreateComponentsHookError } from '../error';
 
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('saga:publish');
@@ -102,7 +103,7 @@ function* createComponents(versionId, media) {
         { reply: true, timeout: 6 }
     );
 
-    if (!reply.success) {
+    if (!reply.data.success) {
         const error = new CreateComponentsHookError(
             `${reply.data.error_result.exception}: ${reply.data.error_result.content}`
         );

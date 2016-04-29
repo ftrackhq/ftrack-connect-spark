@@ -6,7 +6,7 @@ import loglevel from 'loglevel';
 
 import { EventHub } from './event';
 import { queryOperation } from './operation';
-import { ServerPermissionDeniedError, ServerValidationError, ServerError } from '../error';
+import { ServerPermissionDeniedError, ServerValidationError, ServerError } from './error';
 
 
 const logger = loglevel.getLogger('ftrack_api');
