@@ -6,6 +6,7 @@ import loglevel from 'loglevel';
 
 import { EventHub } from './event';
 import { queryOperation } from './operation';
+import { ServerPermissionDeniedError, ServerValidationError } from '../error';
 
 
 const logger = loglevel.getLogger('ftrack_api');
@@ -223,7 +224,17 @@ export class Session {
         // Reject promise on API exception.
         request = request.then((response) => {
             if (response.exception) {
-                const error = new Error(`${response.exception}: ${response.content}`);
+                const message = `${response.exception}: ${response.content}`;
+                let error;
+
+                if (response.exception === 'ValidationError') {
+                    error = new ServerValidationError(message);
+                } else if (response.exception === 'FTAuthenticationError') {
+                    error = new ServerPermissionDeniedError(message);
+                } else {
+                    error = new Error(message);
+                }
+
                 error.exception = response.exception;
                 error.content = response.content;
                 return Promise.reject(error);
