@@ -15,7 +15,7 @@ import { showProgress, showCompletion, showFailure } from './lib/overlay';
 import {
     getUploadMetadata, uploadMedia, updateComponentVersions, finalizeUpload, getAsset,
 } from './lib/share';
-import { isPermissionError, isValidationError } from '../util/error';
+import { ServerPermissionDeniedError } from '../error';
 
 import { mediator } from '../application';
 
@@ -224,7 +224,7 @@ function* submitQuickReview(action) {
     } catch (error) {
         let message = 'Could not create the review session, please verify the form and try again';
 
-        if (isPermissionError(error)) {
+        if (error instanceof ServerPermissionDeniedError) {
             message = (
                 'You\'re not permitted to create a review session on the ' +
                 'selected project'
@@ -236,6 +236,7 @@ function* submitQuickReview(action) {
             {
                 header: 'Failed to create review session',
                 message,
+                details: error.message,
             });
     }
 }

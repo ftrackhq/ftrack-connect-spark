@@ -34,7 +34,7 @@ export function* showFailure({ header, message, details }, callback = () => {}) 
     yield put(overlayShow({
         header,
         message: message || 'Please try again or contact support with the following details',
-        details: details,
+        details,
         dismissable: true,
     }));
     yield take(actions.OVERLAY_HIDE);
