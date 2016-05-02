@@ -93,6 +93,25 @@ export class Cinema4dMediator extends AbstractMediator {
         logger.info('Upload media', options);
         return this._rpcEvent('upload_media', options);
     }
+
+
+    /**
+     * Return if publish is supported by host application.
+     * If true, application will show publish menu item and view.
+     */
+    isPublishSupported() { return true; }
+
+    /**
+     * Return if Quick review is supported by host application.
+     * If true, application will show Quick review menu item and view.
+     */
+    isQuickReviewSupported() { return false; }
+
+    /**
+     * Return if file importing is supported by host application.
+     * If true, application will show import buttons on versions.
+     */
+    isImportFileSupported() { return false; }
 }
 
 const cinema4dMediator = new Cinema4dMediator();

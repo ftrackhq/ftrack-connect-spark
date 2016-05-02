@@ -3,6 +3,7 @@
 import { takeLatest } from 'redux-saga';
 import { call, put } from 'redux-saga/effects';
 import { hashHistory } from 'react-router';
+import compare from 'semver-compare';
 
 import { mediator } from '../application';
 import { session, configureSharedApiSession } from '../ftrack_api';
@@ -10,10 +11,10 @@ import {
     ftrackApiUserAuthenticated,
     ftrackApiAuthenticationFailed,
 } from 'action/ftrack_api';
-import actions from 'action/application';
+import actions, { applicationConfiguration } from 'action/application';
 
 import {
-    showProgress, hideOverlay, showFailure,
+    showProgress, hideOverlay, showFailure, showCompletion,
 } from './lib/overlay';
 
 /** Return API operation to query user details. */
@@ -53,6 +54,12 @@ function* startup(action) {
         return;
     }
 
+    yield put(applicationConfiguration({
+        isPublishSupported: mediator.isPublishSupported(),
+        isQuickReviewSupported: mediator.isQuickReviewSupported(),
+        isImportFileSupported: mediator.isImportFileSupported(),
+    }));
+
     try {
         yield configureSharedApiSession(
             credentials.serverUrl,
@@ -67,6 +74,20 @@ function* startup(action) {
 
         yield hideOverlay();
         hashHistory.replace(nextPathName || '/home');
+
+        if (session.serverVersion !== 'dev') {
+            if (
+                compare(session.serverVersion, '3.3.20') < 0
+            ) {
+                yield call(showCompletion, {
+                    header: 'Incompatible server version',
+                    message: (
+                        'The version of your ftrack server is outdated and must ' +
+                        'be updated to make sure that everything works as expected.'
+                    ),
+                });
+            }
+        }
     } catch (error) {
         yield put(ftrackApiAuthenticationFailed(error));
         yield call(showFailure, {

@@ -56,11 +56,7 @@ class PublishView extends React.Component {
 
     /** Update context if route has changed. */
     componentWillReciveProps(nextProps) {
-        const nextContext = nextProps.params.context;
-        const currentContext = this.props.params.context;
-        if (nextContext !== currentContext) {
-            this._updateContext();
-        }
+        this._updateContext(nextProps.params.context);
     }
 
     /** Update current context to *contextId*.  */

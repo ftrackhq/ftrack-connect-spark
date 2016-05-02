@@ -146,6 +146,7 @@ export class Session {
             (responses) => {
                 this._serverInformation = responses[0];
                 this._schemas = responses[1];
+                this.serverVersion = this._serverInformation.version;
                 this.initialized = true;
             }
         );

@@ -108,6 +108,24 @@ export class MainMediator extends AbstractMediator {
     downloadFileFromUrl(url) {
         window.location = url;
     }
+
+    /**
+     * Return if publish is supported by host application.
+     * If true, application will show publish menu item and view.
+     */
+    isPublishSupported() { return true; }
+
+    /**
+     * Return if Quick review is supported by host application.
+     * If true, application will show Quick review menu item and view.
+     */
+    isQuickReviewSupported() { return true; }
+
+    /**
+     * Return if file importing is supported by host application.
+     * If true, application will show import buttons on versions.
+     */
+    isImportFileSupported() { return true; }
 }
 
 /** Export *MainMediator* instance. */
