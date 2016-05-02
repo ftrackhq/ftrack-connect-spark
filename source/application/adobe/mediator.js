@@ -202,12 +202,12 @@ export class AdobeMediator extends AbstractMediator {
     }
 
     /** Write a data file to the connect folder with *data* and *filename*. */
-    writeDataFile(filename, data) {
+    writeSecurePublishFile(filename, data) {
         const util = window.top.FT.util;
         logger.info('Writing data file.');
 
         const promise = new Promise((resolve, reject) => {
-            util.writeDataFile(filename, data, (error, filePath) => {
+            util.writeSecurePublishFile(filename, data, (error, filePath) => {
                 if (error) {
                     reject(error);
                 } else {
