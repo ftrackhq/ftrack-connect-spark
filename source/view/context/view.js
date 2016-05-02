@@ -19,7 +19,9 @@ class _ContextView extends React.Component {
 
     constructor() {
         super();
-        this.state = { entity: null, loading: true, error: false };
+        this.state = {
+            entity: null, projectId: null, loading: true, error: false,
+        };
         this._loadContext = this._loadContext.bind(this);
         this._onEntityUpdate = this._onEntityUpdate.bind(this);
     }
@@ -60,7 +62,7 @@ class _ContextView extends React.Component {
     /** Return query string to get a TypedContext. */
     _getTypedContextQuery() {
         const select = [
-            'thumbnail_id', 'link', 'status.sort', 'status.name',
+            'project_id', 'thumbnail_id', 'link', 'status.sort', 'status.name',
             'status.color', 'assignments.resource.id', 'end_date',
             'project.project_schema_id', 'type_id',
         ];
@@ -76,7 +78,7 @@ class _ContextView extends React.Component {
     /** Return a query string to get Project. */
     _getProjectQuery() {
         const select = [
-            'thumbnail_id', 'link',
+            'id', 'thumbnail_id', 'link',
         ];
 
         const queryString = (
@@ -103,7 +105,9 @@ class _ContextView extends React.Component {
             if (!entity) {
                 return Promise.reject(new Error('Failed to find entity.'));
             }
-            this.setState({ entity, loading: false });
+
+            const projectId = entity.project_id || entity.id;
+            this.setState({ entity, projectId, loading: false });
             return Promise.resolve(entity);
         });
 
@@ -114,6 +118,7 @@ class _ContextView extends React.Component {
 
     render() {
         const contextId = this.props.params.id;
+        const projectId = this.state.projectId;
         const contextType = this.props.params.type;
         const entity = this.state.entity;
         const tabs = [
@@ -123,7 +128,7 @@ class _ContextView extends React.Component {
         return (
             <div className={style.view}>
                 <div className={style['view-top']}>
-                    <HomeHeader back context={contextId} />
+                    <HomeHeader back context={contextId} projectId={projectId} />
                     <ContextBar
                         entity={entity}
                         onEntityUpdate={this._onEntityUpdate}

@@ -39,7 +39,7 @@ class _HomeHeader extends React.Component {
             menuItems.push(
                 <MenuItem
                     key="quickReview"
-                    value="quick-review"
+                    value={`quick-review/${this.props.projectId}`}
                     icon="play_circle_outline"
                     caption="Quick review"
                 />
@@ -88,12 +88,14 @@ _HomeHeader.propTypes = {
     publish: React.PropTypes.bool,
     quickReview: React.PropTypes.bool,
     context: React.PropTypes.string,
+    projectId: React.PropTypes.string,
 };
 
 _HomeHeader.defaultProps = {
     publish: false,
     quickReview: false,
     context: null,
+    projectId: null,
 };
 
 /** Map application configuration to props. */
