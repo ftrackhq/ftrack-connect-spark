@@ -1,6 +1,10 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import { loadComponents, resolveComponentPaths } from '../lib/import';
+import publishLib from '../lib/publish';
+const {
+    createVersion, createComponents, uploadReviewMedia, updateComponentVersions,
+} = publishLib;
 
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('main:mediator');
@@ -15,7 +19,7 @@ export const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
  *
  * *min* and *max* should be specified in milliseconds.
  */
-export function delayedResponse(result, min = 500, max = 750) {
+export function delayedResponse(result, min = 200, max = 400) {
     const timeout = min + (max - min) * Math.random();
     const promise = new Promise((resolve) => {
         delay(timeout).then(resolve(result));
@@ -58,7 +62,7 @@ export class MainMediator extends AbstractMediator {
     exportMedia(options) {
         logger.info('[MainMediator]', 'Exporting media', options);
         const media = [];
-        if (options.reviewable) {
+        if (options.review) {
             media.push({
                 use: 'review',
                 name: 'image',
@@ -67,7 +71,7 @@ export class MainMediator extends AbstractMediator {
                 size: 10403354,
             });
         }
-        if (options.deliverable) {
+        if (options.delivery) {
             media.push({
                 use: 'delivery',
                 name: 'photoshop-document',
@@ -189,4 +193,32 @@ export class MainMediator extends AbstractMediator {
 
 /** Export *MainMediator* instance. */
 const mainMediator = new MainMediator();
+
+/** Publish */
+function* publish(values, callbacks) {
+    yield callbacks.progress('Exporting media...');
+    const media = yield this.exportMedia({
+        review: true,
+        delivery: true,
+    });
+    logger.info('Exported media', media);
+    const reviewableMedia = media.filter((file) => file.use.includes('review'));
+    const deliverableMedia = media.filter((file) => file.use === 'delivery');
+
+    yield callbacks.progress('Uploading review media...');
+    const componentIds = yield uploadReviewMedia(reviewableMedia);
+
+    yield callbacks.progress('Creating version...');
+    const versionId = yield createVersion(values, componentIds[0]);
+
+    const componentVersions = componentIds.map((componentId) => ({ componentId, versionId }));
+    yield updateComponentVersions(componentVersions);
+
+    yield callbacks.progress('Publishing...');
+    const reply = yield createComponents(versionId, deliverableMedia);
+    logger.info('Finished publish', reply);
+    yield true;
+}
+mainMediator.publish = publish;
+
 export default mainMediator;

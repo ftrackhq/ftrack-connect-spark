@@ -41,6 +41,11 @@ export default class AbstractMediator {
      */
     isPublishSupported() { return false; }
 
+    /** Publish */
+    *publish() {
+        throw new Error('Not implemented');
+    }
+
     /**
      * Return if Quick review is supported by host application.
      * If true, application will show Quick review menu item and view.

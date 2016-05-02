@@ -183,6 +183,7 @@ function* submitQuickReview(action) {
         yield showProgress('Gathering media...');
         const media = yield call([mediator, mediator.exportMedia], {
             review: true,
+            thumbnail: true,
             delivery: false,
         });
         logger.debug('Gathered media', media[0]);
