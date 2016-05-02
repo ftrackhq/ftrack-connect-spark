@@ -3,11 +3,14 @@
 import React from 'react';
 import { reduxForm } from 'redux-form';
 import { hashHistory } from 'react-router';
+import omit from 'lodash/omit';
 
 import Input from 'react-toolbox/lib/input';
 
 import Form from 'component/form';
 import Selector from 'component/selector';
+import DynamicFields from 'component/dynamic_fields';
+
 import { session } from '../../ftrack_api';
 import { isEmptyString } from '../../util/validation';
 
@@ -52,11 +55,15 @@ class PublishView extends React.Component {
     /** Update context when component is mounted. */
     componentWillMount() {
         this._updateContext(this.props.params.context);
+        this._updateOptions(this.props.options || []);
     }
 
     /** Update context if route has changed. */
-    componentWillReciveProps(nextProps) {
+    componentWillReceiveProps(nextProps) {
         this._updateContext(nextProps.params.context);
+        if (nextProps.options !== this.props.options) {
+            this._updateOptions(nextProps.options);
+        }
     }
 
     /** Update current context to *contextId*.  */
@@ -67,16 +74,39 @@ class PublishView extends React.Component {
         }
     }
 
+    _updateOptions(options) {
+        options.forEach((config, index) => {
+            this.props.fields.options.removeField(index);
+            this.props.fields.options.addField(config.value, index);
+        });
+    }
+
     /** Navigate back on cancel clicked */
     _onCancelClick(e) {
         e.preventDefault();
         this.context.router.goBack();
     }
 
-    /** Trigger onSubmit with values on submission. */
+    /**
+     * Trigger onSubmit with values on submission.
+     *
+     * Normalize Custom UI options from array to name, value pairs.
+     */
     _onSubmit(e) {
         e.preventDefault();
-        this.props.submitForm(this.props.values);
+        const optionValues = this.props.values.options;
+        const values = omit(this.props.values, 'options');
+
+        const normalizedValues = this.props.options.reduce(
+            (accumulator, config, index) => {
+                const value = optionValues[index];
+                return Object.assign(
+                    accumulator, { [config.name]: value }
+                );
+            }, values
+        );
+
+        this.props.submitForm(normalizedValues);
     }
 
     /** Return if submit should be disabled */
@@ -101,7 +131,7 @@ class PublishView extends React.Component {
     render() {
         const {
             fields: {
-                name, type, description,
+                name, type, description, options,
             },
         } = this.props;
 
@@ -147,6 +177,11 @@ class PublishView extends React.Component {
                         error={this._errorMessage(description)}
                     />
                 </Reveal>
+
+                <DynamicFields
+                    items={this.props.options}
+                    fields={options}
+                />
             </Form>
         );
     }
@@ -166,9 +201,11 @@ PublishView.propTypes = {
     params: React.PropTypes.object,
     link: React.PropTypes.array,
     onContextChange: React.PropTypes.func,
+    options: React.PropTypes.array,
 };
 
 PublishView.defaultProps = {
+    options: [],
     params: {
         context: null,
     },
@@ -177,7 +214,7 @@ PublishView.defaultProps = {
 const formOptions = {
     form: 'publish',
     fields: [
-        'name', 'parent', 'task', 'type', 'description',
+        'name', 'parent', 'task', 'type', 'description', 'options[]',
     ],
     validateForm,
 };
@@ -193,7 +230,9 @@ function mapStateToProps(state) {
             type: publish.type || assetTypeId,
             parent: publish.parent || null,
             task: publish.task || null,
+            options: [],
         },
+        options: publish.items || [],
         link: publish.link || [],
     };
 }

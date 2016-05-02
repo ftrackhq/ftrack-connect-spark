@@ -1,0 +1,16 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+.switch {
+    padding: $spacing 0;
+}
+
+.switch-control {
+    float: right;
+    margin-top: $spacing-small;
+    margin-left: $spacing;
+    vertical-align: middle;
+}
+
+.switch-description {
+    color: $color-text-faded;
+}

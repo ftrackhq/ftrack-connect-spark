@@ -55,14 +55,6 @@ export class MainMediator extends AbstractMediator {
         });
     }
 
-    /** Return publish options */
-    getPublishOptions() {
-        logger.info('[MainMediator]', 'Get publish options');
-        return delayedResponse({
-            name: 'image',
-        });
-    }
-
     exportMedia(options) {
         logger.info('[MainMediator]', 'Exporting media', options);
         const media = [];
@@ -126,6 +118,73 @@ export class MainMediator extends AbstractMediator {
      * If true, application will show import buttons on versions.
      */
     isImportFileSupported() { return true; }
+
+    getPublishOptions() {
+        const items = [
+            {
+                label: 'Custom field',
+                type: 'text',
+                name: 'custom_field',
+            },
+            {
+                label: 'Textarea field',
+                type: 'textarea',
+                name: 'custom_field_2',
+            },
+            {
+                label: 'Number field',
+                type: 'number',
+                name: 'custom_field_3',
+            },
+            {
+                label: 'Enumerator',
+                type: 'enumerator',
+                name: 'custom_field_4',
+                data: [
+                    {
+                        label: 'Option 1',
+                        value: 'opt1',
+                    },
+                    {
+                        label: 'Option 2',
+                        value: 'option_2',
+                    },
+                ],
+            },
+            {
+                label: 'Include project file',
+                type: 'boolean',
+                name: 'custom_field_3',
+                value: true,
+            },
+            {
+                label: 'Source range',
+                type: 'dropdown',
+                name: 'source_range',
+                help: 'Include an export of your sequence.',
+                data: [
+                    {
+                        label: 'Do not export sequence',
+                        value: 'none',
+                    },
+                    {
+                        label: 'Entire sequence',
+                        value: 'entire',
+                    },
+                    {
+                        label: 'Sequence in/out',
+                        value: 'sequence_in_out',
+                    },
+                    {
+                        label: 'Work area',
+                        value: 'work_area',
+                    },
+                ],
+            },
+        ];
+
+        return delayedResponse({ name: 'testfile.txt', items });
+    }
 }
 
 /** Export *MainMediator* instance. */

@@ -25,7 +25,7 @@ const APPLICATION_IDS = {
     AUDT: 'Audition',
     DRWV: 'Dreamweaver',
 };
-const PUBLISH_SUPPORTED_APP_IDS = ['PHSP', 'PHXS'];
+const PUBLISH_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO'];
 const QUICK_REVIEW_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO'];
 const IMPORT_FILE_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO', 'AEFT'];
 
@@ -78,10 +78,11 @@ export class AdobeMediator extends AbstractMediator {
         const promise = new Promise((resolve, reject) => {
             exporter.getPublishOptions(options, (error, response) => {
                 logger.info('Publish options', error, response);
+                const items = this.getPublishOptionsItems();
                 if (error) {
                     reject(error);
                 } else {
-                    resolve(response);
+                    resolve(Object.assign({ items }, response));
                 }
             });
         });
@@ -187,6 +188,48 @@ export class AdobeMediator extends AbstractMediator {
         return PUBLISH_SUPPORTED_APP_IDS.includes(this.getAppId());
     }
 
+    getPublishOptionsItems() {
+        const appId = this.getAppId();
+        const items = [];
+        if (appId === 'PPRO') {
+            items.push(
+                {
+                    label: 'Project file',
+                    description: 'Include a copy of the Premiere project file.',
+                    type: 'boolean',
+                    name: 'include_project_file',
+                    value: true,
+                },
+                {
+                    label: 'Source range',
+                    type: 'dropdown',
+                    name: 'source_range',
+                    help: 'Include an export of your sequence.',
+                    value: 'inout',
+                    data: [
+                        {
+                            label: 'Do not export sequence',
+                            value: null,
+                        },
+                        {
+                            label: 'Entire sequence',
+                            value: 'entire',
+                        },
+                        {
+                            label: 'Sequence in/out',
+                            value: 'inout',
+                        },
+                        {
+                            label: 'Work area',
+                            value: 'workarea',
+                        },
+                    ],
+                }
+            );
+        }
+
+        return items;
+    }
     /**
      * Return if Quick review is supported by host application.
      */
