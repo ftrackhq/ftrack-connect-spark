@@ -200,6 +200,24 @@ export class AdobeMediator extends AbstractMediator {
     isImportFileSupported() {
         return IMPORT_FILE_SUPPORTED_APP_IDS.includes(this.getAppId());
     }
+
+    /** Write a data file to the connect folder with *data* and *filename*. */
+    writeSecurePublishFile(filename, data) {
+        const util = window.top.FT.util;
+        logger.info('Writing data file.');
+
+        const promise = new Promise((resolve, reject) => {
+            util.writeSecurePublishFile(filename, data, (error, filePath) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(filePath);
+                }
+            });
+        });
+
+        return promise;
+    }
 }
 
 const adobeMediator = new AdobeMediator();

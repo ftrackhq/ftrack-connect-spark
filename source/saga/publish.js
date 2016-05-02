@@ -95,9 +95,16 @@ function* createComponents(versionId, media) {
         });
     }
 
-    logger.info('Creating components', components);
+    const filename = `${uuid.v4()}.json`;
+    const result = yield call(
+        [mediator, mediator.writeSecurePublishFile],
+        filename,
+        components
+    );
+
+    logger.info('Creating components from config', result);
     return session.eventHub.publish(
-        new Event('ftrack.connect.publish-components', { components }),
+        new Event('ftrack.connect.publish-components', { components_config: result }),
         { reply: true, timeout: 240 }
     );
 }
