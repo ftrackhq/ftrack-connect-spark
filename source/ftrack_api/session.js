@@ -1,6 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-import { forIn } from 'lodash';
+import forIn from 'lodash/forIn';
 import moment from 'moment';
 import loglevel from 'loglevel';
 
