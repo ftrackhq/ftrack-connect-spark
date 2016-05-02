@@ -97,7 +97,7 @@ function* createComponents(versionId, media) {
 
     const filename = `${uuid.v4()}.json`;
     const result = yield call(
-        [mediator, mediator.writeDataFile],
+        [mediator, mediator.writeSecurePublishFile],
         filename,
         components
     );
