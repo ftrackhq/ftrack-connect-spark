@@ -71,7 +71,7 @@ function* submitPublish(action) {
             logger.info('Complete');
         });
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         yield call(showFailure, {
             header: 'Publish failed',
             error,
