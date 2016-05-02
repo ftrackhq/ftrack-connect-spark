@@ -306,6 +306,10 @@ class QuickReviewView extends React.Component {
         this.props.fields.collaborator.onChange(
             ''
         );
+
+        this.setState({
+            name: '',
+        });
     }
 
     /** Remove collaborator *item*. */
@@ -324,10 +328,6 @@ class QuickReviewView extends React.Component {
             name,
             email,
             thumbnail_id: null,
-        });
-
-        this.setState({
-            name: '',
         });
     }
 
@@ -348,7 +348,7 @@ class QuickReviewView extends React.Component {
 
                 return (
                     <Chip
-                        key={item.id}
+                        key={item.email}
                         deletable
                         onDeleteClick={removeCollaborator}
                         className={style['selected-collaborator-item']}
