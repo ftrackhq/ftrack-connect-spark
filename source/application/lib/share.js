@@ -280,10 +280,20 @@ export function createComponents(versionId, media) {
             version_id: versionId,
         });
     }
+    const filename = `${uuid.v4()}.json`;
 
-    logger.info('Creating components', components);
-    return session.eventHub.publish(
-        new Event('ftrack.connect.publish-components', { components }),
-        { reply: true, timeout: 240 }
-    );
+    const promise = mediator.writeSecurePublishFile(
+        filename, components
+    ).then((result) => {
+        logger.info('Creating components from config', result);
+        return session.eventHub.publish(
+            new Event(
+                'ftrack.connect.publish-components',
+                { components_config: result }
+            ),
+            { reply: true, timeout: 240 }
+        );
+    });
+
+    return promise;
 }
