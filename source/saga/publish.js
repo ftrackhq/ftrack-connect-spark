@@ -21,7 +21,10 @@ const logger = loglevel.getLogger('saga:publish');
 function* preparePublish(action) {
     const onComplete = action.payload.onComplete;
     logger.info('Prepare publish');
-    yield showProgress('Preparing publish...');
+    yield showProgress(
+        'Preparing publish...',
+        { message: 'Gathering options from application...' }
+    );
 
     try {
         const isConnectRunning = yield session.eventHub.publish(
@@ -36,16 +39,9 @@ function* preparePublish(action) {
             error,
         });
     }
-    // TODO: Get asset name
     const options = yield call([mediator, mediator.getPublishOptions], {});
     logger.debug('Gathered options', options);
     yield put(publishOptions(options));
-
-    // TODO: Get export options
-    // Future
-
-    // TODO: Get preview information
-    // Future
 
     logger.info('Finished preparing publish');
     yield hideOverlay();
