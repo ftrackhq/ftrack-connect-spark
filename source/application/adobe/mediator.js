@@ -174,10 +174,11 @@ export class AdobeMediator extends AbstractMediator {
     /** Return identifier. */
     getIdentifier() {
         const appId = window.top.csInterface.getHostEnvironment().appId;
+        let niceName = APPLICATION_IDS[appId];
+        niceName = niceName.replace(' ', '-');
+        niceName = niceName.toLowerCase();
 
-        // TODO: Translate the appId into something more easy to read.
-
-        return `adobe-${appId}`;
+        return `adobe-${niceName}`;
     }
 
     /** Return host version. */
