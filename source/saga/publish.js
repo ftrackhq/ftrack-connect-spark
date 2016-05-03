@@ -13,6 +13,8 @@ import { getAsset, uploadReviewMedia, updateComponentVersions } from './lib/shar
 import { session } from '../ftrack_api';
 import Event from '../ftrack_api/event';
 import { createOperation } from '../ftrack_api/operation';
+import { EventServerReplyTimeoutError } from '../ftrack_api/error';
+import { CreateComponentsHookError } from '../error';
 
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('saga:publish');
@@ -35,7 +37,7 @@ function* preparePublish() {
         yield call(showFailure, {
             header: 'Failed communicate with Connect',
             message: 'Please ensure ftrack Connect is running.',
-            error,
+            details: error.message,
         });
     }
     // TODO: Get asset name
@@ -103,10 +105,19 @@ function* createComponents(versionId, media) {
     );
 
     logger.info('Creating components from config', result);
-    return session.eventHub.publish(
+    const reply = yield session.eventHub.publish(
         new Event('ftrack.connect.publish-components', { components_config: result }),
-        { reply: true, timeout: 240 }
+        { reply: true, timeout: 3600 }
     );
+
+    if (!reply.data.success) {
+        const error = new CreateComponentsHookError(
+            `${reply.data.error_result.exception}: ${reply.data.error_result.content}`
+        );
+        throw error;
+    }
+
+    return reply;
 }
 
 /**
@@ -146,10 +157,29 @@ function* submitPublish(action) {
             logger.info('Complete');
         });
     } catch (error) {
-        yield call(showFailure, {
-            header: 'Publish failed',
-            error,
-        });
+        let message;
+
+        if (error instanceof EventServerReplyTimeoutError) {
+            message = (
+                'No response from ftrack Connect. Please ensure that ' +
+                'ftrack Connect is running.'
+            );
+        }
+
+        if (error instanceof CreateComponentsHookError) {
+            message = (
+                'ftrack Connect failed to publish the versions.'
+            );
+        }
+
+        yield call(
+            showFailure,
+            {
+                header: 'Publish failed',
+                message,
+                details: error.message,
+            }
+        );
     }
 }
 

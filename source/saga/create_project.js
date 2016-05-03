@@ -8,6 +8,7 @@ import { session } from '../ftrack_api';
 import { createOperation } from '../ftrack_api/operation';
 import actions from 'action/create_project';
 
+import { ServerPermissionDeniedError, ServerValidationError } from '../ftrack_api/error';
 import { showProgress, showCompletion, showFailure } from './lib/overlay';
 
 import loglevel from 'loglevel';
@@ -45,7 +46,24 @@ function* createProjectSubmit(action) {
         });
         yield put({ type: actions.CREATE_PROJECT_COMPLETED, payload: project });
     } catch (error) {
-        yield call(showFailure, { header: 'Failed to create project.', error });
+        let message;
+
+        if (error instanceof ServerPermissionDeniedError) {
+            message = 'You\'re not permitted to create a project';
+        } else if (error instanceof ServerValidationError) {
+            message = (
+                'Could not create project, please verify the form and that ' +
+                'the project name is unique.'
+            );
+        }
+        yield call(
+            showFailure,
+            {
+                header: 'Failed to create project.',
+                details: error.message,
+                message,
+            }
+        );
     }
 }
 

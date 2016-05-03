@@ -136,7 +136,7 @@ class PublishView extends React.Component {
                         {...type}
                     />
                 </div>
-                <Reveal label="Add description">
+                <Reveal label="Add description" className="flex-justify-start">
                     <Input
                         type="text"
                         label="Description"

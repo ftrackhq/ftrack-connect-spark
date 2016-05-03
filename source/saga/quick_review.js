@@ -15,6 +15,7 @@ import { showProgress, showCompletion, showFailure } from './lib/overlay';
 import {
     getUploadMetadata, uploadMedia, updateComponentVersions, finalizeUpload, getAsset,
 } from './lib/share';
+import { ServerPermissionDeniedError } from '../ftrack_api/error';
 
 import { mediator } from '../application';
 
@@ -221,7 +222,22 @@ function* submitQuickReview(action) {
         // Reset the form.
         yield put(reset('quickReview'));
     } catch (error) {
-        yield call(showFailure, { header: 'Failed to create review session', error });
+        let message = 'Could not create the review session, please verify the form and try again';
+
+        if (error instanceof ServerPermissionDeniedError) {
+            message = (
+                'You\'re not permitted to create a review session on the ' +
+                'selected project'
+            );
+        }
+
+        yield call(
+            showFailure,
+            {
+                header: 'Failed to create review session',
+                message,
+                details: error.message,
+            });
     }
 }
 

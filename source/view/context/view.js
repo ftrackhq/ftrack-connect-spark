@@ -163,7 +163,7 @@ const ContextView = connect(
                 const type = entity.__entity_type__;
                 let errorMessage = `Failed to update the ${type}`;
                 if (error.message && error.message.indexOf('permission') !== -1) {
-                    errorMessage = `You're note permitted to update this ${type}`;
+                    errorMessage = `You're not permitted to update this ${type}`;
                 }
                 dispatch(notificationWarning(errorMessage));
             },

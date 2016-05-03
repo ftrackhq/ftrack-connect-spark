@@ -323,6 +323,10 @@ class QuickReviewView extends React.Component {
         this.props.fields.collaborator.onChange(
             ''
         );
+
+        this.setState({
+            name: '',
+        });
     }
 
     /** Remove collaborator *item*. */
@@ -341,10 +345,6 @@ class QuickReviewView extends React.Component {
             name,
             email,
             thumbnail_id: null,
-        });
-
-        this.setState({
-            name: '',
         });
     }
 
@@ -365,7 +365,7 @@ class QuickReviewView extends React.Component {
 
                 return (
                     <Chip
-                        key={item.id}
+                        key={item.email}
                         deletable
                         onDeleteClick={removeCollaborator}
                         className={style['selected-collaborator-item']}
@@ -493,7 +493,7 @@ class QuickReviewView extends React.Component {
                     onKeyDown={this._onCollaboratorsKeyDown}
                 />
                 {this.renderResult(this.state.availableCollaborators)}
-                <Reveal label="Add description">
+                <Reveal label="Add description" className="flex-justify-start">
                     <Input
                         type="text"
                         label="Description"
@@ -504,7 +504,7 @@ class QuickReviewView extends React.Component {
                         error={this._errorMessage(description)}
                     />
                 </Reveal>
-                <Reveal label="Add expiry">
+                <Reveal label="Add expiry" className="flex-justify-start">
                     <DatePicker
                         label="Expiry date"
                         {...expiryDate}
