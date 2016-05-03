@@ -5,13 +5,14 @@ import { call, put } from 'redux-saga/effects';
 import { hashHistory } from 'react-router';
 import compare from 'semver-compare';
 
-import { mediator } from '../application';
+import { store, mediator } from '../application';
 import { session, configureSharedApiSession } from '../ftrack_api';
 import {
     ftrackApiUserAuthenticated,
     ftrackApiAuthenticationFailed,
 } from 'action/ftrack_api';
 import actions, { applicationConfiguration } from 'action/application';
+import { trackUsageEvent } from 'action/track_usage';
 
 import {
     showProgress, hideOverlay, showFailure, showCompletion,
@@ -72,20 +73,11 @@ function* startup(action) {
         );
         yield put(ftrackApiUserAuthenticated(users.data[0]));
 
-        // Track startup of plugin.
-        session._call([
-            {
-                action: '_track_usage',
-                data: {
-                    type: 'event',
-                    name: `STARTED-SPARK-${mediator.getIdentifier()}`,
-                    metadata: {
-                        pluginVersion: mediator.getPluginVersion(),
-                        hostVersion: mediator.getHostVersion(),
-                    },
-                },
-            },
-        ]);
+        store.dispatch(
+            trackUsageEvent(
+                `STARTED-SPARK-${mediator.getIdentifier()}`
+            )
+        );
 
         yield hideOverlay();
         hashHistory.replace(nextPathName || '/home');
