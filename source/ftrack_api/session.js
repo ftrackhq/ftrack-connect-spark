@@ -1,11 +1,12 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-import { forIn } from 'lodash';
+import forIn from 'lodash/forIn';
 import moment from 'moment';
 import loglevel from 'loglevel';
 
 import { EventHub } from './event';
 import { queryOperation } from './operation';
+import { ServerPermissionDeniedError, ServerValidationError, ServerError } from './error';
 
 
 const logger = loglevel.getLogger('ftrack_api');
@@ -145,6 +146,7 @@ export class Session {
             (responses) => {
                 this._serverInformation = responses[0];
                 this._schemas = responses[1];
+                this.serverVersion = this._serverInformation.version;
                 this.initialized = true;
             }
         );
@@ -223,9 +225,18 @@ export class Session {
         // Reject promise on API exception.
         request = request.then((response) => {
             if (response.exception) {
-                return Promise.reject(
-                    new Error(`${response.exception}: ${response.content}`)
-                );
+                const message = `${response.exception}: ${response.content}`;
+                let error;
+
+                if (response.exception === 'ValidationError') {
+                    error = new ServerValidationError(message);
+                } else if (response.exception === 'FTAuthenticationError') {
+                    error = new ServerPermissionDeniedError(message);
+                } else {
+                    error = new ServerError(message);
+                }
+
+                return Promise.reject(error);
             }
             return Promise.resolve(response);
         });

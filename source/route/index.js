@@ -53,13 +53,17 @@ export default (store) => (
 
             <Route path="/context/:type/:id" component={ContextView}>
                 <IndexRedirect to="notes" />
-                <Route path="notes" component={NotesListView}
+                <Route
+                    path="notes"
+                    component={NotesListView}
                     onEnter={
                         // eslint-disable-next-line react/prop-types
                         ({ params }) => store.dispatch(notesLoad(params.id, params.type))
                     }
                 />
-                <Route path="versions" component={VersionsView}
+                <Route
+                    path="versions"
+                    component={VersionsView}
                     onEnter={dispatchOnEnter(store.dispatch, importReset)}
                 />
             </Route>
@@ -67,7 +71,7 @@ export default (store) => (
             <Route path="/example" component={ExampleView} />
             <Route path="/publish-context" component={PublishContextBrowser} />
             <Route
-                path="/quick-review"
+                path="/quick-review/:projectId"
                 component={QuickReviewView}
             />
             <Route
@@ -77,7 +81,11 @@ export default (store) => (
             <Route
                 path="/publish/:context"
                 component={PublishView}
-                onEnter={dispatchOnEnter(store.dispatch, publishLoad)}
+                onEnter={
+                    (nextState, replace, callback) => store.dispatch(
+                        publishLoad(callback)
+                    )
+                }
             />
         </Route>
 

@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 import { debounce } from 'lodash/function';
 import { without } from 'lodash/array';
+import moment from 'moment';
 
 import Input from 'react-toolbox/lib/input';
 import DatePicker from 'react-toolbox/lib/date_picker';
@@ -55,9 +56,9 @@ function ResultList({ items, onClick, className }) {
             return (
                 <ListItem
                     avatar={<EntityAvatar entity={item} />}
-                    caption={ item.name }
-                    legend={ item.email }
-                    onClick={ handleClick }
+                    caption={item.name}
+                    legend={item.email}
+                    onClick={handleClick}
                 />
             );
         });
@@ -68,7 +69,7 @@ function ResultList({ items, onClick, className }) {
                 selectable
                 ripple
             >
-                { result }
+                {result}
             </List>
         );
     }
@@ -85,7 +86,6 @@ ResultList.propTypes = {
 };
 
 /** Quick review view */
-/* eslint-disable react/prefer-stateless-function */
 class QuickReviewView extends React.Component {
     constructor() {
         super();
@@ -119,6 +119,16 @@ class QuickReviewView extends React.Component {
             }
             return result;
         });
+    }
+
+    /** Update project when component is mounted. */
+    componentWillMount() {
+        this._updateProjectId(this.props.params.projectId);
+    }
+
+    /** Update project if route has changed. */
+    componentWillReciveProps(nextProps) {
+        this._updateProjectId(nextProps.params.projectId);
     }
 
     /** Navigate back on cancel clicked */
@@ -157,6 +167,14 @@ class QuickReviewView extends React.Component {
     _createProject(e) {
         e.preventDefault();
         this.props.createProject(this._updateProject);
+    }
+
+    /** Update current project to *projectId*.  */
+    _updateProjectId(projectId) {
+        const currentProjectId = this.props.values.project;
+        if (projectId && projectId !== currentProjectId) {
+            this._updateProject({ id: projectId });
+        }
     }
 
     /** Handle changes to the collaborators field. */
@@ -305,6 +323,10 @@ class QuickReviewView extends React.Component {
         this.props.fields.collaborator.onChange(
             ''
         );
+
+        this.setState({
+            name: '',
+        });
     }
 
     /** Remove collaborator *item*. */
@@ -323,10 +345,6 @@ class QuickReviewView extends React.Component {
             name,
             email,
             thumbnail_id: null,
-        });
-
-        this.setState({
-            name: '',
         });
     }
 
@@ -347,7 +365,7 @@ class QuickReviewView extends React.Component {
 
                 return (
                     <Chip
-                        key={item.id}
+                        key={item.email}
                         deletable
                         onDeleteClick={removeCollaborator}
                         className={style['selected-collaborator-item']}
@@ -381,7 +399,7 @@ class QuickReviewView extends React.Component {
             result.push(
                 <ResultList
                     className={style['collaborator-matches']}
-                    items={ this.state.availableCollaborators }
+                    items={this.state.availableCollaborators}
                     onClick={this.addCollaborator}
                 />
             );
@@ -394,14 +412,14 @@ class QuickReviewView extends React.Component {
                     </p>
                     <div>
                         <Input
-                            value={ this.state.name }
-                            onChange={ this._onNameChange }
+                            value={this.state.name}
+                            onChange={this._onNameChange}
                         />
                         <Button
-                            className={ style.addButton }
+                            className={style.addButton}
                             label="Add"
                             primary
-                            onClick={ this._addNewCollaborator }
+                            onClick={this._addNewCollaborator}
                             type="button"
                         />
                     </div>
@@ -421,7 +439,7 @@ class QuickReviewView extends React.Component {
         if (result && result.length) {
             return (
                 <div className={style['collaborator-footer']}>
-                    { result }
+                    {result}
                 </div>
             );
         }
@@ -450,7 +468,7 @@ class QuickReviewView extends React.Component {
                     {...project}
                 />
                 <p className={style['create-project-link']}>
-                    <a href="#" onClick={ this._createProject }>Create a new project</a>
+                    <a href="#" onClick={this._createProject}>Create a new project</a>
                 </p>
                 <Input
                     type="text"
@@ -460,11 +478,11 @@ class QuickReviewView extends React.Component {
                     error={this._errorMessage(name)}
                 />
                 {
-                    collaborators.value && collaborators.value.length ?
-                    <p className={ style.label }>Collaborators</p> :
-                    null
+                    (collaborators.value && collaborators.value.length) ? (
+                        <p className={style.label}>Collaborators</p>
+                    ) : null
                 }
-                { this._renderCollaborators() }
+                {this._renderCollaborators()}
                 <Input
                     label="Add collaborators"
                     type="text"
@@ -474,8 +492,8 @@ class QuickReviewView extends React.Component {
                     onChange={this._onCollaboratorsChange}
                     onKeyDown={this._onCollaboratorsKeyDown}
                 />
-                { this.renderResult(this.state.availableCollaborators) }
-                <Reveal label="Add description">
+                {this.renderResult(this.state.availableCollaborators)}
+                <Reveal label="Add description" className="flex-justify-start">
                     <Input
                         type="text"
                         label="Description"
@@ -486,7 +504,7 @@ class QuickReviewView extends React.Component {
                         error={this._errorMessage(description)}
                     />
                 </Reveal>
-                <Reveal label="Add expiry">
+                <Reveal label="Add expiry" className="flex-justify-start">
                     <DatePicker
                         label="Expiry date"
                         {...expiryDate}
@@ -502,6 +520,7 @@ QuickReviewView.contextTypes = {
 };
 
 QuickReviewView.propTypes = {
+    params: React.PropTypes.object.isRequired,
     values: React.PropTypes.object.isRequired,
     fields: React.PropTypes.object.isRequired,
     handleSubmit: React.PropTypes.func.isRequired,
@@ -536,6 +555,7 @@ QuickReviewView = reduxForm({
     initialValues: {
         collaborator: '',
         collaborators: [],
+        expiryDate: moment().add(1, 'year').toDate(),
     },
     validateForm,
     destroyOnUnmount: false,

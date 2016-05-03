@@ -274,13 +274,16 @@ function NotesList({ items, entity, user, loading, nextOffset, onFetchMore }) {
     }
 
     if (!loading && !items.length) {
-        content.push(<NotesListEmptyState entity={entity} />);
+        content.push(
+            <NotesListEmptyState key="notes-list-empty-state" entity={entity} />
+        );
     }
 
     if (loading === false && nextOffset !== null && items.length) {
         // Only add way point if not loading and there are more items to load.
         notes.push(
             <Waypoint
+                key="notes-list-waypoint"
                 onEnter={
                     () => onFetchMore(entity, nextOffset)
                 }

@@ -1,7 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React, { PropTypes } from 'react';
-import ToolboxApp from 'react-toolbox/lib/app';
+import { Layout, Panel } from 'react-toolbox/lib/layout';
 
 import ApplicationOverlay from 'container/application_overlay';
 import PreviewMediaContainer from 'container/preview_media';
@@ -14,12 +14,14 @@ import style from './style.scss';
 /** A root layout. */
 function RootLayout({ children }) {
     return (
-        <ToolboxApp className={style.app}>
-            {children}
-            <ApplicationOverlay />
-            <PreviewMediaContainer />
-            <ApplicationSnackbar />
-        </ToolboxApp>
+        <Layout className={style.app}>
+            <Panel>
+                {children}
+                <ApplicationOverlay />
+                <PreviewMediaContainer />
+                <ApplicationSnackbar />
+            </Panel>
+        </Layout>
     );
 }
 

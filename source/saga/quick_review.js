@@ -1,6 +1,5 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-import moment from 'moment';
 import uuid from 'uuid';
 
 import { takeEvery } from 'redux-saga';
@@ -15,7 +14,8 @@ import actions from 'action/quick_review';
 import { showProgress, showCompletion, showFailure } from './lib/overlay';
 import {
     getUploadMetadata, uploadMedia, updateComponentVersions, finalizeUpload, getAsset,
-} from './lib/share';
+} from '../application/lib/share';
+import { ServerPermissionDeniedError } from '../ftrack_api/error';
 
 import { mediator } from '../application';
 
@@ -40,7 +40,6 @@ const logger = loglevel.getLogger('saga:quick_review');
  */
 function* createQuickReview(values, media) {
     const operations = [];
-    const oneYear = moment().add(1, 'year');
 
     const componentIds = Object.keys(media);
     const versionId = uuid.v4();
@@ -77,7 +76,7 @@ function* createQuickReview(values, media) {
         project_id: values.project,
         name: values.name,
         description: values.description || '',
-        end_date: values.expiryDate || oneYear,
+        end_date: values.expiryDate,
     }));
 
     // TODO: Update this once you can select task in spark.
@@ -185,6 +184,7 @@ function* submitQuickReview(action) {
         yield showProgress('Gathering media...');
         const media = yield call([mediator, mediator.exportMedia], {
             review: true,
+            thumbnail: true,
             delivery: false,
         });
         logger.debug('Gathered media', media[0]);
@@ -223,7 +223,22 @@ function* submitQuickReview(action) {
         // Reset the form.
         yield put(reset('quickReview'));
     } catch (error) {
-        yield call(showFailure, { header: 'Failed to create review session', error });
+        let message = 'Could not create the review session, please verify the form and try again';
+
+        if (error instanceof ServerPermissionDeniedError) {
+            message = (
+                'You\'re not permitted to create a review session on the ' +
+                'selected project'
+            );
+        }
+
+        yield call(
+            showFailure,
+            {
+                header: 'Failed to create review session',
+                message,
+                details: error.message,
+            });
     }
 }
 

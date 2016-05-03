@@ -54,7 +54,7 @@ class InfiniteScroll extends React.Component {
                 <ProgressBar
                     type="circular"
                     mode="indeterminate"
-                    className={ style.loading }
+                    className={style.loading}
                 />
             );
         }

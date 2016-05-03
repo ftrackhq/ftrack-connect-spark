@@ -6,9 +6,10 @@ const PUBLISH_SUBMIT = 'PUBLISH_SUBMIT';
 const PUBLISH_RESOLVE_CONTEXT = 'PUBLISH_RESOLVE_CONTEXT';
 
 /** Publish load action creator. Call when publish load is called */
-export function publishLoad() {
+export function publishLoad(onComplete) {
     return {
         type: PUBLISH_LOAD,
+        payload: { onComplete },
     };
 }
 
