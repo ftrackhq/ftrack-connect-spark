@@ -19,7 +19,7 @@ class ContextBrowser extends React.Component {
     constructor() {
         super();
 
-        this.state = { parentId: 'projects' };
+        this.state = { parentId: 'projects', empty: true, loading: true };
         this._limit = 25;
         this._offset = 0;
         this._loadItems = this._loadItems.bind(this);
@@ -28,13 +28,10 @@ class ContextBrowser extends React.Component {
 
         this._history = [this.state.parentId];
         this._resetQuery('projects');
-
-        this.state = { empty: true, loading: true };
     }
 
     /** Reset the query. */
     _resetQuery(parentId) {
-        this.setState({ empty: true, loading: true });
         const lastItem = this._history[this._history.length - 1];
         if (parentId !== lastItem) {
             this._history.push(parentId);
@@ -89,7 +86,7 @@ class ContextBrowser extends React.Component {
         if (history.length > 1) {
             history.pop();
             const parentId = history.pop();
-            this.setState({ parentId });
+            this.setState({ parentId, empty: true, loading: true });
             this._resetQuery(parentId);
         }
     }
@@ -100,7 +97,7 @@ class ContextBrowser extends React.Component {
         if (item.__entity_type__ === 'Task') {
             this.props.onSelectContext(item.id);
         } else {
-            this.setState({ parentId: item.id });
+            this.setState({ parentId: item.id, empty: true, loading: true });
             this._resetQuery(item.id);
         }
     }
@@ -116,6 +113,7 @@ class ContextBrowser extends React.Component {
         const onSelectClick = this._onSelectContextClick.bind(this, item);
         const actions = [
             <Button
+                key="context-browser-action-select"
                 label="Select"
                 onClick={onSelectClick}
                 type="button"
