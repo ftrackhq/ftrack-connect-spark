@@ -53,13 +53,13 @@ class PublishView extends React.Component {
     }
 
     /** Update context when component is mounted. */
-    componentWillMount(nextProps) {
+    componentWillMount() {
         this._updateContext(this.props.params.context);
         this._updateOptions(this.props.options || []);
 
         for (const prop of ['parent', 'task']) {
-            if (nextProps[prop] !== this.props[prop]) {
-                this.props.fields[prop].onChange(nextProps[prop]);
+            if (this.props[prop]) {
+                this.props.fields[prop].onChange(this.props[prop]);
             }
         }
     }
@@ -72,7 +72,7 @@ class PublishView extends React.Component {
         }
 
         for (const prop of ['parent', 'task']) {
-            if (this.props[prop]) {
+            if (nextProps[prop] !== this.props[prop]) {
                 this.props.fields[prop].onChange(this.props[prop]);
             }
         }
