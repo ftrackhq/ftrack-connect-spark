@@ -81,7 +81,11 @@ export default (store) => (
             <Route
                 path="/publish/:context"
                 component={PublishView}
-                onEnter={dispatchOnEnter(store.dispatch, publishLoad)}
+                onEnter={
+                    (nextState, replace, callback) => store.dispatch(
+                        publishLoad(callback)
+                    )
+                }
             />
         </Route>
 

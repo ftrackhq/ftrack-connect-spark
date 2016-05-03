@@ -18,7 +18,8 @@ const logger = loglevel.getLogger('saga:publish');
 /**
  * Prepare publish
  */
-function* preparePublish() {
+function* preparePublish(action) {
+    const onComplete = action.payload.onComplete;
     logger.info('Prepare publish');
     yield showProgress('Preparing publish...');
 
@@ -48,6 +49,7 @@ function* preparePublish() {
 
     logger.info('Finished preparing publish');
     yield hideOverlay();
+    onComplete();
 }
 
 /**

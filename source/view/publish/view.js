@@ -53,9 +53,15 @@ class PublishView extends React.Component {
     }
 
     /** Update context when component is mounted. */
-    componentWillMount() {
+    componentWillMount(nextProps) {
         this._updateContext(this.props.params.context);
         this._updateOptions(this.props.options || []);
+
+        for (const prop of ['parent', 'task']) {
+            if (nextProps[prop] !== this.props[prop]) {
+                this.props.fields[prop].onChange(nextProps[prop]);
+            }
+        }
     }
 
     /** Update context if route has changed. */
@@ -64,12 +70,18 @@ class PublishView extends React.Component {
         if (nextProps.options !== this.props.options) {
             this._updateOptions(nextProps.options);
         }
+
+        for (const prop of ['parent', 'task']) {
+            if (this.props[prop]) {
+                this.props.fields[prop].onChange(this.props[prop]);
+            }
+        }
     }
 
     /** Update current context to *contextId*.  */
     _updateContext(contextId) {
-        if (contextId && contextId !== this.state.context) {
-            this.state.context = contextId;
+        if (contextId && contextId !== this._contextId) {
+            this._contextId = contextId;
             this.props.onContextChange(contextId);
         }
     }
@@ -199,6 +211,8 @@ PublishView.propTypes = {
     submitting: React.PropTypes.bool.isRequired,
     contexts: React.PropTypes.object,
     params: React.PropTypes.object,
+    parent: React.PropTypes.string,
+    task: React.PropTypes.string,
     link: React.PropTypes.array,
     onContextChange: React.PropTypes.func,
     options: React.PropTypes.array,
@@ -233,6 +247,8 @@ function mapStateToProps(state) {
             options: [],
         },
         options: publish.items || [],
+        parent: publish.parent || null,
+        task: publish.task || null,
         link: publish.link || [],
     };
 }
