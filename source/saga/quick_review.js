@@ -14,7 +14,7 @@ import actions from 'action/quick_review';
 import { showProgress, showCompletion, showFailure } from './lib/overlay';
 import {
     getUploadMetadata, uploadMedia, updateComponentVersions, finalizeUpload, getAsset,
-} from './lib/share';
+} from '../application/lib/share';
 
 import { mediator } from '../application';
 

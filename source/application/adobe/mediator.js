@@ -1,10 +1,9 @@
 // :copyright: Copyright (c) 2016 ftrack
 import { loadComponents, resolveComponentPaths } from '../lib/import';
-import publishLib from '../lib/publish';
-const {
+import {
     showProgress, createVersion, createComponents, uploadReviewMedia,
     updateComponentVersions,
-} = publishLib;
+} from '../lib/share';
 
 import { notificationInfo } from 'action/notification';
 

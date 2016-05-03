@@ -5,14 +5,29 @@ import { session } from '../../ftrack_api';
 import {
     createOperation, updateOperation,
 } from '../../ftrack_api/operation';
-import { mediator } from '../../application';
+import Event from '../../ftrack_api/event';
+import { store, mediator } from '../';
+import { overlayShow } from 'action/overlay';
 
 import loglevel from 'loglevel';
-const logger = loglevel.getLogger('saga:lib:share');
-
+const logger = loglevel.getLogger('application:lib:share');
 
 // This is the `Upload` asset type, which is guaranteed to exist.
 const _uploadTypeId = '8f4144e0-a8e6-11e2-9e96-0800200c9a66';
+
+/** Dispatch progress actions */
+export function showProgress(options) {
+    store.dispatch(overlayShow(
+        Object.assign({
+            header: null,
+            message: null,
+            loader: true,
+            dismissable: true,
+            dismissLabel: 'Cancel',
+        }, options)
+    ));
+}
+
 
 /** Return array with assetId and create operations for *contextId* and *name*. */
 export function getAsset(contextId, name, typeId) {
@@ -224,3 +239,51 @@ export function updateComponentVersions(componentVersions) {
     return promise;
 }
 
+
+/** Create version */
+export function createVersion(values, thumbnailId) {
+    const versionId = uuid.v4();
+    const taskId = values.task;
+
+    const promise = getAsset(
+        values.parent, values.name, values.type
+    ).then(([assetId, createAssetsOperations]) => {
+        const operations = [
+            ...createAssetsOperations,
+            createOperation('AssetVersion', {
+                id: versionId,
+                thumbnail_id: thumbnailId,
+                asset_id: assetId,
+                status_id: null,
+                task_id: taskId,
+                comment: values.description,
+            }),
+        ];
+
+        logger.info('Create version operations', operations);
+        return session._call(operations);
+    }).then((responses) => {
+        logger.info('Create version responses', responses);
+        return Promise.resolve(versionId);
+    });
+
+    return promise;
+}
+
+/** Create components */
+export function createComponents(versionId, media) {
+    const components = [];
+    for (const file of media) {
+        components.push({
+            name: file.name,
+            path: file.path,
+            version_id: versionId,
+        });
+    }
+
+    logger.info('Creating components', components);
+    return session.eventHub.publish(
+        new Event('ftrack.connect.publish-components', { components }),
+        { reply: true, timeout: 240 }
+    );
+}
