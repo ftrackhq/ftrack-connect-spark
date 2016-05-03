@@ -6,6 +6,8 @@ import {
     createOperation, updateOperation,
 } from '../../ftrack_api/operation';
 import Event from '../../ftrack_api/event';
+import { CreateComponentsHookError } from '../../error';
+
 import { store, mediator } from '../';
 import { overlayShow } from 'action/overlay';
 
@@ -291,8 +293,17 @@ export function createComponents(versionId, media) {
                 'ftrack.connect.publish-components',
                 { components_config: result }
             ),
-            { reply: true, timeout: 240 }
+            { reply: true, timeout: 3600 }
         );
+    }).then((reply) => {
+        if (!reply.data.success) {
+            const error = new CreateComponentsHookError(
+                `${reply.data.error_result.exception}: ${reply.data.error_result.content}`
+            );
+            return Promise.reject(error);
+        }
+
+        return Promise.resolve(reply);
     });
 
     return promise;

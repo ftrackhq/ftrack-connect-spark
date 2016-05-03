@@ -5,6 +5,8 @@ import ProgressBar from 'react-toolbox/lib/progress_bar';
 import Button from 'react-toolbox/lib/button';
 import classNames from 'classnames';
 
+import Reveal from 'component/reveal';
+
 import style from './style';
 
 
@@ -15,8 +17,8 @@ import style from './style';
  */
 function Overlay(props) {
     const {
-        className, active, fixed, loader, progress, header, message, error,
-        dismissable, onDismss, dismissLabel,
+        className, active, fixed, loader, progress, header, message,
+        details, dismissable, onDismss, dismissLabel,
     } = props;
 
     const _classNames = classNames(
@@ -41,8 +43,12 @@ function Overlay(props) {
         children.push(<h6 key="message" className={style.message}>{message}</h6>);
     }
 
-    if (error) {
-        children.push(<p key="error" className={style['error-message']}>Error: {error}</p>);
+    if (details) {
+        children.push(
+            <div key="details" className={style.details}>
+                <Reveal label="Details">{details}</Reveal>
+            </div>
+        );
     }
 
     if (dismissable) {
@@ -68,7 +74,7 @@ Overlay.propTypes = {
     progress: React.PropTypes.number,
     header: React.PropTypes.node,
     message: React.PropTypes.node,
-    error: React.PropTypes.node,
+    details: React.PropTypes.node,
     dismissable: React.PropTypes.bool,
     onDismss: React.PropTypes.func,
     dismissLabel: React.PropTypes.node,
@@ -82,7 +88,7 @@ Overlay.defaultProps = {
     progress: null,
     header: null,
     message: null,
-    error: null,
+    details: null,
     dismissable: false,
     onDismss: null,
     dismissLabel: 'Close',

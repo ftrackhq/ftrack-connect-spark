@@ -10,6 +10,8 @@ import {
 } from './lib/overlay';
 import { session } from '../ftrack_api';
 import Event from '../ftrack_api/event';
+import { EventServerReplyTimeoutError } from '../ftrack_api/error';
+import { CreateComponentsHookError } from '../error';
 
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('saga:publish');
@@ -36,7 +38,7 @@ function* preparePublish(action) {
         yield call(showFailure, {
             header: 'Failed communicate with Connect',
             message: 'Please ensure ftrack Connect is running.',
-            error,
+            details: error.message,
         });
     }
     const options = yield call([mediator, mediator.getPublishOptions], {});
@@ -70,10 +72,29 @@ function* submitPublish(action) {
         });
     } catch (error) {
         logger.error(error);
-        yield call(showFailure, {
-            header: 'Publish failed',
-            error,
-        });
+        let message;
+
+        if (error instanceof EventServerReplyTimeoutError) {
+            message = (
+                'No response from ftrack Connect. Please ensure that ' +
+                'ftrack Connect is running.'
+            );
+        }
+
+        if (error instanceof CreateComponentsHookError) {
+            message = (
+                'ftrack Connect failed to publish the versions.'
+            );
+        }
+
+        yield call(
+            showFailure,
+            {
+                header: 'Publish failed',
+                message,
+                details: error.message,
+            }
+        );
     }
 }
 
