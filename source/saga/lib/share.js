@@ -1,6 +1,5 @@
 // :copyright: Copyright (c) 2016 ftrack
 import uuid from 'uuid';
-import { call } from 'redux-saga/effects';
 
 import { session } from '../../ftrack_api';
 import {
@@ -58,7 +57,7 @@ export function getAsset(contextId, name, typeId) {
  *
  * Return object mapping component ids to component and upload data.
  */
-export function* getUploadMetadata(media) {
+export function getUploadMetadata(media) {
     const operations = [];
 
     const result = {};
@@ -81,26 +80,27 @@ export function* getUploadMetadata(media) {
             component_id: componentId,
         });
     }
-    const responses = yield call(
-        [session, session._call], operations
-    );
 
-    logger.debug('Get upload metadata responses', responses);
-    for (let i = 0; i < responses.length; i += 2) {
-        const componentResult = responses[i].data;
-        const uploadMetadataResult = responses[i + 1];
-        result[uploadMetadataResult.component_id].component = componentResult;
-        result[uploadMetadataResult.component_id].upload = uploadMetadataResult;
-        result[uploadMetadataResult.component_id].media = mediaLookup[
-            uploadMetadataResult.component_id
-        ];
-    }
-    logger.debug('Get upload metadata result', result);
-    return result;
+    const promise = session._call(operations).then((responses) => {
+        logger.debug('Get upload metadata responses', responses);
+        for (let i = 0; i < responses.length; i += 2) {
+            const componentResult = responses[i].data;
+            const uploadMetadataResult = responses[i + 1];
+            result[uploadMetadataResult.component_id].component = componentResult;
+            result[uploadMetadataResult.component_id].upload = uploadMetadataResult;
+            result[uploadMetadataResult.component_id].media = mediaLookup[
+                uploadMetadataResult.component_id
+            ];
+        }
+        logger.debug('Get upload metadata result', result);
+        return Promise.resolve(result);
+    });
+
+    return promise;
 }
 
 /** Upload component data through mediator for each item in *uploadMeta*. */
-export function* uploadMedia(uploadMeta) {
+export function uploadMedia(uploadMeta) {
     const promises = [];
     Object.keys(uploadMeta).forEach((componentId) => {
         const path = uploadMeta[componentId].path;
@@ -112,11 +112,11 @@ export function* uploadMedia(uploadMeta) {
             mediator.uploadMedia({ path, url, headers })
         );
     });
-    yield Promise.all(promises);
+    return Promise.all(promises);
 }
 
 /** Finalize *uploadMeta* by adding components to location and setting metadata for review. */
-export function* finalizeUpload(uploadMeta) {
+export function finalizeUpload(uploadMeta) {
     const operations = [];
     const serverLocationId = '3a372bde-05bc-11e4-8908-20c9d081909b';
     const componentIds = Object.keys(uploadMeta);
@@ -166,9 +166,7 @@ export function* finalizeUpload(uploadMeta) {
         }
     }
 
-    yield call(
-        [session, session._call], operations
-    );
+    return session._call(operations);
 }
 
 /**
@@ -177,19 +175,23 @@ export function* finalizeUpload(uploadMeta) {
  * .. note::
  *      Currently assumes that the media is  pre-encoded images.
  */
-export function* uploadReviewMedia(media) {
-    const uploadMeta = yield call(getUploadMetadata, media);
-    logger.debug('Prepared upload', uploadMeta);
+export function uploadReviewMedia(media) {
+    let uploadMeta;
 
-    let responses = yield call(uploadMedia, uploadMeta);
-    logger.debug('Uploaded', responses);
+    const promise = getUploadMetadata(media).then((_uploadMeta) => {
+        uploadMeta = _uploadMeta;
+        logger.debug('Prepared upload', uploadMeta);
+        return uploadMedia(uploadMeta);
+    }).then((responses) => {
+        logger.debug('Uploaded', responses);
+        return finalizeUpload(uploadMeta);
+    }).then((responses) => {
+        const componentIds = Object.keys(uploadMeta);
+        logger.debug('Finalized upload', responses);
+        return Promise.resolve(componentIds);
+    });
 
-    const componentIds = Object.keys(uploadMeta);
-    responses = yield call(
-        finalizeUpload, uploadMeta
-    );
-    logger.debug('Finalized upload', responses);
-    return componentIds;
+    return promise;
 }
 
 
@@ -199,7 +201,7 @@ export function* uploadReviewMedia(media) {
  * *componentVersions* should be array of objects with componentId and
  * versionId keys.
  */
-export function* updateComponentVersions(componentVersions) {
+export function updateComponentVersions(componentVersions) {
     // TODO: Move this logic to previous batch once the issues in API backend
     // has been resolved.
     // Update file components seperatly as it causes integrity errors
@@ -214,11 +216,11 @@ export function* updateComponentVersions(componentVersions) {
         ));
     }
     logger.debug('Update component operations', operations);
-    const responses = yield call(
-        [session, session._call],
-        operations
-    );
-    logger.debug('Update component responses', responses);
-    return true;
+    const promise = session._call(operations).then((responses) => {
+        logger.debug('Update component responses', responses);
+        return true;
+    });
+
+    return promise;
 }
 

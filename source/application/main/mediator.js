@@ -3,7 +3,8 @@
 import { loadComponents, resolveComponentPaths } from '../lib/import';
 import publishLib from '../lib/publish';
 const {
-    createVersion, createComponents, uploadReviewMedia, updateComponentVersions,
+    showProgress, createVersion, createComponents, uploadReviewMedia,
+    updateComponentVersions,
 } = publishLib;
 
 import loglevel from 'loglevel';
@@ -189,36 +190,51 @@ export class MainMediator extends AbstractMediator {
 
         return delayedResponse({ name: 'testfile.txt', items });
     }
+
+    publish(values) {
+        showProgress({ header: 'Publishing...' });
+        let reviewableMedia;
+        let deliverableMedia;
+        let componentIds;
+        let versionId;
+
+        const promise = this.exportMedia({
+            review: true,
+            delivery: true,
+        }).then((media) => {
+            reviewableMedia = media.filter((file) => file.use.includes('review'));
+            deliverableMedia = media.filter((file) => file.use === 'delivery');
+            logger.debug('Exported media', reviewableMedia, deliverableMedia);
+
+            showProgress({ header: 'Uploading review media...' });
+            return uploadReviewMedia(reviewableMedia);
+        }).then((_componentIds) => {
+            componentIds = _componentIds;
+            logger.debug('Uploaded components', _componentIds);
+
+            showProgress({ header: 'Creating version...' });
+            return createVersion(values, componentIds[0]);
+        }).then((_versionId) => {
+            logger.debug('Created version', _versionId);
+            versionId = _versionId;
+            const componentVersions = componentIds.map(
+                (componentId) => ({ componentId, versionId })
+            );
+
+            return updateComponentVersions(componentVersions);
+        }).then(() => {
+            showProgress({ header: 'Publishing...' });
+            return createComponents(versionId, deliverableMedia);
+        }).then((reply) => {
+            logger.info('Finished publish', reply);
+            return Promise.resolve(reply);
+        });
+
+        return promise;
+    }
 }
 
 /** Export *MainMediator* instance. */
 const mainMediator = new MainMediator();
-
-/** Publish */
-function* publish(values, callbacks) {
-    yield callbacks.progress('Exporting media...');
-    const media = yield this.exportMedia({
-        review: true,
-        delivery: true,
-    });
-    logger.info('Exported media', media);
-    const reviewableMedia = media.filter((file) => file.use.includes('review'));
-    const deliverableMedia = media.filter((file) => file.use === 'delivery');
-
-    yield callbacks.progress('Uploading review media...');
-    const componentIds = yield uploadReviewMedia(reviewableMedia);
-
-    yield callbacks.progress('Creating version...');
-    const versionId = yield createVersion(values, componentIds[0]);
-
-    const componentVersions = componentIds.map((componentId) => ({ componentId, versionId }));
-    yield updateComponentVersions(componentVersions);
-
-    yield callbacks.progress('Publishing...');
-    const reply = yield createComponents(versionId, deliverableMedia);
-    logger.info('Finished publish', reply);
-    yield true;
-}
-mainMediator.publish = publish;
 
 export default mainMediator;

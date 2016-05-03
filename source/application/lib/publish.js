@@ -28,35 +28,37 @@ function showProgress(options) {
 
 
 /** Create version */
-function* createVersion(values, thumbnailId) {
-    const [assetId, createAssetsOperations] = yield getAsset(
-        values.parent, values.name, values.type
-    );
-
+function createVersion(values, thumbnailId) {
     const versionId = uuid.v4();
     const taskId = values.task;
 
-    const operations = [
-        ...createAssetsOperations,
-        createOperation('AssetVersion', {
-            id: versionId,
-            thumbnail_id: thumbnailId,
-            asset_id: assetId,
-            status_id: null,
-            task_id: taskId,
-            comment: values.description,
-        }),
-    ];
+    const promise = getAsset(
+        values.parent, values.name, values.type
+    ).then(([assetId, createAssetsOperations]) => {
+        const operations = [
+            ...createAssetsOperations,
+            createOperation('AssetVersion', {
+                id: versionId,
+                thumbnail_id: thumbnailId,
+                asset_id: assetId,
+                status_id: null,
+                task_id: taskId,
+                comment: values.description,
+            }),
+        ];
 
-    logger.info('Create version operations', operations);
-    const responses = yield session._call(operations);
-    logger.info('Create version responses', responses);
+        logger.info('Create version operations', operations);
+        return session._call(operations);
+    }).then((responses) => {
+        logger.info('Create version responses', responses);
+        return Promise.resolve(versionId);
+    });
 
-    return versionId;
+    return promise;
 }
 
 /** Create components */
-function* createComponents(versionId, media) {
+function createComponents(versionId, media) {
     const components = [];
     for (const file of media) {
         components.push({
