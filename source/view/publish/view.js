@@ -67,13 +67,16 @@ class PublishView extends React.Component {
     /** Update context if route has changed. */
     componentWillReceiveProps(nextProps) {
         this._updateContext(nextProps.params.context);
-        if (nextProps.options !== this.props.options) {
+        if (
+            nextProps.options !== this.props.options ||
+            nextProps.fields.options !== this.props.fields.options
+        ) {
             this._updateOptions(nextProps.options);
         }
 
         for (const prop of ['parent', 'task']) {
             if (nextProps[prop] !== this.props[prop]) {
-                this.props.fields[prop].onChange(this.props[prop]);
+                this.props.fields[prop].onChange(nextProps[prop]);
             }
         }
     }
@@ -244,7 +247,6 @@ function mapStateToProps(state) {
             type: publish.type || assetTypeId,
             parent: publish.parent || null,
             task: publish.task || null,
-            options: [],
         },
         options: publish.items || [],
         parent: publish.parent || null,
