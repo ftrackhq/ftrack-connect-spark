@@ -269,46 +269,65 @@ export class AdobeMediator extends AbstractMediator {
     isImportFileSupported() {
         return IMPORT_FILE_SUPPORTED_APP_IDS.includes(this.getAppId());
     }
+
+    /**
+     * Publish media to ftrack based on form *values*.
+     * Return promise resolved once publish has completed.
+     */
+    publish(values) {
+        const message = `
+            This may take a few minutes, please keep this window open until finished.
+        `;
+        showProgress({ header: 'Publishing...', message });
+        let uploadMedia;
+        let publishMedia;
+        let componentIds;
+        let versionId;
+
+        const publishExportOptions = this.getPublishExportOptions(values);
+        const promise = this.exportMedia(
+            Object.assign({ showProgress }, publishExportOptions)
+        ).then((media) => {
+            const categories = media.reduce((accumulator, file) => {
+                const isUpload = file.use.includes('review') || file.use === 'thumbnail';
+                if (isUpload) {
+                    accumulator.uploadMedia.push(file);
+                } else {
+                    accumulator.publishMedia.push(file);
+                }
+                return accumulator;
+            }, { uploadMedia: [], publishMedia: [] });
+            uploadMedia = categories.uploadMedia;
+            publishMedia = categories.publishMedia;
+            logger.debug('Exported media', uploadMedia, publishMedia);
+
+            showProgress({ header: 'Uploading media...', message });
+            return uploadReviewMedia(uploadMedia);
+        }).then((_componentIds) => {
+            componentIds = _componentIds;
+            logger.debug('Uploaded components', _componentIds);
+
+            showProgress({ header: 'Creating version...', message });
+            return createVersion(values, componentIds[0]);
+        }).then((_versionId) => {
+            logger.debug('Created version', _versionId);
+            versionId = _versionId;
+            const componentVersions = componentIds.map(
+                (componentId) => ({ componentId, versionId })
+            );
+
+            return updateComponentVersions(componentVersions);
+        }).then(() => {
+            showProgress({ header: 'Publishing...', message });
+            return createComponents(versionId, publishMedia);
+        }).then((reply) => {
+            logger.info('Finished publish', reply);
+            return Promise.resolve(reply);
+        });
+
+        return promise;
+    }
 }
 
 const adobeMediator = new AdobeMediator();
-
-
-/** Publish */
-function* publish(values, callbacks) {
-    yield callbacks.progress('Exporting media...');
-    const publishExportOptions = this.getPublishExportOptions(values);
-    logger.info('[adobe] Exporting media', publishExportOptions);
-
-    const media = yield this.exportMedia(
-        Object.assign({ showProgress }, publishExportOptions)
-    );
-    logger.info('Exported media', media);
-
-    const { uploadMedia, publishMedia } = media.reduce((categories, file) => {
-        const isUpload = file.use.includes('review') || file.use === 'thumbnail';
-        if (isUpload) {
-            categories.uploadMedia.push(file);
-        } else {
-            categories.publishMedia.push(file);
-        }
-        return categories;
-    }, { uploadMedia: [], publishMedia: [] });
-
-    yield callbacks.progress('Uploading media...');
-    const componentIds = yield uploadReviewMedia(uploadMedia);
-
-    yield callbacks.progress('Creating version...');
-    const versionId = yield createVersion(values, componentIds[0]);
-
-    const componentVersions = componentIds.map((componentId) => ({ componentId, versionId }));
-    yield updateComponentVersions(componentVersions);
-
-    yield callbacks.progress('Publishing...');
-    const reply = yield createComponents(versionId, publishMedia);
-    logger.info('Finished publish', reply);
-    yield true;
-}
-adobeMediator.publish = publish;
-
 export default adobeMediator;

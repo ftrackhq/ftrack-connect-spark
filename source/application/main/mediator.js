@@ -191,8 +191,15 @@ export class MainMediator extends AbstractMediator {
         return delayedResponse({ name: 'testfile.txt', items });
     }
 
+    /**
+     * Publish media to ftrack based on form *values*.
+     * Return promise resolved once publish has completed.
+     */
     publish(values) {
-        showProgress({ header: 'Publishing...' });
+        const message = `
+            This may take a few minutes, please keep this window open until finished.
+        `;
+        showProgress({ header: 'Publishing...', message });
         let reviewableMedia;
         let deliverableMedia;
         let componentIds;
@@ -206,13 +213,13 @@ export class MainMediator extends AbstractMediator {
             deliverableMedia = media.filter((file) => file.use === 'delivery');
             logger.debug('Exported media', reviewableMedia, deliverableMedia);
 
-            showProgress({ header: 'Uploading review media...' });
+            showProgress({ header: 'Uploading review media...', message });
             return uploadReviewMedia(reviewableMedia);
         }).then((_componentIds) => {
             componentIds = _componentIds;
             logger.debug('Uploaded components', _componentIds);
 
-            showProgress({ header: 'Creating version...' });
+            showProgress({ header: 'Creating version...', message });
             return createVersion(values, componentIds[0]);
         }).then((_versionId) => {
             logger.debug('Created version', _versionId);
@@ -223,7 +230,7 @@ export class MainMediator extends AbstractMediator {
 
             return updateComponentVersions(componentVersions);
         }).then(() => {
-            showProgress({ header: 'Publishing...' });
+            showProgress({ header: 'Publishing...', message });
             return createComponents(versionId, deliverableMedia);
         }).then((reply) => {
             logger.info('Finished publish', reply);

@@ -41,8 +41,12 @@ export default class AbstractMediator {
      */
     isPublishSupported() { return false; }
 
-    /** Publish */
-    *publish() {
+    /**
+     * Publish media to ftrack based on form *values*.
+     * Return promise resolved once publish has completed.
+     */
+    // eslint-disable-next-line no-unused-vars
+    publish(values) {
         throw new Error('Not implemented');
     }
 
