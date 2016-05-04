@@ -10,8 +10,8 @@ import classNames from 'classnames';
 
 import style from './style.scss';
 
-
-function renderInput(config, field = {}) {
+/** Input field component for types: text, number, textarea */
+function InputField({ config, field = {} }) {
     return (
         <Input
             type={config.type}
@@ -22,8 +22,17 @@ function renderInput(config, field = {}) {
         />
     );
 }
+InputField.propTypes = {
+    config: React.PropTypes.shape({
+        label: React.PropTypes.string,
+        name: React.PropTypes.string.isRequired,
+        type: React.PropTypes.string.isRequired,
+    }),
+    field: React.PropTypes.object,
+};
 
-function renderEnumerator(config, field = {}) {
+/** Enumerator field component with options in config.data */
+function EnumeratorField({ config, field = {} }) {
     const source = config.data.reduce(
         (accumulator, item) => (Object.assign(
             {}, accumulator, { [item.value]: item.label }
@@ -42,9 +51,17 @@ function renderEnumerator(config, field = {}) {
         />
     );
 }
+EnumeratorField.propTypes = {
+    config: React.PropTypes.shape({
+        data: React.PropTypes.array.isRequired,
+        label: React.PropTypes.string,
+        name: React.PropTypes.string.isRequired,
+    }),
+    field: React.PropTypes.object,
+};
 
-
-function renderDropdown(config, field = {}) {
+/** Dropdown field component with options in config.data */
+function DropdownField({ config, field = {} }) {
     return (
         <Dropdown
             auto={false}
@@ -56,8 +73,21 @@ function renderDropdown(config, field = {}) {
         />
     );
 }
+DropdownField.propTypes = {
+    config: React.PropTypes.shape({
+        data: React.PropTypes.array.isRequired,
+        label: React.PropTypes.string,
+        name: React.PropTypes.string.isRequired,
+    }),
+    field: React.PropTypes.object,
+};
 
-function renderBoolean(config, field = {}) {
+/**
+ * Boolean field component
+ *
+ * Rendered as a `Swicth` component with an optional description
+ */
+function BooleanField({ config, field = {} }) {
     return (
         <div className={style.switch}>
             <Switch
@@ -72,39 +102,50 @@ function renderBoolean(config, field = {}) {
 
     );
 }
-
-const renderDebug = (config) => <pre>{JSON.stringify(config)}</pre>;
-
-const mapTypeToRenderFunction = {
-    text: renderInput,
-    textarea: renderInput,
-    number: renderInput,
-    enumerator: renderEnumerator,
-    dropdown: renderDropdown,
-    boolean: renderBoolean,
+BooleanField.propTypes = {
+    config: React.PropTypes.shape({
+        description: React.PropTypes.string,
+        label: React.PropTypes.string,
+        name: React.PropTypes.string.isRequired,
+    }),
+    field: React.PropTypes.object,
 };
 
-function renderFields(items, fields) {
-    const result = items.map((config, index) => {
-        const field = fields[index];
-        const renderer = mapTypeToRenderFunction[config.type] || renderDebug;
-        if (!field) {
-            return null;
-        }
-        return renderer(config, field, index);
-    });
-    return result;
-}
+/** Debug field, renders the configuration in a pre-formatted element */
+const DebugField = ({ config }) => <pre>{JSON.stringify(config)}</pre>;
+DebugField.propTypes = { config: React.PropTypes.any };
+
+
+/** Map field types to components */
+const fieldTypeComponent = {
+    text: InputField,
+    textarea: InputField,
+    number: InputField,
+    enumerator: EnumeratorField,
+    dropdown: DropdownField,
+    boolean: BooleanField,
+};
 
 /**
  * Dynamic Fields Component.
  *
+ *  Returns form elements based on item configuration.
  */
-function DynamicFields({ className, items, fields }) {
+function DynamicFields({ className, items, fields = [] }) {
     const _classNames = classNames(style.component, className);
     return (
         <div className={_classNames}>
-            {renderFields(items, fields)}
+        {
+            items.map((config, index) => {
+                const field = fields[index];
+                const component = fieldTypeComponent[config.type] || DebugField;
+                if (!field) {
+                    return null;
+                }
+
+                return React.createElement(component, { config, field });
+            })
+        }
         </div>
     );
 }
