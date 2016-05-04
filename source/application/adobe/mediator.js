@@ -192,6 +192,7 @@ export class AdobeMediator extends AbstractMediator {
         return PUBLISH_SUPPORTED_APP_IDS.includes(this.getAppId());
     }
 
+    /** Return publish interface options for the current host application. */
     getPublishOptionsItems() {
         const appId = this.getAppId();
         const items = [];
@@ -235,6 +236,7 @@ export class AdobeMediator extends AbstractMediator {
         return items;
     }
 
+    /** Return publish export options for the current host application. */
     getPublishExportOptions(values) {
         switch (this.getAppId()) {
             case 'PHSP':
