@@ -280,8 +280,8 @@ export class AdobeMediator extends AbstractMediator {
             This may take a few minutes, please keep this window open until finished.
         `;
         showProgress({ header: 'Publishing...', message });
-        let uploadMedia;
-        let publishMedia;
+        const uploadMedia = [];
+        const publishMedia = [];
         let componentIds;
         let versionId;
 
@@ -289,17 +289,18 @@ export class AdobeMediator extends AbstractMediator {
         const promise = this.exportMedia(
             Object.assign({ showProgress }, publishExportOptions)
         ).then((media) => {
-            const categories = media.reduce((accumulator, file) => {
-                const isUpload = file.use.includes('review') || file.use === 'thumbnail';
+            for (const file of media) {
+                const isUpload = (
+                    file.use.includes('review') ||
+                    file.use === 'thumbnail'
+                );
+
                 if (isUpload) {
-                    accumulator.uploadMedia.push(file);
+                    uploadMedia.push(file);
                 } else {
-                    accumulator.publishMedia.push(file);
+                    publishMedia.push(file);
                 }
-                return accumulator;
-            }, { uploadMedia: [], publishMedia: [] });
-            uploadMedia = categories.uploadMedia;
-            publishMedia = categories.publishMedia;
+            }
             logger.debug('Exported media', uploadMedia, publishMedia);
 
             showProgress({ header: 'Uploading media...', message });
