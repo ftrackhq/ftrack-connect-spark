@@ -31,7 +31,10 @@ export function showProgress(options) {
 }
 
 
-/** Return array with assetId and create operations for *contextId* and *name*. */
+/**
+ * Return Promise resolved with array containing
+ * assetId and create operations for *contextId* and *name*.
+ */
 export function getAsset(contextId, name, typeId) {
     let assetId = null;
     const assetTypeId = typeId || _uploadTypeId;
@@ -72,7 +75,7 @@ export function getAsset(contextId, name, typeId) {
 /**
  * Create file components and retrieve upload meta data for array of *media*.
  *
- * Return object mapping component ids to component and upload data.
+ * Return Promise resolved with object mapping component ids to component and upload data.
  */
 export function getUploadMetadata(media) {
     const operations = [];
@@ -116,7 +119,11 @@ export function getUploadMetadata(media) {
     return promise;
 }
 
-/** Upload component data through mediator for each item in *uploadMeta*. */
+/**
+ * Upload component data through mediator for each item in *uploadMeta*.
+ *
+ * Return Promise resolved once all uploads complete.
+ */
 export function uploadMedia(uploadMeta) {
     const promises = [];
     Object.keys(uploadMeta).forEach((componentId) => {
@@ -132,7 +139,11 @@ export function uploadMedia(uploadMeta) {
     return Promise.all(promises);
 }
 
-/** Finalize *uploadMeta* by adding components to location and setting metadata for review. */
+/**
+ * Finalize *uploadMeta* by adding components to location and setting metadata for review.
+ *
+ * Return API promise, resolved once operations are completed.
+ */
 export function finalizeUpload(uploadMeta) {
     const operations = [];
     const serverLocationId = '3a372bde-05bc-11e4-8908-20c9d081909b';
@@ -190,7 +201,9 @@ export function finalizeUpload(uploadMeta) {
  * Upload *media* for review.
  *
  * .. note::
- *      Currently assumes that the media is  pre-encoded images.
+ *      Currently assumes that the media is pre-encoded images or video.
+ *
+ * Return Promise resolved once media encoded.
  */
 export function uploadReviewMedia(media) {
     let uploadMeta;
@@ -217,6 +230,8 @@ export function uploadReviewMedia(media) {
  *
  * *componentVersions* should be array of objects with componentId and
  * versionId keys.
+ *
+ * Return Promise resolved once components are updated.
  */
 export function updateComponentVersions(componentVersions) {
     // TODO: Move this logic to previous batch once the issues in API backend
@@ -242,7 +257,13 @@ export function updateComponentVersions(componentVersions) {
 }
 
 
-/** Create version */
+/**
+ * Create version based on values.
+ *
+ * Will either create a new asset or version-up if one matching already exists.
+ *
+ * Return promise resolved with version id once the version has been created.
+ */
 export function createVersion(values, thumbnailId) {
     const versionId = uuid.v4();
     const taskId = values.task;
@@ -272,7 +293,13 @@ export function createVersion(values, thumbnailId) {
     return promise;
 }
 
-/** Create components */
+/**
+ * Create components
+ *
+ * Publish components using an event to trigger an ftrack connect hook.
+ *
+ * Return promise resolved once component publish is complete.
+ */
 export function createComponents(versionId, media) {
     const components = [];
     for (const file of media) {
