@@ -167,7 +167,7 @@ export class Cinema4dMediator extends AbstractMediator {
 
     /** Return identifier. */
     getIdentifier() {
-        return 'cinema4d';
+        return 'spark-cinema4d';
     }
 
 }

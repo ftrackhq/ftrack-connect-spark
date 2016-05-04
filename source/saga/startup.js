@@ -75,7 +75,7 @@ function* startup(action) {
 
         store.dispatch(
             trackUsageEvent(
-                `STARTED-SPARK-${mediator.getIdentifier()}`
+                `STARTED-${mediator.getIdentifier()}`
             )
         );
 

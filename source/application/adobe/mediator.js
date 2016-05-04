@@ -178,7 +178,7 @@ export class AdobeMediator extends AbstractMediator {
         niceName = niceName.replace(' ', '-');
         niceName = niceName.toLowerCase();
 
-        return `adobe-${niceName}`;
+        return `spark-adobe-${niceName}`;
     }
 
     /** Return host version. */

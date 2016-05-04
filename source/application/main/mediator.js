@@ -107,13 +107,12 @@ export class MainMediator extends AbstractMediator {
 
     /** Return identifier. */
     getIdentifier() {
-        return 'SPARK';
+        return 'spark';
     }
 
     /** Return host version. */
     getHostVersion() {
-        // TODO: Send actual browser version.
-        return 'browser';
+        return window.navigator.userAgent;
     }
 
     /** Return plugin version */
