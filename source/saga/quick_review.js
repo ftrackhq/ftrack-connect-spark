@@ -50,13 +50,12 @@ function* createQuickReview(values, media) {
     // Loop over components and find asset name based on media use.
     for (const componentId of componentIds) {
         const componentData = media[componentId];
-        logger.debug(componentData.media.use);
-        if (componentData.media.use === 'video-review') {
+        if (componentData.use === 'video-review') {
             assetName = componentData.name;
-        } else if (componentData.media.use === 'image-review') {
+        } else if (componentData.use === 'image-review') {
             assetName = componentData.name;
             thumbnailId = componentId;
-        } else if (componentData.media.use === 'thumbnail') {
+        } else if (componentData.use === 'thumbnail') {
             thumbnailId = componentId;
         }
 

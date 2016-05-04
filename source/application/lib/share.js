@@ -81,11 +81,9 @@ export function getUploadMetadata(media) {
     const operations = [];
 
     const result = {};
-    const mediaLookup = {};
 
     for (const file of media) {
         const componentId = uuid.v4();
-        mediaLookup[componentId] = file;
         result[componentId] = Object.assign({}, file);
         operations.push(
             createOperation('FileComponent', {
@@ -108,9 +106,6 @@ export function getUploadMetadata(media) {
             const uploadMetadataResult = responses[i + 1];
             result[uploadMetadataResult.component_id].component = componentResult;
             result[uploadMetadataResult.component_id].upload = uploadMetadataResult;
-            result[uploadMetadataResult.component_id].media = mediaLookup[
-                uploadMetadataResult.component_id
-            ];
         }
         logger.debug('Get upload metadata result', result);
         return Promise.resolve(result);
@@ -159,9 +154,8 @@ export function finalizeUpload(uploadMeta) {
         );
 
         const componentData = uploadMeta[componentId];
-        logger.debug(componentData.media.use);
-        if (componentData.media.use === 'video-review') {
-            const metadata = componentData.media.metadata;
+        if (componentData.use === 'video-review') {
+            const metadata = componentData.metadata;
             operations.push(updateOperation(
                 'FileComponent', [componentId], { name: 'ftrackreview-mp4' }
             ));
@@ -179,7 +173,7 @@ export function finalizeUpload(uploadMeta) {
                     ),
                 })
             );
-        } else if (componentData.media.use === 'image-review') {
+        } else if (componentData.use === 'image-review') {
             operations.push(updateOperation(
                 'FileComponent', [componentId], { name: 'ftrackreview-image' }
             ));
