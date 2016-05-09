@@ -61,4 +61,22 @@ export default class AbstractMediator {
      * If true, application will show import buttons on versions.
      */
     isImportFileSupported() { return false; }
+
+    /** Return identifier for current host. */
+    // eslint-disable-next-line no-unused-vars
+    getIdentifier() {
+        throw new Error('Not implemented');
+    }
+
+    /** Return version for host. */
+    // eslint-disable-next-line no-unused-vars
+    getHostVersion() {
+        throw new Error('Not implemented');
+    }
+
+    /** Return version for plugin. */
+    // eslint-disable-next-line no-unused-vars
+    getPluginVersion() {
+        throw new Error('Not implemented');
+    }
 }

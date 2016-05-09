@@ -5,13 +5,14 @@ import { call, put } from 'redux-saga/effects';
 import { hashHistory } from 'react-router';
 import compare from 'semver-compare';
 
-import { mediator } from '../application';
+import { store, mediator } from '../application';
 import { session, configureSharedApiSession } from '../ftrack_api';
 import {
     ftrackApiUserAuthenticated,
     ftrackApiAuthenticationFailed,
 } from 'action/ftrack_api';
 import actions, { applicationConfiguration } from 'action/application';
+import { trackUsageEvent } from 'action/track_usage';
 
 import {
     showProgress, hideOverlay, showFailure, showCompletion,
@@ -71,6 +72,12 @@ function* startup(action) {
             queryUserExpression(credentials.apiUser)
         );
         yield put(ftrackApiUserAuthenticated(users.data[0]));
+
+        store.dispatch(
+            trackUsageEvent(
+                `STARTED-${mediator.getIdentifier()}`
+            )
+        );
 
         yield hideOverlay();
         hashHistory.replace(nextPathName || '/home');

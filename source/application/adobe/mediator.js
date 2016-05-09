@@ -171,6 +171,26 @@ export class AdobeMediator extends AbstractMediator {
         );
     }
 
+    /** Return identifier. */
+    getIdentifier() {
+        const appId = window.top.csInterface.getHostEnvironment().appId;
+        let niceName = APPLICATION_IDS[appId];
+        niceName = niceName.replace(' ', '-');
+        niceName = niceName.toLowerCase();
+
+        return `spark-adobe-${niceName}`;
+    }
+
+    /** Return host version. */
+    getHostVersion() {
+        return window.top.csInterface.getHostEnvironment().appVersion;
+    }
+
+    /** Return plugin version */
+    getPluginVersion() {
+        return 'undefined';
+    }
+
     /** Return host application environment. */
     getHostEnvironment() {
         if (!this._hostEnvironment) {

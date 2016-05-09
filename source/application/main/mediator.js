@@ -105,6 +105,21 @@ export class MainMediator extends AbstractMediator {
         window.location = url;
     }
 
+    /** Return identifier. */
+    getIdentifier() {
+        return 'spark';
+    }
+
+    /** Return host version. */
+    getHostVersion() {
+        return window.navigator.userAgent;
+    }
+
+    /** Return plugin version */
+    getPluginVersion() {
+        return 'undefined';
+    }
+
     /**
      * Return if publish is supported by host application.
      * If true, application will show publish menu item and view.

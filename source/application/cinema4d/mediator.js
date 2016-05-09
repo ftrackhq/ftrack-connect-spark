@@ -98,7 +98,6 @@ export class Cinema4dMediator extends AbstractMediator {
         return this._rpcEvent('upload_media', options);
     }
 
-
     /**
      * Return if publish is supported by host application.
      * If true, application will show publish menu item and view.
@@ -165,6 +164,12 @@ export class Cinema4dMediator extends AbstractMediator {
 
         return promise;
     }
+
+    /** Return identifier. */
+    getIdentifier() {
+        return 'spark-cinema4d';
+    }
+
 }
 
 const cinema4dMediator = new Cinema4dMediator();
