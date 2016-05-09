@@ -6,6 +6,7 @@ import { publishLoadSaga, publishSubmitSaga, publishResolveContextSaga } from '.
 import { notesLoadSaga, notesLoadNextPageSaga, noteSubmitSaga, noteRemoveSaga } from './note';
 import { importGetComponentsSaga, importComponentSaga } from './import';
 import { createProjectSaga, createProjectSubmitSaga } from './create_project';
+import { trackUsageEventSaga } from './track_usage';
 
 
 export default [
@@ -22,4 +23,5 @@ export default [
     publishResolveContextSaga,
     importGetComponentsSaga,
     importComponentSaga,
+    trackUsageEventSaga,
 ];
