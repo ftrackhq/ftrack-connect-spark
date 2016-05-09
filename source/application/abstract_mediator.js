@@ -42,6 +42,15 @@ export default class AbstractMediator {
     isPublishSupported() { return false; }
 
     /**
+     * Publish media to ftrack based on form *values*.
+     * Return promise resolved once publish has completed.
+     */
+    // eslint-disable-next-line no-unused-vars
+    publish(values) {
+        throw new Error('Not implemented');
+    }
+
+    /**
      * Return if Quick review is supported by host application.
      * If true, application will show Quick review menu item and view.
      */

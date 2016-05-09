@@ -14,4 +14,12 @@ config.entry = {
     ],
 };
 
+// Large source maps in CEF causes issues with the remote developer tools.
+// They have been disabled to allow remote debugging, but can be enabled
+// here by removing the following override.
+//
+// See issue: https://github.com/nwjs/nw.js/issues/2738
+//
+config.devtool = null;
+
 module.exports = config;

@@ -17,8 +17,8 @@ import style from './style';
  */
 function Overlay(props) {
     const {
-        className, active, fixed, loader, header, message, details,
-        dismissable, onDismss, dismissLabel,
+        className, active, fixed, loader, progress, header, message,
+        details, dismissable, onDismss, dismissLabel,
     } = props;
 
     const _classNames = classNames(
@@ -31,7 +31,8 @@ function Overlay(props) {
     const children = [];
 
     if (loader) {
-        children.push(<ProgressBar key="loader" type="circular" mode="indeterminate" />);
+        const mode = (progress === null) ? 'indeterminate' : 'determinate';
+        children.push(<ProgressBar key="loader" type="circular" mode={mode} value={progress} />);
     }
 
     if (header) {
@@ -70,6 +71,7 @@ Overlay.propTypes = {
     active: React.PropTypes.bool,
     fixed: React.PropTypes.bool,
     loader: React.PropTypes.bool,
+    progress: React.PropTypes.number,
     header: React.PropTypes.node,
     message: React.PropTypes.node,
     details: React.PropTypes.node,
@@ -83,6 +85,7 @@ Overlay.defaultProps = {
     active: false,
     fixed: false,
     loader: false,
+    progress: null,
     header: null,
     message: null,
     details: null,

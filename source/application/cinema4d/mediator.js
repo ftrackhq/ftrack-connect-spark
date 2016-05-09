@@ -5,6 +5,10 @@ const logger = loglevel.getLogger('cinema4d:mediator');
 
 import { session } from '../../ftrack_api';
 import Event from '../../ftrack_api/event';
+import {
+    showProgress, createVersion, createComponents, uploadReviewMedia,
+    updateComponentVersions,
+} from '../lib/share';
 
 import AbstractMediator from '../abstract_mediator';
 
@@ -112,6 +116,55 @@ export class Cinema4dMediator extends AbstractMediator {
      * If true, application will show import buttons on versions.
      */
     isImportFileSupported() { return false; }
+
+    /**
+     * Publish media to ftrack based on form *values*.
+     * Return promise resolved once publish has completed.
+     */
+    publish(values) {
+        const message = `
+            This may take a few minutes, please keep this window open until finished.
+        `;
+        showProgress({ header: 'Publishing...', message });
+        let reviewableMedia;
+        let deliverableMedia;
+        let componentIds;
+        let versionId;
+
+        const promise = this.exportMedia({
+            review: true,
+            delivery: true,
+        }).then((media) => {
+            reviewableMedia = media.filter((file) => file.use.includes('review'));
+            deliverableMedia = media.filter((file) => file.use === 'delivery');
+            logger.debug('Exported media', reviewableMedia, deliverableMedia);
+
+            showProgress({ header: 'Uploading review media...', message });
+            return uploadReviewMedia(reviewableMedia);
+        }).then((_componentIds) => {
+            componentIds = _componentIds;
+            logger.debug('Uploaded components', _componentIds);
+
+            showProgress({ header: 'Creating version...', message });
+            return createVersion(values, componentIds[0]);
+        }).then((_versionId) => {
+            logger.debug('Created version', _versionId);
+            versionId = _versionId;
+            const componentVersions = componentIds.map(
+                (componentId) => ({ componentId, versionId })
+            );
+
+            return updateComponentVersions(componentVersions);
+        }).then(() => {
+            showProgress({ header: 'Publishing...', message });
+            return createComponents(versionId, deliverableMedia);
+        }).then((reply) => {
+            logger.info('Finished publish', reply);
+            return Promise.resolve(reply);
+        });
+
+        return promise;
+    }
 }
 
 const cinema4dMediator = new Cinema4dMediator();

@@ -117,7 +117,7 @@ class CreateProjectView extends React.Component {
                     query={this._workflows}
                     {...workflow}
                 />
-                <Reveal label="Add dates">
+                <Reveal label="Add dates" className="flex-justify-start">
                     <DatePicker
                         label="Start date"
                         {...startDate}

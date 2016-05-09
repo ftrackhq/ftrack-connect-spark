@@ -14,7 +14,7 @@ import actions from 'action/quick_review';
 import { showProgress, showCompletion, showFailure } from './lib/overlay';
 import {
     getUploadMetadata, uploadMedia, updateComponentVersions, finalizeUpload, getAsset,
-} from './lib/share';
+} from '../application/lib/share';
 import { ServerPermissionDeniedError } from '../ftrack_api/error';
 
 import { mediator } from '../application';
@@ -50,13 +50,12 @@ function* createQuickReview(values, media) {
     // Loop over components and find asset name based on media use.
     for (const componentId of componentIds) {
         const componentData = media[componentId];
-        logger.debug(componentData.media.use);
-        if (componentData.media.use === 'video-review') {
+        if (componentData.use === 'video-review') {
             assetName = componentData.name;
-        } else if (componentData.media.use === 'image-review') {
+        } else if (componentData.use === 'image-review') {
             assetName = componentData.name;
             thumbnailId = componentId;
-        } else if (componentData.media.use === 'thumbnail') {
+        } else if (componentData.use === 'thumbnail') {
             thumbnailId = componentId;
         }
 
@@ -184,6 +183,7 @@ function* submitQuickReview(action) {
         yield showProgress('Gathering media...');
         const media = yield call([mediator, mediator.exportMedia], {
             review: true,
+            thumbnail: true,
             delivery: false,
         });
         logger.debug('Gathered media', media[0]);

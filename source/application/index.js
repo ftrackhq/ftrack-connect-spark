@@ -13,6 +13,7 @@ import makeRoutes from '../route';
 import RootContainer from 'container/root';
 
 export let mediator = null;
+export let store = null;
 
 export default function createApplication({
     initialState = {},
@@ -26,7 +27,7 @@ export default function createApplication({
     logger.debug('Creating application');
 
     // Create redux store and sync with react-router-redux.
-    const store = configureStore(initialState, sagas);
+    store = configureStore(initialState, sagas);
     const history = syncHistoryWithStore(hashHistory, store);
 
     // Create our routes. We provide the store to the route definitions

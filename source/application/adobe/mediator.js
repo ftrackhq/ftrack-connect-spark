@@ -1,5 +1,9 @@
 // :copyright: Copyright (c) 2016 ftrack
 import { loadComponents, resolveComponentPaths } from '../lib/import';
+import {
+    showProgress, createVersion, createComponents, uploadReviewMedia,
+    updateComponentVersions,
+} from '../lib/share';
 
 import { notificationInfo } from 'action/notification';
 
@@ -25,7 +29,7 @@ const APPLICATION_IDS = {
     AUDT: 'Audition',
     DRWV: 'Dreamweaver',
 };
-const PUBLISH_SUPPORTED_APP_IDS = ['PHSP', 'PHXS'];
+const PUBLISH_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO'];
 const QUICK_REVIEW_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO'];
 const IMPORT_FILE_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO', 'AEFT'];
 
@@ -78,10 +82,11 @@ export class AdobeMediator extends AbstractMediator {
         const promise = new Promise((resolve, reject) => {
             exporter.getPublishOptions(options, (error, response) => {
                 logger.info('Publish options', error, response);
+                const items = this.getPublishOptionsItems();
                 if (error) {
                     reject(error);
                 } else {
-                    resolve(response);
+                    resolve(Object.assign({ items }, response));
                 }
             });
         });
@@ -187,6 +192,71 @@ export class AdobeMediator extends AbstractMediator {
         return PUBLISH_SUPPORTED_APP_IDS.includes(this.getAppId());
     }
 
+    /** Return publish interface options for the current host application. */
+    getPublishOptionsItems() {
+        const appId = this.getAppId();
+        const items = [];
+        if (appId === 'PPRO') {
+            items.push(
+                {
+                    label: 'Project file',
+                    description: 'Include a copy of the Premiere project file.',
+                    type: 'boolean',
+                    name: 'include_project_file',
+                    value: true,
+                },
+                {
+                    label: 'Source range',
+                    type: 'dropdown',
+                    name: 'source_range',
+                    help: 'Include an export of your sequence.',
+                    value: 'inout',
+                    data: [
+                        {
+                            label: 'Do not export sequence',
+                            value: null,
+                        },
+                        {
+                            label: 'Entire sequence',
+                            value: 'entire',
+                        },
+                        {
+                            label: 'Sequence in/out',
+                            value: 'inout',
+                        },
+                        {
+                            label: 'Work area',
+                            value: 'workarea',
+                        },
+                    ],
+                }
+            );
+        }
+
+        return items;
+    }
+
+    /** Return publish export options for the current host application. */
+    getPublishExportOptions(values) {
+        switch (this.getAppId()) {
+            case 'PHSP':
+            case 'PHXS':
+                return {
+                    review: true,
+                    delivery: true,
+                };
+            case 'PPRO':
+                return {
+                    thumbnail: true,
+                    project_file: values.include_project_file,
+                    rendered_sequence: !!values.source_range,
+                    source_range: values.source_range,
+                };
+            default:
+                return {};
+        }
+    }
+
     /**
      * Return if Quick review is supported by host application.
      */
@@ -199,6 +269,65 @@ export class AdobeMediator extends AbstractMediator {
      */
     isImportFileSupported() {
         return IMPORT_FILE_SUPPORTED_APP_IDS.includes(this.getAppId());
+    }
+
+    /**
+     * Publish media to ftrack based on form *values*.
+     * Return promise resolved once publish has completed.
+     */
+    publish(values) {
+        const message = `
+            This may take a few minutes, please keep this window open until finished.
+        `;
+        showProgress({ header: 'Publishing...', message });
+        const uploadMedia = [];
+        const publishMedia = [];
+        let componentIds;
+        let versionId;
+
+        const publishExportOptions = this.getPublishExportOptions(values);
+        const promise = this.exportMedia(
+            Object.assign({ showProgress }, publishExportOptions)
+        ).then((media) => {
+            for (const file of media) {
+                const isUpload = (
+                    file.use.includes('review') ||
+                    file.use === 'thumbnail'
+                );
+
+                if (isUpload) {
+                    uploadMedia.push(file);
+                } else {
+                    publishMedia.push(file);
+                }
+            }
+            logger.debug('Exported media', uploadMedia, publishMedia);
+
+            showProgress({ header: 'Uploading media...', message });
+            return uploadReviewMedia(uploadMedia);
+        }).then((_componentIds) => {
+            componentIds = _componentIds;
+            logger.debug('Uploaded components', _componentIds);
+
+            showProgress({ header: 'Creating version...', message });
+            return createVersion(values, componentIds[0]);
+        }).then((_versionId) => {
+            logger.debug('Created version', _versionId);
+            versionId = _versionId;
+            const componentVersions = componentIds.map(
+                (componentId) => ({ componentId, versionId })
+            );
+
+            return updateComponentVersions(componentVersions);
+        }).then(() => {
+            showProgress({ header: 'Publishing...', message });
+            return createComponents(versionId, publishMedia);
+        }).then((reply) => {
+            logger.info('Finished publish', reply);
+            return Promise.resolve(reply);
+        });
+
+        return promise;
     }
 
     /** Write a data file to the connect folder with *data* and *filename*. */
@@ -221,5 +350,4 @@ export class AdobeMediator extends AbstractMediator {
 }
 
 const adobeMediator = new AdobeMediator();
-
 export default adobeMediator;
