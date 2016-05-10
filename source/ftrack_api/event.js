@@ -173,6 +173,7 @@ export class EventHub {
                 'Event hub is not connected, event is delayed.'
             );
             this._callbacks.push(callback);
+            this._socketIo.socket.reconnect();
         } else {
             callback();
         }
