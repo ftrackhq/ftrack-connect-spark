@@ -12,8 +12,10 @@ import { createOperation } from '../ftrack_api/operation';
 import actions from 'action/quick_review';
 
 import { showProgress, showCompletion, showFailure } from './lib/overlay';
+
 import {
-    getUploadMetadata, uploadMedia, updateComponentVersions, finalizeUpload, getAsset,
+    getUploadMetadata, uploadMedia, updateComponentVersions, finalizeUpload,
+    getAsset, showProgress as dispatchShowProgressOverlay,
 } from '../application/lib/share';
 import { ServerPermissionDeniedError } from '../ftrack_api/error';
 
@@ -185,6 +187,7 @@ function* submitQuickReview(action) {
             review: true,
             thumbnail: true,
             delivery: false,
+            showProgress: dispatchShowProgressOverlay,
         });
         logger.debug('Gathered media', media[0]);
 
