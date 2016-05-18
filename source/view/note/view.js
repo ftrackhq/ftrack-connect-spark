@@ -287,6 +287,7 @@ function NotesList({ items, entity, user, loading, nextOffset, onFetchMore }) {
                 onEnter={
                     () => onFetchMore(entity, nextOffset)
                 }
+                threshold={0.1}
             />
         );
     }
