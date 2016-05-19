@@ -29,7 +29,7 @@ const APPLICATION_IDS = {
     AUDT: 'Audition',
     DRWV: 'Dreamweaver',
 };
-const PUBLISH_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO'];
+const PUBLISH_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO', 'AEFT'];
 const QUICK_REVIEW_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO'];
 const IMPORT_FILE_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO', 'AEFT'];
 
@@ -82,7 +82,7 @@ export class AdobeMediator extends AbstractMediator {
         const promise = new Promise((resolve, reject) => {
             exporter.getPublishOptions(options, (error, response) => {
                 logger.info('Publish options', error, response);
-                const items = this.getPublishOptionsItems();
+                const items = this.getPublishOptionsItems(response);
                 if (error) {
                     reject(error);
                 } else {
@@ -213,7 +213,7 @@ export class AdobeMediator extends AbstractMediator {
     }
 
     /** Return publish interface options for the current host application. */
-    getPublishOptionsItems() {
+    getPublishOptionsItems(options) {
         const appId = this.getAppId();
         const items = [];
         if (appId === 'PPRO') {
@@ -251,6 +251,99 @@ export class AdobeMediator extends AbstractMediator {
                     ],
                 }
             );
+        } else if (appId === 'AEFT') {
+            if (options.exportOptions) {
+                let defaultValue = null;
+                const data = [];
+                for (const name of options.exportOptions.compositionNames) {
+                    data.push({
+                        label: name,
+                        value: name,
+                    });
+                }
+                if (options.exportOptions.compositionNames.length) {
+                    defaultValue = options.exportOptions.compositionNames[0];
+                }
+                items.push(
+                    {
+                        label: 'Composition',
+                        type: 'dropdown',
+                        name: 'composition',
+                        help: 'Composition to use for export and thumbnail generation.',
+                        value: defaultValue,
+                        data,
+                    }
+                );
+            }
+            items.push(
+                {
+                    label: 'Project file',
+                    description: 'Include a copy of the After Effects project file.',
+                    type: 'boolean',
+                    name: 'include_project_file',
+                    value: true,
+                },
+                {
+                    label: 'Render composition',
+                    description: 'Include a render of the select composition.',
+                    type: 'boolean',
+                    name: 'render_composition',
+                    value: true,
+                }
+            );
+            if (options.exportOptions) {
+                const outputModules = options.exportOptions.outputModules;
+                let defaultValue = null;
+                let data = [];
+                for (const name of outputModules) {
+                    if (name.includes('_HIDDEN')) {
+                        continue;
+                    }
+                    data.push({
+                        label: name,
+                        value: name,
+                    });
+                }
+                if (outputModules.length) {
+                    defaultValue = outputModules[0];
+                }
+                items.push(
+                    {
+                        label: 'Output module',
+                        type: 'dropdown',
+                        name: 'output_module',
+                        help: 'Select output module that should be used.',
+                        value: defaultValue,
+                        data,
+                    }
+                );
+
+                const renderSettings = options.exportOptions.renderSettings;
+                defaultValue = null;
+                data = [];
+                for (const name of renderSettings) {
+                    if (name.includes('_HIDDEN')) {
+                        continue;
+                    }
+                    data.push({
+                        label: name,
+                        value: name,
+                    });
+                }
+                if (renderSettings.length) {
+                    defaultValue = renderSettings[0];
+                }
+                items.push(
+                    {
+                        label: 'Render setting',
+                        type: 'dropdown',
+                        name: 'render_setting',
+                        help: 'Render setting that should be used.',
+                        value: defaultValue,
+                        data,
+                    }
+                );
+            }
         }
 
         return items;
@@ -271,6 +364,15 @@ export class AdobeMediator extends AbstractMediator {
                     project_file: values.include_project_file,
                     rendered_sequence: !!values.source_range,
                     source_range: values.source_range,
+                };
+            case 'AEFT':
+                return {
+                    thumbnail: true,
+                    project_file: values.include_project_file,
+                    render_composition: values.render_composition,
+                    render_setting: values.render_setting,
+                    output_module: values.output_module,
+                    composition: values.composition,
                 };
             default:
                 return {};

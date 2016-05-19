@@ -15,7 +15,7 @@ import style from './style.scss';
 function RootLayout({ children }) {
     return (
         <Layout className={style.app}>
-            <Panel scrollY={1}>
+            <Panel scrollY>
                 {children}
                 <ApplicationOverlay />
                 <PreviewMediaContainer />
