@@ -29,7 +29,7 @@ function _ConnectMissingView({ onRetryClicked }) {
                     onClick={onRetryClicked}
                 />
                 <p className="padding-normal">
-                    <a href="http://support.ftrack.com/adobe" target="_blank">
+                    <a href="https://ftrack.com/adobe" target="_blank">
                         Why do I need this?
                     </a>
                 </p>
