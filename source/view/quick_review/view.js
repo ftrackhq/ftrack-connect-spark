@@ -583,7 +583,7 @@ QuickReviewView = reduxForm({
     validateForm,
     destroyOnUnmount: false,
     asyncBlurFields: ['project'],
-    asyncValidate: (values, dispatch, props) => {
+    asyncValidate: (values) => {
         const { project } = values;
 
         return new Promise(
