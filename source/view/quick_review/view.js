@@ -92,6 +92,7 @@ class QuickReviewView extends React.Component {
         this.state = {
             availableCollaborators: [],
             name: '',
+            createProjectAuthorized: false,
         };
         this._onCancelClick = this._onCancelClick.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
@@ -118,6 +119,20 @@ class QuickReviewView extends React.Component {
                 result[project.id] = project.full_name;
             }
             return result;
+        });
+
+        session._call([{
+            action: '_authorize_operation',
+            data: {
+                action: 'create',
+                data: {
+                    entity_type: 'Project',
+                },
+            },
+        }]).then((data) => {
+            this.setState({
+                createProjectAuthorized: data.result === true,
+            });
         });
     }
 
@@ -453,6 +468,8 @@ class QuickReviewView extends React.Component {
             },
         } = this.props;
 
+        const { createProjectAuthorized } = this.state;
+
         return (
             <Form
                 header="Share a quick review"
@@ -466,10 +483,16 @@ class QuickReviewView extends React.Component {
                     label="Select project"
                     query={this._projects}
                     {...project}
+                    error={this._errorMessage(project)}
                 />
-                <p className={style['create-project-link']}>
-                    <a href="#" onClick={this._createProject}>Create a new project</a>
-                </p>
+                {
+                    createProjectAuthorized ?
+                    (
+                        <p className={style['create-project-link']}>
+                            <a href="#" onClick={this._createProject}>Create a new project</a>
+                        </p>
+                    ) : null
+                }
                 <Input
                     type="text"
                     label="Review session name"
@@ -559,6 +582,39 @@ QuickReviewView = reduxForm({
     },
     validateForm,
     destroyOnUnmount: false,
+    asyncBlurFields: ['project'],
+    asyncValidate: (values, dispatch, props) => {
+        const { project } = values;
+
+        return new Promise(
+            (resolve) => {
+                session._call([{
+                    action: '_authorize_operation',
+                    data: {
+                        action: 'create',
+                        data: {
+                            entity_type: 'ReviewSession',
+                        },
+                        context: {
+                            entity_key: project,
+                            entity_type: 'Project',
+                        },
+                    },
+                }]).then(
+                    (data) => {
+                        const result = {};
+                        if (data.result === false) {
+                            result.project = (
+                                'You\'re not allowed to create review sessions ' +
+                                'on this project.'
+                            );
+                        }
+                        resolve(result);
+                    }
+                );
+            }
+        );
+    },
 })(QuickReviewView);
 
 export default QuickReviewView;
