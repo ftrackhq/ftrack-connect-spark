@@ -173,9 +173,16 @@ class QuickReviewView extends React.Component {
         return field.touched && field.error || null;
     }
 
-    /** Update the selected project with the new one. */
+    /** Update the selected project with the new one.
+    *
+    * Simulate blur of field to force validation.
+    *
+    */
     _updateProject(project) {
         this.props.fields.project.onChange(project.id);
+
+        // Trigger field blur to force remote validation of project id.
+        this.props.fields.project.onBlur(project.id);
     }
 
     /** Create a new project. */
@@ -583,6 +590,7 @@ QuickReviewView = reduxForm({
     validateForm,
     destroyOnUnmount: false,
     asyncBlurFields: ['project'],
+    alwaysAsyncValidate: true,
     asyncValidate: (values) => {
         const { project } = values;
 

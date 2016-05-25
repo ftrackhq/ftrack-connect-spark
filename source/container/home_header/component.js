@@ -39,7 +39,7 @@ class _HomeHeader extends React.Component {
             menuItems.push(
                 <MenuItem
                     key="quickReview"
-                    value={`quick-review/${this.props.projectId}`}
+                    value={`quick-review/${this.props.projectId || ''}`}
                     icon="play_circle_outline"
                     caption="Quick review"
                 />
