@@ -83,6 +83,18 @@ export class Cinema4dMediator extends AbstractMediator {
         return this._rpcEvent('get_publish_options', options);
     }
 
+    /** Return components to import for *options*. */
+    getImportComponents(options) {
+        logger.info('Get import components', options);
+        return this._rpcEvent('get_import_components', options);
+    }
+
+    /** Import *component* and resolve on success. */
+    importComponent(component) {
+        logger.info('Import component', component);
+        return this._rpcEvent('import_component', component);
+    }
+
     /**
      * Return if publish is supported by host application.
      * If true, application will show publish menu item and view.
@@ -99,7 +111,7 @@ export class Cinema4dMediator extends AbstractMediator {
      * Return if file importing is supported by host application.
      * If true, application will show import buttons on versions.
      */
-    isImportFileSupported() { return false; }
+    isImportFileSupported() { return true; }
 
     /**
      * Publish media to ftrack based on form *values*.
