@@ -1,8 +1,8 @@
 // :copyright: Copyright (c) 2016 ftrack
 import { loadComponents, resolveComponentPaths } from '../lib/import';
 import {
-    showProgress, createVersion, createComponents, uploadReviewMedia,
-    updateComponentVersions,
+    showProgress, ensureConnectIsRunning, createVersion, createComponents,
+    uploadReviewMedia, updateComponentVersions,
 } from '../lib/share';
 
 import { notificationInfo } from 'action/notification';
@@ -79,16 +79,21 @@ export class AdobeMediator extends AbstractMediator {
         const exporter = window.top.FT.exporter;
         logger.info('Get publish options', options);
 
-        const promise = new Promise((resolve, reject) => {
-            exporter.getPublishOptions(options, (error, response) => {
-                logger.info('Publish options', error, response);
-                const items = this.getPublishOptionsItems(response);
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(Object.assign({ items }, response));
-                }
+        let promise = ensureConnectIsRunning();
+
+        promise = promise.then(() => {
+            const publishOptions = new Promise((resolve, reject) => {
+                exporter.getPublishOptions(options, (error, response) => {
+                    logger.info('Publish options', error, response);
+                    const items = this.getPublishOptionsItems(response);
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(Object.assign({ items }, response));
+                    }
+                });
             });
+            return publishOptions;
         });
 
         return promise;
