@@ -133,7 +133,7 @@ class QuickReviewView extends React.Component {
             this.setState({
                 createProjectAuthorized: data.result === true,
             });
-        });
+        }).catch(() => this.setState({ createProjectAuthorized: true }));
     }
 
     /** Update project when component is mounted. */
@@ -619,7 +619,7 @@ QuickReviewView = reduxForm({
                         }
                         resolve(result);
                     }
-                );
+                ).catch(() => resolve({}));
             }
         );
     },
