@@ -44,7 +44,7 @@ class Selector extends React.Component {
     _onChange(value) {
         this.setState({ value });
         // Trigger blur to set redux form's touched state.
-        this.props.onBlur(this.state.value);
+        this.props.onBlur(value);
 
         this.props.onChange(value);
     }
