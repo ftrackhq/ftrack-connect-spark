@@ -5,10 +5,7 @@ const logger = loglevel.getLogger('cinema4d:mediator');
 
 import { session } from '../../ftrack_api';
 import Event from '../../ftrack_api/event';
-import {
-    showProgress, createVersion, createComponents, uploadReviewMedia,
-    updateComponentVersions,
-} from '../lib/share';
+import { showProgress } from '../lib/share';
 
 import AbstractMediator from '../abstract_mediator';
 
@@ -86,16 +83,16 @@ export class Cinema4dMediator extends AbstractMediator {
         return this._rpcEvent('get_publish_options', options);
     }
 
-    /** Exported media and resolve with array of files. */
-    exportMedia(options) {
-        logger.info('Export media', options);
-        return this._rpcEvent('export_media', options);
+    /** Return components to import for *options*. */
+    getImportComponents(options) {
+        logger.info('Get import components', options);
+        return this._rpcEvent('get_import_components', options);
     }
 
-    /** Upload media. */
-    uploadMedia(options) {
-        logger.info('Upload media', options);
-        return this._rpcEvent('upload_media', options);
+    /** Import *component* and resolve on success. */
+    importComponent(component) {
+        logger.info('Import component', component);
+        return this._rpcEvent('import_component', component);
     }
 
     /**
@@ -114,50 +111,21 @@ export class Cinema4dMediator extends AbstractMediator {
      * Return if file importing is supported by host application.
      * If true, application will show import buttons on versions.
      */
-    isImportFileSupported() { return false; }
+    isImportFileSupported() { return true; }
 
     /**
      * Publish media to ftrack based on form *values*.
      * Return promise resolved once publish has completed.
      */
     publish(values) {
-        const message = `
-            This may take a few minutes, please keep this window open until finished.
-        `;
+        const message = (
+            'This may take up to a few minutes, please keep this window open until finished.'
+        );
         showProgress({ header: 'Publishing...', message });
-        let reviewableMedia;
-        let deliverableMedia;
-        let componentIds;
-        let versionId;
 
-        const promise = this.exportMedia({
-            review: true,
-            delivery: true,
-        }).then((media) => {
-            reviewableMedia = media.filter((file) => file.use.includes('review'));
-            deliverableMedia = media.filter((file) => file.use === 'delivery');
-            logger.debug('Exported media', reviewableMedia, deliverableMedia);
-
-            showProgress({ header: 'Uploading review media...', message });
-            return uploadReviewMedia(reviewableMedia);
-        }).then((_componentIds) => {
-            componentIds = _componentIds;
-            logger.debug('Uploaded components', _componentIds);
-
-            showProgress({ header: 'Creating version...', message });
-            return createVersion(values, componentIds[0]);
-        }).then((_versionId) => {
-            logger.debug('Created version', _versionId);
-            versionId = _versionId;
-            const componentVersions = componentIds.map(
-                (componentId) => ({ componentId, versionId })
-            );
-
-            return updateComponentVersions(componentVersions);
-        }).then(() => {
-            showProgress({ header: 'Publishing...', message });
-            return createComponents(versionId, deliverableMedia);
-        }).then((reply) => {
+        const promise = this._rpcEvent(
+            'publish_media', values
+        ).then((reply) => {
             logger.info('Finished publish', reply);
             return Promise.resolve(reply);
         });
@@ -168,6 +136,16 @@ export class Cinema4dMediator extends AbstractMediator {
     /** Return identifier. */
     getIdentifier() {
         return 'spark-cinema4d';
+    }
+
+    /** Return host version. */
+    getHostVersion() {
+        return this._options.host_version || 'undefined';
+    }
+
+    /** Return plugin version */
+    getPluginVersion() {
+        return this._options.plugin_version || 'undefined';
     }
 
 }

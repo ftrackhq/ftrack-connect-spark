@@ -15,7 +15,9 @@ export default function configureStore(
     const sagaMiddleware = createSagaMiddleware();
     middleware.push(sagaMiddleware);
 
-    middleware.push(createLogger());
+    if (process.env.NODE_ENV !== 'production') {
+        middleware.push(createLogger());
+    }
 
     const createStoreWithMiddleware = compose(
         applyMiddleware(...middleware),
