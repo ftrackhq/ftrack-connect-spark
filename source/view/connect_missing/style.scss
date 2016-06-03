@@ -1,23 +1,18 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-.view {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+.instructions {
+    text-align: left;
+    margin: $spacing-normal 0;
+    flex-shrink: 0;
+}
 
-    color: $color-text-secondary;
-    text-align: center;
-
-    h6 {
-        margin: 2.4rem;
-    }
+.instructions-list {
+    margin-left: $spacing-large;
+    padding: $spacing;
+    white-space: nowrap;
 }
 
 
-.icon {
-    font-size: 5.6rem;
-    opacity: 0.5;
+.refresh-button {
+    margin: $spacing-large 0;
 }
