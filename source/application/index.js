@@ -15,6 +15,31 @@ import RootContainer from 'container/root';
 export let mediator = null;
 export let store = null;
 
+
+// Patch `history` and `sessionStorage` to avoid issues in IE11 served via file://
+// which occurs in Cinema 4D / Windows 2012 server.
+//
+// * #126 (https://github.com/ReactJSTraining/history/issues/126)
+// * #295 (https://github.com/ReactJSTraining/history/issues/295)
+//
+// TODO: Remove the following block once
+// the `history` library has been upgraded to `3.0.0` or later.
+//
+if (!window.sessionStorage) {
+    window.sessionStorage = {
+        setItem() {},
+        getItem() {},
+        removeItem() {},
+    };
+
+    hashHistory.replaceHashPath = (path) => {
+        const i = window.location.href.indexOf('#');
+        const baseUrl = window.location.href.slice(0, i >= 0 ? i : 0);
+        window.location.replace(`${baseUrl}#${path}`);
+    };
+}
+
+
 export default function createApplication({
     initialState = {},
     sagas = [],
