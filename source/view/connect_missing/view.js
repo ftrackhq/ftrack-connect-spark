@@ -29,7 +29,7 @@ function _ConnectMissingView({ onRetryClicked, onLinkClicked }) {
             <div>
                 <div className={style.instructions}>
                     <p>
-                        To get you started, just follow the following simple steps:
+                        To get started, just follow these steps:
                     </p>
                     <ol className={style['instructions-list']}>
                         <li>
