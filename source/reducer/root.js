@@ -12,6 +12,7 @@ import publishReducer from './screen/publish';
 import previewMediaReducer from './screen/preview_media';
 import notesReducer from './screen/note';
 import versionReducer from './screen/version';
+import timeloggerReducer from './screen/timelogger';
 
 export default combineReducers({
     routing: routerReducer,
@@ -25,5 +26,6 @@ export default combineReducers({
         preview_media: previewMediaReducer,
         notes: notesReducer,
         version: versionReducer,
+        timelogger: timeloggerReducer,
     }),
 });

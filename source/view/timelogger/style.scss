@@ -1,0 +1,20 @@
+// :copyright: Copyright (c) 2016 ftrack
+
+.task-list {
+    padding: $spacing;
+
+}
+
+.item {
+    margin-bottom: $spacing-large;
+
+    overflow: visible;
+}
+
+.import {
+    position: relative;
+}
+
+.menu {
+    position: absolute;
+}

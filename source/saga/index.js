@@ -7,6 +7,7 @@ import { notesLoadSaga, notesLoadNextPageSaga, noteSubmitSaga, noteRemoveSaga } 
 import { importGetComponentsSaga, importComponentSaga } from './import';
 import { createProjectSaga, createProjectSubmitSaga } from './create_project';
 import { trackUsageEventSaga } from './track_usage';
+import timeloggerSagas from './timelogger';
 
 
 export default [
@@ -24,4 +25,5 @@ export default [
     importGetComponentsSaga,
     importComponentSaga,
     trackUsageEventSaga,
+    ...timeloggerSagas,
 ];

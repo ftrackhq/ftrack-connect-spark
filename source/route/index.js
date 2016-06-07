@@ -18,12 +18,13 @@ import ContextView from 'view/context';
 import { importReset } from 'action/import';
 import { publishLoad } from 'action/publish';
 import { notesLoad } from 'action/note';
+import { timelogsLoad } from 'action/timelogger';
 import BrowseAllView from 'view/browse_all';
 import MyTasksView from 'view/my_tasks';
 import VersionsView from 'view/versions';
 import NotesListView from 'view/note';
 import ConnectMissingView from 'view/connect_missing';
-
+import TimeloggerView from 'view/timelogger';
 
 function dispatchOnEnter(dispatch, actionCreator) {
     return () => { dispatch(actionCreator()); };
@@ -67,6 +68,11 @@ export default (store) => (
                     onEnter={dispatchOnEnter(store.dispatch, importReset)}
                 />
             </Route>
+            <Route
+                path="/timelogger"
+                component={TimeloggerView}
+                onEnter={dispatchOnEnter(store.dispatch, timelogsLoad)}
+            />
 
             <Route path="/example" component={ExampleView} />
             <Route path="/publish-context" component={PublishContextBrowser} />
