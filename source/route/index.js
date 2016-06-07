@@ -71,7 +71,7 @@ export default (store) => (
             <Route path="/example" component={ExampleView} />
             <Route path="/publish-context" component={PublishContextBrowser} />
             <Route
-                path="/quick-review/:projectId"
+                path="/quick-review(/:projectId)"
                 component={QuickReviewView}
             />
             <Route

@@ -30,6 +30,35 @@ export function showProgress(options) {
     ));
 }
 
+/** Dispatch failure action */
+export function showFailure(options) {
+    store.dispatch(overlayShow(
+        Object.assign({
+            header: null,
+            message: null,
+            loader: false,
+            dismissable: true,
+            dismissLabel: 'Close',
+        }, options)
+    ));
+}
+
+export function ensureConnectIsRunning() {
+    return session.eventHub.publish(
+        new Event('ftrack.connect.discover', {}),
+        { reply: true, timeout: 15 }
+    ).then((isConnectRunning) => {
+        logger.debug('Connect discover: ', isConnectRunning);
+        return Promise.resolve(true);
+    }).catch((error) => {
+        showFailure({
+            header: 'Failed communicate with Connect',
+            message: 'Please ensure ftrack Connect is running.',
+            details: error.message,
+        });
+    });
+}
+
 
 /**
  * Return Promise resolved with array containing

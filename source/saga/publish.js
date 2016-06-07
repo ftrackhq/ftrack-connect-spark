@@ -9,7 +9,6 @@ import {
     showProgress, hideOverlay, showCompletion, showFailure,
 } from './lib/overlay';
 import { session } from '../ftrack_api';
-import Event from '../ftrack_api/event';
 import { EventServerReplyTimeoutError } from '../ftrack_api/error';
 import { CreateComponentsHookError } from '../error';
 
@@ -28,19 +27,6 @@ function* preparePublish(action) {
         { message: 'Gathering options from application...' }
     );
 
-    try {
-        const isConnectRunning = yield session.eventHub.publish(
-            new Event('ftrack.connect.discover', {}),
-            { reply: true, timeout: 15 }
-        );
-        logger.debug('Connect discover: ', isConnectRunning);
-    } catch (error) {
-        yield call(showFailure, {
-            header: 'Failed communicate with Connect',
-            message: 'Please ensure ftrack Connect is running.',
-            details: error.message,
-        });
-    }
     const options = yield call([mediator, mediator.getPublishOptions], {});
     logger.debug('Gathered options', options);
     yield put(publishOptions(options));
