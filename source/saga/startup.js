@@ -15,8 +15,12 @@ import actions, { applicationConfiguration } from 'action/application';
 import { trackUsageEvent } from 'action/track_usage';
 
 import {
-    showProgress, hideOverlay, showFailure, showCompletion,
+    showProgress, hideOverlay, showCompletion,
 } from './lib/overlay';
+
+import loglevel from 'loglevel';
+const logger = loglevel.getLogger('saga:startup');
+
 
 /** Return API operation to query user details. */
 function queryUserExpression(apiUser) {
@@ -96,11 +100,10 @@ function* startup(action) {
             }
         }
     } catch (error) {
+        logger.error('Authentication failed', error);
         yield put(ftrackApiAuthenticationFailed(error));
-        yield call(showFailure, {
-            header: 'Authentication failed',
-            message: error.message,
-        });
+        yield hideOverlay();
+        hashHistory.replace('/connect-missing');
     }
 }
 
