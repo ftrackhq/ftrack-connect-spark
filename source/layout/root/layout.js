@@ -14,8 +14,8 @@ import style from './style.scss';
 /** A root layout. */
 function RootLayout({ children }) {
     return (
-        <Layout className={style.app}>
-            <Panel scrollY>
+        <Layout>
+            <Panel scrollY className={style.panel}>
                 {children}
                 <ApplicationOverlay />
                 <PreviewMediaContainer />
