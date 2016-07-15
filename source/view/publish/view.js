@@ -43,7 +43,7 @@ class PublishView extends React.Component {
         this._updateContext = this._updateContext.bind(this);
         this._link = '';
 
-        this._assetTypes = session._query(
+        this._assetTypes = session.query(
             'select id, name from AssetType'
         ).then((data) => data.data.reduce(
             (accumulator, item) => (

@@ -42,7 +42,7 @@ function* removeNote(action) {
 
     try {
         yield call(
-            [session, session._call],
+            [session, session.call],
             [operation]
         );
     } catch (error) {
@@ -84,7 +84,7 @@ function* submitNote(action) {
     let submitResponse;
     try {
         submitResponse = yield call(
-            [session, session._call],
+            [session, session.call],
             [operation]
         );
     } catch (error) {
@@ -97,7 +97,7 @@ function* submitNote(action) {
     const query = `${noteSelect()} where id is "${noteId}"`;
 
     const response = yield call(
-        [session, session._query],
+        [session, session.query],
         query
     );
 
@@ -133,7 +133,7 @@ function* loadNotes(action) {
     );
 
     const relatedEntitiesResponse = yield call(
-        [session, session._call],
+        [session, session.call],
         [
             queryOperation(assetVersionsQuery),
             queryOperation(taskVersionsQuery),
@@ -163,7 +163,7 @@ function* loadNotes(action) {
 
     logger.debug('Loading notes with "', query, '" from action', action);
     const response = yield call(
-        [session, session._query],
+        [session, session.query],
         query
     );
 
@@ -238,7 +238,7 @@ function* loadNotes(action) {
         );
 
         const inviteeResponse = yield call(
-            [session, session._query],
+            [session, session.query],
             inviteeQuery
         );
         logger.debug('Invitee query result: ', inviteeResponse);

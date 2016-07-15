@@ -40,7 +40,7 @@ class _ContextView extends React.Component {
     _onEntityUpdate(newEntity) {
         const oldEntity = this.state.entity;
 
-        const response = session._call(
+        const response = session.call(
             [
                 updateOperation(
                     newEntity.__entity_type__, [newEntity.id],
@@ -99,7 +99,7 @@ class _ContextView extends React.Component {
             queryString = this._getTypedContextQuery();
         }
 
-        const promise = session._query(queryString).then((result) => {
+        const promise = session.query(queryString).then((result) => {
             const entity = result.data[0];
 
             if (!entity) {

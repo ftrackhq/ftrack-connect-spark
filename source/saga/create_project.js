@@ -23,7 +23,7 @@ function* createProjectSubmit(action) {
 
         yield showProgress('Creating project...');
         const responses = yield call(
-            [session, session._call],
+            [session, session.call],
             [
                 createOperation(
                     'Project',

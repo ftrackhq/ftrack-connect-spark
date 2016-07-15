@@ -44,7 +44,7 @@ class VersionsView extends React.Component {
             `asset.context_id is ${contextId} or task_id is ${contextId}`
         );
 
-        let query = session._query(
+        let query = session.query(
             `${queryString} order by date desc` +
             `offset ${this._offset} limit ${this._limit}`
         );

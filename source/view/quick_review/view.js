@@ -109,7 +109,7 @@ class QuickReviewView extends React.Component {
         this._renderCollaborators = this._renderCollaborators.bind(this);
         this._onCollaboratorsKeyDown = this._onCollaboratorsKeyDown.bind(this);
 
-        const _projects = session._query(
+        const _projects = session.query(
             'select id, full_name from Project where status is "active"'
         );
 
@@ -121,7 +121,7 @@ class QuickReviewView extends React.Component {
             return result;
         });
 
-        session._call([{
+        session.call([{
             action: '_authorize_operation',
             data: {
                 action: 'create',
@@ -258,7 +258,7 @@ class QuickReviewView extends React.Component {
             'and is_active is true'
         );
 
-        const promise = session._call([
+        const promise = session.call([
             queryOperation(inviteeQuery),
             queryOperation(userQuery),
         ]);
@@ -596,7 +596,7 @@ QuickReviewView = reduxForm({
 
         return new Promise(
             (resolve) => {
-                session._call([{
+                session.call([{
                     action: '_authorize_operation',
                     data: {
                         action: 'create',

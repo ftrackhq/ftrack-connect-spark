@@ -76,7 +76,7 @@ export function getAsset(contextId, name, typeId) {
         limit 1`
     );
 
-    const request = session._query(query);
+    const request = session.query(query);
     const createOperations = [];
     const promise = request.then((response) => {
         logger.info(response);
@@ -128,7 +128,7 @@ export function getUploadMetadata(media) {
         });
     }
 
-    const promise = session._call(operations).then((responses) => {
+    const promise = session.call(operations).then((responses) => {
         logger.debug('Get upload metadata responses', responses);
         for (let i = 0; i < responses.length; i += 2) {
             const componentResult = responses[i].data;
@@ -217,7 +217,7 @@ export function finalizeUpload(uploadMeta) {
         }
     }
 
-    return session._call(operations);
+    return session.call(operations);
 }
 
 /**
@@ -271,7 +271,7 @@ export function updateComponentVersions(componentVersions) {
         ));
     }
     logger.debug('Update component operations', operations);
-    const promise = session._call(operations).then((responses) => {
+    const promise = session.call(operations).then((responses) => {
         logger.debug('Update component responses', responses);
         return true;
     });
@@ -307,7 +307,7 @@ export function createVersion(values, thumbnailId) {
         ];
 
         logger.info('Create version operations', operations);
-        return session._call(operations);
+        return session.call(operations);
     }).then((responses) => {
         logger.info('Create version responses', responses);
         return Promise.resolve(versionId);

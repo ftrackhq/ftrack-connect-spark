@@ -103,7 +103,7 @@ function* createQuickReview(values, media) {
 
     // Add current user as invitee.
     const response = yield call(
-        [session, session._query],
+        [session, session.query],
         `select first_name, last_name, email from User where username is "${session._apiUser}"`
     );
     if (response && response.data && response.data.length) {
@@ -137,7 +137,7 @@ function* createQuickReview(values, media) {
 
     logger.debug('Create Quick Review operations', operations);
     const responses = yield call(
-        [session, session._call],
+        [session, session.call],
         operations
     );
     logger.debug('Create Quick Review responses', responses);
@@ -163,7 +163,7 @@ function* sendInvites(reviewSessionInviteeIds) {
 
     logger.debug('Send invites operations', operations);
     const responses = yield call(
-        [session, session._call],
+        [session, session.call],
         operations
     );
     logger.debug('Send invites responses', responses);

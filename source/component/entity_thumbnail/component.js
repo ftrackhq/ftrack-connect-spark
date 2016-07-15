@@ -10,7 +10,7 @@ import { session } from '../../ftrack_api';
  */
 function EntityThumbnail(props) {
     const { thumbnailId } = props;
-    const url = session.thumbnail(thumbnailId);
+    const url = session.thumbnailUrl(thumbnailId);
     const _classNames = classNames(
         style['entity-thumbnail'], props.className
     );

@@ -75,6 +75,7 @@
   },
   "dependencies": {
     "core-js": "^2.3.0",
+    "ftrack-javascript-api": "git+ssh://git@bitbucket.org/ftrack/ftrack-javascript-api.git#backlog/separate-js-api-from-spark/story",
     "lodash": "^4.11.1",
     "loglevel": "^1.4.0",
     "markdown-it": "^6.0.1",

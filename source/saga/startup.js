@@ -72,7 +72,7 @@ function* startup(action) {
             credentials.apiKey
         );
         const users = yield call(
-            [session, session._query],
+            [session, session.query],
             queryUserExpression(credentials.apiUser)
         );
         yield put(ftrackApiUserAuthenticated(users.data[0]));

@@ -16,7 +16,7 @@ function EntityAvatar({ entity, className }) {
 
     let image = false;
     if (entity.thumbnail_id) {
-        const url = session.thumbnail(entity.thumbnail_id, 100);
+        const url = session.thumbnailUrl(entity.thumbnail_id, 100);
         image = (
             <div
                 className={style.image}

@@ -90,7 +90,7 @@ function* submitPublish(action) {
 function* resolveContext(action) {
     const contextId = action.payload;
 
-    const result = yield session._query(
+    const result = yield session.query(
         'select link, parent.id from Context where id is ' +
         `${contextId}`
     );
