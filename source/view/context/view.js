@@ -9,7 +9,7 @@ import ContextCard from 'component/context_card';
 import ContextBar from 'component/context_bar';
 import RouteTabs from 'container/route_tabs';
 import { session } from '../../ftrack_api';
-import { updateOperation } from '../../ftrack_api/operation';
+import { operation } from 'ftrack-javascript-api';
 import { notificationWarning } from 'action/notification';
 
 import style from './style.scss';
@@ -42,7 +42,7 @@ class _ContextView extends React.Component {
 
         const response = session.call(
             [
-                updateOperation(
+                operation.update(
                     newEntity.__entity_type__, [newEntity.id],
                     Object.assign({}, { status: newEntity.status })
                 ),

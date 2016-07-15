@@ -9,7 +9,7 @@ import {
     showProgress, hideOverlay, showCompletion, showFailure,
 } from './lib/overlay';
 import { session } from '../ftrack_api';
-import { EventServerReplyTimeoutError } from '../ftrack_api/error';
+import { error as apiError } from 'ftrack-javascript-api';
 import { CreateComponentsHookError } from '../error';
 
 import loglevel from 'loglevel';
@@ -60,7 +60,7 @@ function* submitPublish(action) {
         logger.error(error);
         let message;
 
-        if (error instanceof EventServerReplyTimeoutError) {
+        if (error instanceof apiError.EventServerReplyTimeoutError) {
             message = (
                 'No response from ftrack Connect. Please ensure that ' +
                 'ftrack Connect is running.'

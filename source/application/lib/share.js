@@ -1,10 +1,9 @@
 // :copyright: Copyright (c) 2016 ftrack
 import uuid from 'uuid';
 
+import { operation } from 'ftrack-javascript-api';
+
 import { session } from '../../ftrack_api';
-import {
-    createOperation, updateOperation,
-} from '../../ftrack_api/operation';
 import Event from '../../ftrack_api/event';
 import { CreateComponentsHookError } from '../../error';
 
@@ -88,7 +87,7 @@ export function getAsset(contextId, name, typeId) {
             logger.info('No asset ');
 
             assetId = uuid.v4();
-            createOperations.push(createOperation('Asset', {
+            createOperations.push(operation.create('Asset', {
                 id: assetId,
                 name,
                 context_id: contextId,
@@ -115,7 +114,7 @@ export function getUploadMetadata(media) {
         const componentId = uuid.v4();
         result[componentId] = Object.assign({}, file);
         operations.push(
-            createOperation('FileComponent', {
+            operation.create('FileComponent', {
                 id: componentId,
                 name: file.name,
                 size: file.size,
@@ -175,7 +174,7 @@ export function finalizeUpload(uploadMeta) {
 
     for (const componentId of componentIds) {
         operations.push(
-            createOperation('ComponentLocation', {
+            operation.create('ComponentLocation', {
                 component_id: componentId,
                 location_id: serverLocationId,
                 resource_identifier: componentId,
@@ -185,11 +184,11 @@ export function finalizeUpload(uploadMeta) {
         const componentData = uploadMeta[componentId];
         if (componentData.use === 'video-review') {
             const metadata = componentData.metadata;
-            operations.push(updateOperation(
+            operations.push(operation.update(
                 'FileComponent', [componentId], { name: 'ftrackreview-mp4' }
             ));
             operations.push(
-                createOperation('Metadata', {
+                operation.create('Metadata', {
                     parent_id: componentId,
                     parent_type: 'FileComponent',
                     key: 'ftr_meta',
@@ -203,11 +202,11 @@ export function finalizeUpload(uploadMeta) {
                 })
             );
         } else if (componentData.use === 'image-review') {
-            operations.push(updateOperation(
+            operations.push(operation.update(
                 'FileComponent', [componentId], { name: 'ftrackreview-image' }
             ));
             operations.push(
-                createOperation('Metadata', {
+                operation.create('Metadata', {
                     parent_id: componentId,
                     parent_type: 'FileComponent',
                     key: 'ftr_meta',
@@ -264,7 +263,7 @@ export function updateComponentVersions(componentVersions) {
     const operations = [];
     for (const componentVersion of componentVersions) {
         // TODO: Update this once components are being encoded.
-        operations.push(updateOperation(
+        operations.push(operation.update(
             'FileComponent', [componentVersion.componentId], {
                 version_id: componentVersion.versionId,
             }
@@ -296,7 +295,7 @@ export function createVersion(values, thumbnailId) {
     ).then(([assetId, createAssetsOperations]) => {
         const operations = [
             ...createAssetsOperations,
-            createOperation('AssetVersion', {
+            operation.create('AssetVersion', {
                 id: versionId,
                 thumbnail_id: thumbnailId,
                 asset_id: assetId,

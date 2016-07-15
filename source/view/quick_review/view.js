@@ -17,7 +17,7 @@ import EntityAvatar from 'component/entity_avatar';
 import Form from 'component/form';
 import Selector from 'component/selector';
 import { session } from '../../ftrack_api';
-import { queryOperation } from '../../ftrack_api/operation';
+import { operation } from 'ftrack-javascript-api';
 import {
     isEmptyString,
 } from '../../util/validation';
@@ -259,8 +259,8 @@ class QuickReviewView extends React.Component {
         );
 
         const promise = session.call([
-            queryOperation(inviteeQuery),
-            queryOperation(userQuery),
+            operation.query(inviteeQuery),
+            operation.query(userQuery),
         ]);
 
         promise.then((responses) => {

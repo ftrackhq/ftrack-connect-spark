@@ -8,7 +8,7 @@ import { hashHistory } from 'react-router';
 import { reset } from 'redux-form';
 
 import { session } from '../ftrack_api';
-import { createOperation } from '../ftrack_api/operation';
+import { operation, error as apiError } from 'ftrack-javascript-api';
 import actions from 'action/quick_review';
 
 import { showProgress, showCompletion, showFailure } from './lib/overlay';
@@ -17,7 +17,6 @@ import {
     getUploadMetadata, uploadMedia, updateComponentVersions, finalizeUpload,
     getAsset, showProgress as dispatchShowProgressOverlay,
 } from '../application/lib/share';
-import { ServerPermissionDeniedError } from '../ftrack_api/error';
 
 import { mediator } from '../application';
 
@@ -72,7 +71,7 @@ function* createQuickReview(values, media) {
     operations.push(...createAssetOperations);
 
     const reviewSessionId = uuid.v4();
-    operations.push(createOperation('ReviewSession', {
+    operations.push(operation.create('ReviewSession', {
         id: reviewSessionId,
         project_id: values.project,
         name: values.name,
@@ -83,7 +82,7 @@ function* createQuickReview(values, media) {
     // TODO: Update this once you can select task in spark.
     const taskId = null;
 
-    operations.push(createOperation('AssetVersion', {
+    operations.push(operation.create('AssetVersion', {
         id: versionId,
         thumbnail_id: thumbnailId,
         asset_id: assetId,
@@ -91,7 +90,7 @@ function* createQuickReview(values, media) {
         task_id: taskId,
     }));
 
-    operations.push(createOperation('ReviewSessionObject', {
+    operations.push(operation.create('ReviewSessionObject', {
         name: assetName,
         description: null,
         version: null,
@@ -126,7 +125,7 @@ function* createQuickReview(values, media) {
             const reviewSessionInviteeId = uuid.v4();
             reviewSessionInviteeIds.push(reviewSessionInviteeId);
 
-            operations.push(createOperation('ReviewSessionInvitee', {
+            operations.push(operation.create('ReviewSessionInvitee', {
                 id: reviewSessionInviteeId,
                 review_session_id: reviewSessionId,
                 email: invitee.email,
@@ -227,7 +226,7 @@ function* submitQuickReview(action) {
     } catch (error) {
         let message = 'Could not create the review session, please verify the form and try again';
 
-        if (error instanceof ServerPermissionDeniedError) {
+        if (error instanceof apiError.ServerPermissionDeniedError) {
             message = (
                 'You\'re not permitted to create a review session on the ' +
                 'selected project'

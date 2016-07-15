@@ -2,11 +2,11 @@
 
 import { call, put } from 'redux-saga/effects';
 import { takeEvery } from 'redux-saga';
+
+import { operation } from 'ftrack-javascript-api';
+
 import actions, { notesLoaded, noteSubmitted, noteRemoved } from 'action/note';
 import { session } from '../ftrack_api';
-import {
-    createOperation, updateOperation, deleteOperation, queryOperation,
-} from '../ftrack_api/operation';
 import { notificationWarning } from 'action/notification';
 
 
@@ -35,7 +35,7 @@ function noteSelect() {
 
 /** Handle remove note *action*. */
 function* removeNote(action) {
-    const operation = deleteOperation(
+    const deleteOperation = operation.delete(
         'Note',
         [action.payload.id]
     );
@@ -43,7 +43,7 @@ function* removeNote(action) {
     try {
         yield call(
             [session, session.call],
-            [operation]
+            [deleteOperation]
         );
     } catch (error) {
         yield put(notificationWarning('Could not remove note'));
@@ -57,11 +57,11 @@ function* removeNote(action) {
 
 /** Handle submit note *action*. */
 function* submitNote(action) {
-    let operation;
+    let submitNoteOperation;
     const isUpdate = !!action.payload.data.id;
 
     if (isUpdate) {
-        operation = updateOperation(
+        submitNoteOperation = operation.update(
             'Note',
             [action.payload.data.id],
             {
@@ -69,7 +69,7 @@ function* submitNote(action) {
             }
         );
     } else {
-        operation = createOperation(
+        submitNoteOperation = operation.create(
             'Note',
             {
                 content: action.payload.data.content,
@@ -85,7 +85,7 @@ function* submitNote(action) {
     try {
         submitResponse = yield call(
             [session, session.call],
-            [operation]
+            [submitNoteOperation]
         );
     } catch (error) {
         yield put(notificationWarning('Could not submit note'));
@@ -135,9 +135,9 @@ function* loadNotes(action) {
     const relatedEntitiesResponse = yield call(
         [session, session.call],
         [
-            queryOperation(assetVersionsQuery),
-            queryOperation(taskVersionsQuery),
-            queryOperation(tasksQuery),
+            operation.query(assetVersionsQuery),
+            operation.query(taskVersionsQuery),
+            operation.query(tasksQuery),
         ]
     );
 
