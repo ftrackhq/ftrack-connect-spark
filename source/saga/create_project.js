@@ -4,8 +4,9 @@ import { takeEvery, takeLatest } from 'redux-saga';
 import { call, take, put } from 'redux-saga/effects';
 import { hashHistory } from 'react-router';
 
+import { operation, error as apiError } from 'ftrack-javascript-api';
+
 import { session } from '../ftrack_api';
-import { createOperation } from '../ftrack_api/operation';
 import actions from 'action/create_project';
 
 import { showProgress, showCompletion, showFailure } from './lib/overlay';
@@ -22,9 +23,9 @@ function* createProjectSubmit(action) {
 
         yield showProgress('Creating project...');
         const responses = yield call(
-            [session, session._call],
+            [session, session.call],
             [
-                createOperation(
+                operation.create(
                     'Project',
                     {
                         name: values.name,
@@ -45,7 +46,24 @@ function* createProjectSubmit(action) {
         });
         yield put({ type: actions.CREATE_PROJECT_COMPLETED, payload: project });
     } catch (error) {
-        yield call(showFailure, { header: 'Failed to create project.', error });
+        let message;
+
+        if (error instanceof apiError.ServerPermissionDeniedError) {
+            message = 'You\'re not permitted to create a project';
+        } else if (error instanceof apiError.ServerValidationError) {
+            message = (
+                'Could not create project, please verify the form and that ' +
+                'the project name is unique.'
+            );
+        }
+        yield call(
+            showFailure,
+            {
+                header: 'Failed to create project.',
+                details: error.message,
+                message,
+            }
+        );
     }
 }
 

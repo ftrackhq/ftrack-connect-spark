@@ -60,7 +60,7 @@ export function loadComponents(versionId) {
         `version_id is ${versionId} order by name, file_type, id`
     );
 
-    const request = session._query(queryString);
+    const request = session.query(queryString);
     const components = request.then(
         (response) => Promise.resolve(
             response.data.map(component => component)

@@ -2,11 +2,11 @@
 
 import { call, put } from 'redux-saga/effects';
 import { takeEvery } from 'redux-saga';
+
+import { operation } from 'ftrack-javascript-api';
+
 import actions, { notesLoaded, noteSubmitted, noteRemoved } from 'action/note';
 import { session } from '../ftrack_api';
-import {
-    createOperation, updateOperation, deleteOperation, queryOperation,
-} from '../ftrack_api/operation';
 import { notificationWarning } from 'action/notification';
 
 
@@ -35,15 +35,15 @@ function noteSelect() {
 
 /** Handle remove note *action*. */
 function* removeNote(action) {
-    const operation = deleteOperation(
+    const deleteOperation = operation.delete(
         'Note',
         [action.payload.id]
     );
 
     try {
         yield call(
-            [session, session._call],
-            [operation]
+            [session, session.call],
+            [deleteOperation]
         );
     } catch (error) {
         yield put(notificationWarning('Could not remove note'));
@@ -57,11 +57,11 @@ function* removeNote(action) {
 
 /** Handle submit note *action*. */
 function* submitNote(action) {
-    let operation;
+    let submitNoteOperation;
     const isUpdate = !!action.payload.data.id;
 
     if (isUpdate) {
-        operation = updateOperation(
+        submitNoteOperation = operation.update(
             'Note',
             [action.payload.data.id],
             {
@@ -69,7 +69,7 @@ function* submitNote(action) {
             }
         );
     } else {
-        operation = createOperation(
+        submitNoteOperation = operation.create(
             'Note',
             {
                 content: action.payload.data.content,
@@ -84,8 +84,8 @@ function* submitNote(action) {
     let submitResponse;
     try {
         submitResponse = yield call(
-            [session, session._call],
-            [operation]
+            [session, session.call],
+            [submitNoteOperation]
         );
     } catch (error) {
         yield put(notificationWarning('Could not submit note'));
@@ -97,7 +97,7 @@ function* submitNote(action) {
     const query = `${noteSelect()} where id is "${noteId}"`;
 
     const response = yield call(
-        [session, session._query],
+        [session, session.query],
         query
     );
 
@@ -133,11 +133,11 @@ function* loadNotes(action) {
     );
 
     const relatedEntitiesResponse = yield call(
-        [session, session._call],
+        [session, session.call],
         [
-            queryOperation(assetVersionsQuery),
-            queryOperation(taskVersionsQuery),
-            queryOperation(tasksQuery),
+            operation.query(assetVersionsQuery),
+            operation.query(taskVersionsQuery),
+            operation.query(tasksQuery),
         ]
     );
 
@@ -163,7 +163,7 @@ function* loadNotes(action) {
 
     logger.debug('Loading notes with "', query, '" from action', action);
     const response = yield call(
-        [session, session._query],
+        [session, session.query],
         query
     );
 
@@ -238,7 +238,7 @@ function* loadNotes(action) {
         );
 
         const inviteeResponse = yield call(
-            [session, session._query],
+            [session, session.query],
             inviteeQuery
         );
         logger.debug('Invitee query result: ', inviteeResponse);

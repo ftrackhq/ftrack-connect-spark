@@ -5,6 +5,8 @@
 import React from 'react';
 import { session } from '../../ftrack_api';
 
+import projectSchema from 'ftrack-javascript-api/lib/project_schema';
+
 import { AssigneeField, StatusField, DateField } from 'component/field';
 import style from './style.scss';
 
@@ -65,7 +67,8 @@ class ContextBar extends React.Component {
         }
 
         if (entity.status) {
-            const statusesResponse = session.getStatuses(
+            const statusesResponse = projectSchema.getStatuses(
+                session,
                 entity.project.project_schema_id,
                 entity.__entity_type__,
                 entity.type_id
@@ -86,7 +89,7 @@ class ContextBar extends React.Component {
             );
 
             if (resourceIds.length > 0) {
-                const assigneesResponse = session._query(
+                const assigneesResponse = session.query(
                     'select first_name, last_name, thumbnail_id from User where id in ' +
                     `(${resourceIds.join(', ')})`
                 );

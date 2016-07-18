@@ -14,10 +14,19 @@ function* showDebugMessageAdobe(action) {
     yield call(evalScript, script);
 }
 
+function* openLink(action) {
+    const csInterface = window.top.csInterface;
+    csInterface.openURLInDefaultBrowser(action.payload.href);
+}
+
 function* adobeSaga() {
     yield* takeEvery(
         actions.APPLICATION_SHOW_DEBUG_MESSAGE, showDebugMessageAdobe
     );
 }
 
-export default [adobeSaga];
+function* openLinkSaga() {
+    yield takeEvery(actions.APPLICATION_OPEN_LINK, openLink);
+}
+
+export default [adobeSaga, openLinkSaga];

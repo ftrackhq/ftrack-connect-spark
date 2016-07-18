@@ -8,13 +8,15 @@ import { hashHistory } from 'react-router';
 import { reset } from 'redux-form';
 
 import { session } from '../ftrack_api';
-import { createOperation } from '../ftrack_api/operation';
+import { operation, error as apiError } from 'ftrack-javascript-api';
 import actions from 'action/quick_review';
 
 import { showProgress, showCompletion, showFailure } from './lib/overlay';
+
 import {
-    getUploadMetadata, uploadMedia, updateComponentVersions, finalizeUpload, getAsset,
-} from './lib/share';
+    getUploadMetadata, uploadMedia, updateComponentVersions, finalizeUpload,
+    getAsset, showProgress as dispatchShowProgressOverlay,
+} from '../application/lib/share';
 
 import { mediator } from '../application';
 
@@ -49,13 +51,12 @@ function* createQuickReview(values, media) {
     // Loop over components and find asset name based on media use.
     for (const componentId of componentIds) {
         const componentData = media[componentId];
-        logger.debug(componentData.media.use);
-        if (componentData.media.use === 'video-review') {
+        if (componentData.use === 'video-review') {
             assetName = componentData.name;
-        } else if (componentData.media.use === 'image-review') {
+        } else if (componentData.use === 'image-review') {
             assetName = componentData.name;
             thumbnailId = componentId;
-        } else if (componentData.media.use === 'thumbnail') {
+        } else if (componentData.use === 'thumbnail') {
             thumbnailId = componentId;
         }
 
@@ -70,7 +71,7 @@ function* createQuickReview(values, media) {
     operations.push(...createAssetOperations);
 
     const reviewSessionId = uuid.v4();
-    operations.push(createOperation('ReviewSession', {
+    operations.push(operation.create('ReviewSession', {
         id: reviewSessionId,
         project_id: values.project,
         name: values.name,
@@ -81,7 +82,7 @@ function* createQuickReview(values, media) {
     // TODO: Update this once you can select task in spark.
     const taskId = null;
 
-    operations.push(createOperation('AssetVersion', {
+    operations.push(operation.create('AssetVersion', {
         id: versionId,
         thumbnail_id: thumbnailId,
         asset_id: assetId,
@@ -89,7 +90,7 @@ function* createQuickReview(values, media) {
         task_id: taskId,
     }));
 
-    operations.push(createOperation('ReviewSessionObject', {
+    operations.push(operation.create('ReviewSessionObject', {
         name: assetName,
         description: null,
         version: null,
@@ -101,7 +102,7 @@ function* createQuickReview(values, media) {
 
     // Add current user as invitee.
     const response = yield call(
-        [session, session._query],
+        [session, session.query],
         `select first_name, last_name, email from User where username is "${session._apiUser}"`
     );
     if (response && response.data && response.data.length) {
@@ -124,7 +125,7 @@ function* createQuickReview(values, media) {
             const reviewSessionInviteeId = uuid.v4();
             reviewSessionInviteeIds.push(reviewSessionInviteeId);
 
-            operations.push(createOperation('ReviewSessionInvitee', {
+            operations.push(operation.create('ReviewSessionInvitee', {
                 id: reviewSessionInviteeId,
                 review_session_id: reviewSessionId,
                 email: invitee.email,
@@ -135,7 +136,7 @@ function* createQuickReview(values, media) {
 
     logger.debug('Create Quick Review operations', operations);
     const responses = yield call(
-        [session, session._call],
+        [session, session.call],
         operations
     );
     logger.debug('Create Quick Review responses', responses);
@@ -161,7 +162,7 @@ function* sendInvites(reviewSessionInviteeIds) {
 
     logger.debug('Send invites operations', operations);
     const responses = yield call(
-        [session, session._call],
+        [session, session.call],
         operations
     );
     logger.debug('Send invites responses', responses);
@@ -183,7 +184,9 @@ function* submitQuickReview(action) {
         yield showProgress('Gathering media...');
         const media = yield call([mediator, mediator.exportMedia], {
             review: true,
+            thumbnail: true,
             delivery: false,
+            showProgress: dispatchShowProgressOverlay,
         });
         logger.debug('Gathered media', media[0]);
 
@@ -221,7 +224,22 @@ function* submitQuickReview(action) {
         // Reset the form.
         yield put(reset('quickReview'));
     } catch (error) {
-        yield call(showFailure, { header: 'Failed to create review session', error });
+        let message = 'Could not create the review session, please verify the form and try again';
+
+        if (error instanceof apiError.ServerPermissionDeniedError) {
+            message = (
+                'You\'re not permitted to create a review session on the ' +
+                'selected project'
+            );
+        }
+
+        yield call(
+            showFailure,
+            {
+                header: 'Failed to create review session',
+                message,
+                details: error.message,
+            });
     }
 }
 

@@ -5,6 +5,7 @@ const logger = loglevel.getLogger('cinema4d:mediator');
 
 import { session } from '../../ftrack_api';
 import Event from '../../ftrack_api/event';
+import { showProgress } from '../lib/share';
 
 import AbstractMediator from '../abstract_mediator';
 
@@ -82,17 +83,71 @@ export class Cinema4dMediator extends AbstractMediator {
         return this._rpcEvent('get_publish_options', options);
     }
 
-    /** Exported media and resolve with array of files. */
-    exportMedia(options) {
-        logger.info('Export media', options);
-        return this._rpcEvent('export_media', options);
+    /** Return components to import for *options*. */
+    getImportComponents(options) {
+        logger.info('Get import components', options);
+        return this._rpcEvent('get_import_components', options);
     }
 
-    /** Upload media. */
-    uploadMedia(options) {
-        logger.info('Upload media', options);
-        return this._rpcEvent('upload_media', options);
+    /** Import *component* and resolve on success. */
+    importComponent(component) {
+        logger.info('Import component', component);
+        return this._rpcEvent('import_component', component);
     }
+
+    /**
+     * Return if publish is supported by host application.
+     * If true, application will show publish menu item and view.
+     */
+    isPublishSupported() { return true; }
+
+    /**
+     * Return if Quick review is supported by host application.
+     * If true, application will show Quick review menu item and view.
+     */
+    isQuickReviewSupported() { return false; }
+
+    /**
+     * Return if file importing is supported by host application.
+     * If true, application will show import buttons on versions.
+     */
+    isImportFileSupported() { return true; }
+
+    /**
+     * Publish media to ftrack based on form *values*.
+     * Return promise resolved once publish has completed.
+     */
+    publish(values) {
+        const message = (
+            'This may take up to a few minutes, please keep this window open until finished.'
+        );
+        showProgress({ header: 'Publishing...', message });
+
+        const promise = this._rpcEvent(
+            'publish_media', values
+        ).then((reply) => {
+            logger.info('Finished publish', reply);
+            return Promise.resolve(reply);
+        });
+
+        return promise;
+    }
+
+    /** Return identifier. */
+    getIdentifier() {
+        return 'spark-cinema4d';
+    }
+
+    /** Return host version. */
+    getHostVersion() {
+        return this._options.host_version || 'undefined';
+    }
+
+    /** Return plugin version */
+    getPluginVersion() {
+        return this._options.plugin_version || 'undefined';
+    }
+
 }
 
 const cinema4dMediator = new Cinema4dMediator();

@@ -3,18 +3,24 @@
 import { takeLatest } from 'redux-saga';
 import { call, put } from 'redux-saga/effects';
 import { hashHistory } from 'react-router';
+import compare from 'semver-compare';
 
-import { mediator } from '../application';
+import { store, mediator } from '../application';
 import { session, configureSharedApiSession } from '../ftrack_api';
 import {
     ftrackApiUserAuthenticated,
     ftrackApiAuthenticationFailed,
 } from 'action/ftrack_api';
-import actions from 'action/application';
+import actions, { applicationConfiguration } from 'action/application';
+import { trackUsageEvent } from 'action/track_usage';
 
 import {
-    showProgress, hideOverlay, showFailure,
+    showProgress, hideOverlay, showCompletion,
 } from './lib/overlay';
+
+import loglevel from 'loglevel';
+const logger = loglevel.getLogger('saga:startup');
+
 
 /** Return API operation to query user details. */
 function queryUserExpression(apiUser) {
@@ -53,6 +59,12 @@ function* startup(action) {
         return;
     }
 
+    yield put(applicationConfiguration({
+        isPublishSupported: mediator.isPublishSupported(),
+        isQuickReviewSupported: mediator.isQuickReviewSupported(),
+        isImportFileSupported: mediator.isImportFileSupported(),
+    }));
+
     try {
         yield configureSharedApiSession(
             credentials.serverUrl,
@@ -60,19 +72,38 @@ function* startup(action) {
             credentials.apiKey
         );
         const users = yield call(
-            [session, session._query],
+            [session, session.query],
             queryUserExpression(credentials.apiUser)
         );
         yield put(ftrackApiUserAuthenticated(users.data[0]));
 
+        store.dispatch(
+            trackUsageEvent(
+                `STARTED-${mediator.getIdentifier()}`
+            )
+        );
+
         yield hideOverlay();
         hashHistory.replace(nextPathName || '/home');
+
+        if (session.serverVersion !== 'dev') {
+            if (
+                compare(session.serverVersion, '3.3.20') < 0
+            ) {
+                yield call(showCompletion, {
+                    header: 'Incompatible server version',
+                    message: (
+                        'The version of your ftrack server is outdated and must ' +
+                        'be updated to make sure that everything works as expected.'
+                    ),
+                });
+            }
+        }
     } catch (error) {
+        logger.error('Authentication failed', error);
         yield put(ftrackApiAuthenticationFailed(error));
-        yield call(showFailure, {
-            header: 'Authentication failed',
-            error,
-        });
+        yield hideOverlay();
+        hashHistory.replace('/connect-missing');
     }
 }
 

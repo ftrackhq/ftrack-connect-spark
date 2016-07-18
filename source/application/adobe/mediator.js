@@ -1,5 +1,9 @@
 // :copyright: Copyright (c) 2016 ftrack
 import { loadComponents, resolveComponentPaths } from '../lib/import';
+import {
+    showProgress, ensureConnectIsRunning, createVersion, createComponents,
+    uploadReviewMedia, updateComponentVersions,
+} from '../lib/share';
 
 import { notificationInfo } from 'action/notification';
 
@@ -7,6 +11,27 @@ import loglevel from 'loglevel';
 const logger = loglevel.getLogger('adobe:mediator');
 
 import AbstractMediator from '../abstract_mediator';
+
+/**
+ * Host Application support
+ */
+// eslint-disable-next-line no-unused-vars
+const APPLICATION_IDS = {
+    PHSP: 'Photoshop',
+    PHXS: 'Photoshop Extended',
+    IDSN: 'InDesign',
+    AICY: 'InCopy',
+    ILST: 'Illustrator',
+    PPRO: 'Premiere Pro',
+    PRLD: 'Prelude',
+    AEFT: 'After Effects',
+    FLPR: 'Flash Pro',
+    AUDT: 'Audition',
+    DRWV: 'Dreamweaver',
+};
+const PUBLISH_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO', 'AEFT'];
+const QUICK_REVIEW_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO'];
+const IMPORT_FILE_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO', 'AEFT'];
 
 /**
  * Adobe Mediator
@@ -54,15 +79,21 @@ export class AdobeMediator extends AbstractMediator {
         const exporter = window.top.FT.exporter;
         logger.info('Get publish options', options);
 
-        const promise = new Promise((resolve, reject) => {
-            exporter.getPublishOptions(options, (error, response) => {
-                logger.info('Publish options', error, response);
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(response);
-                }
+        let promise = ensureConnectIsRunning();
+
+        promise = promise.then(() => {
+            const publishOptions = new Promise((resolve, reject) => {
+                exporter.getPublishOptions(options, (error, response) => {
+                    logger.info('Publish options', error, response);
+                    const items = this.getPublishOptionsItems(response);
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(Object.assign({ items }, response));
+                    }
+                });
             });
+            return publishOptions;
         });
 
         return promise;
@@ -145,8 +176,305 @@ export class AdobeMediator extends AbstractMediator {
         );
     }
 
+    /** Return identifier. */
+    getIdentifier() {
+        const appId = window.top.csInterface.getHostEnvironment().appId;
+        let niceName = APPLICATION_IDS[appId];
+        niceName = niceName.replace(' ', '-');
+        niceName = niceName.toLowerCase();
+
+        return `spark-adobe-${niceName}`;
+    }
+
+    /** Return host version. */
+    getHostVersion() {
+        return window.top.csInterface.getHostEnvironment().appVersion;
+    }
+
+    /** Return plugin version */
+    getPluginVersion() {
+        return 'undefined';
+    }
+
+    /** Return host application environment. */
+    getHostEnvironment() {
+        if (!this._hostEnvironment) {
+            const main = window.top.FT.main;
+            this._hostEnvironment = Object.assign({}, main.getHostEnvironment());
+        }
+        return this._hostEnvironment;
+    }
+
+    /** Return application id */
+    getAppId() {
+        return this.getHostEnvironment().appId;
+    }
+
+    /**
+     * Return if publish is supported by host application.
+     */
+    isPublishSupported() {
+        return PUBLISH_SUPPORTED_APP_IDS.includes(this.getAppId());
+    }
+
+    /** Return publish interface options for the current host application. */
+    getPublishOptionsItems(options) {
+        const appId = this.getAppId();
+        const items = [];
+        if (appId === 'PPRO') {
+            items.push(
+                {
+                    label: 'Project file',
+                    description: 'Include a copy of the Premiere project file.',
+                    type: 'boolean',
+                    name: 'include_project_file',
+                    value: true,
+                },
+                {
+                    label: 'Source range',
+                    type: 'dropdown',
+                    name: 'source_range',
+                    help: 'Include an export of your sequence.',
+                    value: 'inout',
+                    data: [
+                        {
+                            label: 'Do not export sequence',
+                            value: null,
+                        },
+                        {
+                            label: 'Entire sequence',
+                            value: 'entire',
+                        },
+                        {
+                            label: 'Sequence in/out',
+                            value: 'inout',
+                        },
+                        {
+                            label: 'Work area',
+                            value: 'workarea',
+                        },
+                    ],
+                }
+            );
+        } else if (appId === 'AEFT') {
+            if (options.exportOptions) {
+                let defaultValue = null;
+                const data = [];
+                for (const name of options.exportOptions.compositionNames) {
+                    data.push({
+                        label: name,
+                        value: name,
+                    });
+                }
+                if (options.exportOptions.compositionNames.length) {
+                    defaultValue = options.exportOptions.compositionNames[0];
+                }
+                items.push(
+                    {
+                        label: 'Composition',
+                        type: 'dropdown',
+                        name: 'composition',
+                        help: 'Composition to use for export and thumbnail generation.',
+                        value: defaultValue,
+                        data,
+                    }
+                );
+            }
+            items.push(
+                {
+                    label: 'Project file',
+                    description: 'Include a copy of the After Effects project file.',
+                    type: 'boolean',
+                    name: 'include_project_file',
+                    value: true,
+                },
+                {
+                    label: 'Render composition',
+                    description: 'Include a render of the select composition.',
+                    type: 'boolean',
+                    name: 'render_composition',
+                    value: true,
+                }
+            );
+            if (options.exportOptions) {
+                const outputModules = options.exportOptions.outputModules;
+                let defaultValue = null;
+                let data = [];
+                for (const name of outputModules) {
+                    if (name.includes('_HIDDEN')) {
+                        continue;
+                    }
+                    data.push({
+                        label: name,
+                        value: name,
+                    });
+                }
+                if (outputModules.length) {
+                    defaultValue = outputModules[0];
+                }
+                items.push(
+                    {
+                        label: 'Output module',
+                        type: 'dropdown',
+                        name: 'output_module',
+                        help: 'Select output module that should be used.',
+                        value: defaultValue,
+                        data,
+                    }
+                );
+
+                const renderSettings = options.exportOptions.renderSettings;
+                defaultValue = null;
+                data = [];
+                for (const name of renderSettings) {
+                    if (name.includes('_HIDDEN')) {
+                        continue;
+                    }
+                    data.push({
+                        label: name,
+                        value: name,
+                    });
+                }
+                if (renderSettings.length) {
+                    defaultValue = renderSettings[0];
+                }
+                items.push(
+                    {
+                        label: 'Render setting',
+                        type: 'dropdown',
+                        name: 'render_setting',
+                        help: 'Render setting that should be used.',
+                        value: defaultValue,
+                        data,
+                    }
+                );
+            }
+        }
+
+        return items;
+    }
+
+    /** Return publish export options for the current host application. */
+    getPublishExportOptions(values) {
+        switch (this.getAppId()) {
+            case 'PHSP':
+            case 'PHXS':
+                return {
+                    review: true,
+                    delivery: true,
+                };
+            case 'PPRO':
+                return {
+                    thumbnail: true,
+                    project_file: values.include_project_file,
+                    rendered_sequence: !!values.source_range,
+                    source_range: values.source_range,
+                };
+            case 'AEFT':
+                return {
+                    thumbnail: true,
+                    project_file: values.include_project_file,
+                    render_composition: values.render_composition,
+                    render_setting: values.render_setting,
+                    output_module: values.output_module,
+                    composition: values.composition,
+                };
+            default:
+                return {};
+        }
+    }
+
+    /**
+     * Return if Quick review is supported by host application.
+     */
+    isQuickReviewSupported() {
+        return QUICK_REVIEW_SUPPORTED_APP_IDS.includes(this.getAppId());
+    }
+
+    /**
+     * Return if file importing is supported by host application.
+     */
+    isImportFileSupported() {
+        return IMPORT_FILE_SUPPORTED_APP_IDS.includes(this.getAppId());
+    }
+
+    /**
+     * Publish media to ftrack based on form *values*.
+     * Return promise resolved once publish has completed.
+     */
+    publish(values) {
+        const message = `
+            This may take a few minutes, please keep this window open until finished.
+        `;
+        showProgress({ header: 'Publishing...', message });
+        const uploadMedia = [];
+        const publishMedia = [];
+        let componentIds;
+        let versionId;
+
+        const publishExportOptions = this.getPublishExportOptions(values);
+        const promise = this.exportMedia(
+            Object.assign({ showProgress }, publishExportOptions)
+        ).then((media) => {
+            for (const file of media) {
+                const isUpload = (
+                    file.use.includes('review') ||
+                    file.use === 'thumbnail'
+                );
+
+                if (isUpload) {
+                    uploadMedia.push(file);
+                } else {
+                    publishMedia.push(file);
+                }
+            }
+            logger.debug('Exported media', uploadMedia, publishMedia);
+
+            showProgress({ header: 'Uploading media...', message });
+            return uploadReviewMedia(uploadMedia);
+        }).then((_componentIds) => {
+            componentIds = _componentIds;
+            logger.debug('Uploaded components', _componentIds);
+
+            showProgress({ header: 'Creating version...', message });
+            return createVersion(values, componentIds[0]);
+        }).then((_versionId) => {
+            logger.debug('Created version', _versionId);
+            versionId = _versionId;
+            const componentVersions = componentIds.map(
+                (componentId) => ({ componentId, versionId })
+            );
+
+            return updateComponentVersions(componentVersions);
+        }).then(() => {
+            showProgress({ header: 'Publishing...', message });
+            return createComponents(versionId, publishMedia);
+        }).then((reply) => {
+            logger.info('Finished publish', reply);
+            return Promise.resolve(reply);
+        });
+
+        return promise;
+    }
+
+    /** Write a data file to the connect folder with *data* and *filename*. */
+    writeSecurePublishFile(filename, data) {
+        const util = window.top.FT.util;
+        logger.info('Writing data file.');
+
+        const promise = new Promise((resolve, reject) => {
+            util.writeSecurePublishFile(filename, data, (error, filePath) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(filePath);
+                }
+            });
+        });
+
+        return promise;
+    }
 }
 
 const adobeMediator = new AdobeMediator();
-
 export default adobeMediator;

@@ -71,7 +71,7 @@ export default (store) => (
             <Route path="/example" component={ExampleView} />
             <Route path="/publish-context" component={PublishContextBrowser} />
             <Route
-                path="/quick-review"
+                path="/quick-review(/:projectId)"
                 component={QuickReviewView}
             />
             <Route
@@ -81,7 +81,11 @@ export default (store) => (
             <Route
                 path="/publish/:context"
                 component={PublishView}
-                onEnter={dispatchOnEnter(store.dispatch, publishLoad)}
+                onEnter={
+                    (nextState, replace, callback) => store.dispatch(
+                        publishLoad(callback)
+                    )
+                }
             />
         </Route>
 

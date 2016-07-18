@@ -49,7 +49,7 @@ class CreateProjectView extends React.Component {
         this._onCancelClick = this._onCancelClick.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
         this._isSubmitDisabled = this._isSubmitDisabled.bind(this);
-        const _workflows = session._query(
+        const _workflows = session.query(
             'select id, name from ProjectSchema'
         );
 
@@ -117,7 +117,7 @@ class CreateProjectView extends React.Component {
                     query={this._workflows}
                     {...workflow}
                 />
-                <Reveal label="Add dates">
+                <Reveal label="Add dates" className="flex-justify-start">
                     <DatePicker
                         label="Start date"
                         {...startDate}

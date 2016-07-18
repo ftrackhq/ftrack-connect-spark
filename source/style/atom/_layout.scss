@@ -16,4 +16,20 @@
         padding: $spacing-large;
     }
 
+    // Justify content
+    .flex-justify-start {
+        justify-content: flex-start;
+    }
+    .flex-justify-center {
+        justify-content: center;
+    }
+    .flex-justify-end {
+        justify-content: flex-end;
+    }
+    .flex-justify-between {
+        justify-content: space-between;
+    }
+    .flex-justify-around {
+        justify-content: space-around;
+    }
 }

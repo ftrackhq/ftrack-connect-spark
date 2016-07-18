@@ -8,4 +8,15 @@
         line-height: 2.0rem;
     }
 
+    // Adjust list item text to match paragraph styling
+    li {
+        font-size: 1.4rem;
+        font-weight: 400;
+        line-height: 2.0rem;
+        letter-spacing: 0;
+        font-smoothing: antialiased;
+        -webkit-font-smoothing: antialiased;
+        text-size-adjust: 100%;
+    }
+
 }

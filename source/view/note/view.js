@@ -60,7 +60,7 @@ function editableNoteDispatchToProps() {
                     dispatch(openPreviewMedia(Math.max(index, 0), items));
                 } else {
                     mediator.downloadFileFromUrl(
-                        session.getComponent(componentId), dispatch
+                        session.getComponentUrl(componentId), dispatch
                     );
                 }
             },
@@ -287,6 +287,7 @@ function NotesList({ items, entity, user, loading, nextOffset, onFetchMore }) {
                 onEnter={
                     () => onFetchMore(entity, nextOffset)
                 }
+                threshold={0.1}
             />
         );
     }

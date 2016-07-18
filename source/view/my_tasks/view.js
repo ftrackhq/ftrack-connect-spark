@@ -53,7 +53,7 @@ class MyTasks extends React.Component {
             queryString += ' and status.state.short != DONE';
         }
 
-        let query = session._query(
+        let query = session.query(
             `${queryString} order by name, id offset ${this._offset} limit ${this._limit}`,
             true
         );

@@ -1,12 +1,21 @@
 // :copyright: Copyright (c) 2016 ftrack
 @import "../../style/core.scss";
 
-.app {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+// Position app container to fill document, without any scrollbars.
+// The `Panel`  within the `Layout` will be responsible for scrolling.
+:global {
+    #app {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow-y: hidden;
+        overflow-x: hidden;
+    }
+}
+
+.panel {
+    // overflow-y is set via a Panel prop.
     overflow-x: hidden;
-    overflow-y: auto;
 }

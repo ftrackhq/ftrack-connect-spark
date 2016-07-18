@@ -17,7 +17,7 @@ import EntityAvatar from 'component/entity_avatar';
 import Form from 'component/form';
 import Selector from 'component/selector';
 import { session } from '../../ftrack_api';
-import { queryOperation } from '../../ftrack_api/operation';
+import { operation } from 'ftrack-javascript-api';
 import {
     isEmptyString,
 } from '../../util/validation';
@@ -86,13 +86,13 @@ ResultList.propTypes = {
 };
 
 /** Quick review view */
-/* eslint-disable react/prefer-stateless-function */
 class QuickReviewView extends React.Component {
     constructor() {
         super();
         this.state = {
             availableCollaborators: [],
             name: '',
+            createProjectAuthorized: false,
         };
         this._onCancelClick = this._onCancelClick.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
@@ -109,7 +109,7 @@ class QuickReviewView extends React.Component {
         this._renderCollaborators = this._renderCollaborators.bind(this);
         this._onCollaboratorsKeyDown = this._onCollaboratorsKeyDown.bind(this);
 
-        const _projects = session._query(
+        const _projects = session.query(
             'select id, full_name from Project where status is "active"'
         );
 
@@ -120,6 +120,30 @@ class QuickReviewView extends React.Component {
             }
             return result;
         });
+
+        session.call([{
+            action: '_authorize_operation',
+            data: {
+                action: 'create',
+                data: {
+                    entity_type: 'Project',
+                },
+            },
+        }]).then((data) => {
+            this.setState({
+                createProjectAuthorized: data.result === true,
+            });
+        }).catch(() => this.setState({ createProjectAuthorized: true }));
+    }
+
+    /** Update project when component is mounted. */
+    componentWillMount() {
+        this._updateProjectId(this.props.params.projectId);
+    }
+
+    /** Update project if route has changed. */
+    componentWillReciveProps(nextProps) {
+        this._updateProjectId(nextProps.params.projectId);
     }
 
     /** Navigate back on cancel clicked */
@@ -149,15 +173,30 @@ class QuickReviewView extends React.Component {
         return field.touched && field.error || null;
     }
 
-    /** Update the selected project with the new one. */
+    /** Update the selected project with the new one.
+    *
+    * Simulate blur of field to force validation.
+    *
+    */
     _updateProject(project) {
         this.props.fields.project.onChange(project.id);
+
+        // Trigger field blur to force remote validation of project id.
+        this.props.fields.project.onBlur(project.id);
     }
 
     /** Create a new project. */
     _createProject(e) {
         e.preventDefault();
         this.props.createProject(this._updateProject);
+    }
+
+    /** Update current project to *projectId*.  */
+    _updateProjectId(projectId) {
+        const currentProjectId = this.props.values.project;
+        if (projectId && projectId !== currentProjectId) {
+            this._updateProject({ id: projectId });
+        }
     }
 
     /** Handle changes to the collaborators field. */
@@ -219,9 +258,9 @@ class QuickReviewView extends React.Component {
             'and is_active is true'
         );
 
-        const promise = session._call([
-            queryOperation(inviteeQuery),
-            queryOperation(userQuery),
+        const promise = session.call([
+            operation.query(inviteeQuery),
+            operation.query(userQuery),
         ]);
 
         promise.then((responses) => {
@@ -306,6 +345,10 @@ class QuickReviewView extends React.Component {
         this.props.fields.collaborator.onChange(
             ''
         );
+
+        this.setState({
+            name: '',
+        });
     }
 
     /** Remove collaborator *item*. */
@@ -324,10 +367,6 @@ class QuickReviewView extends React.Component {
             name,
             email,
             thumbnail_id: null,
-        });
-
-        this.setState({
-            name: '',
         });
     }
 
@@ -348,7 +387,7 @@ class QuickReviewView extends React.Component {
 
                 return (
                     <Chip
-                        key={item.id}
+                        key={item.email}
                         deletable
                         onDeleteClick={removeCollaborator}
                         className={style['selected-collaborator-item']}
@@ -436,6 +475,8 @@ class QuickReviewView extends React.Component {
             },
         } = this.props;
 
+        const { createProjectAuthorized } = this.state;
+
         return (
             <Form
                 header="Share a quick review"
@@ -449,10 +490,16 @@ class QuickReviewView extends React.Component {
                     label="Select project"
                     query={this._projects}
                     {...project}
+                    error={this._errorMessage(project)}
                 />
-                <p className={style['create-project-link']}>
-                    <a href="#" onClick={this._createProject}>Create a new project</a>
-                </p>
+                {
+                    createProjectAuthorized ?
+                    (
+                        <p className={style['create-project-link']}>
+                            <a href="#" onClick={this._createProject}>Create a new project</a>
+                        </p>
+                    ) : null
+                }
                 <Input
                     type="text"
                     label="Review session name"
@@ -476,7 +523,7 @@ class QuickReviewView extends React.Component {
                     onKeyDown={this._onCollaboratorsKeyDown}
                 />
                 {this.renderResult(this.state.availableCollaborators)}
-                <Reveal label="Add description">
+                <Reveal label="Add description" className="flex-justify-start">
                     <Input
                         type="text"
                         label="Description"
@@ -487,7 +534,7 @@ class QuickReviewView extends React.Component {
                         error={this._errorMessage(description)}
                     />
                 </Reveal>
-                <Reveal label="Add expiry">
+                <Reveal label="Add expiry" className="flex-justify-start">
                     <DatePicker
                         label="Expiry date"
                         {...expiryDate}
@@ -503,6 +550,7 @@ QuickReviewView.contextTypes = {
 };
 
 QuickReviewView.propTypes = {
+    params: React.PropTypes.object.isRequired,
     values: React.PropTypes.object.isRequired,
     fields: React.PropTypes.object.isRequired,
     handleSubmit: React.PropTypes.func.isRequired,
@@ -541,6 +589,40 @@ QuickReviewView = reduxForm({
     },
     validateForm,
     destroyOnUnmount: false,
+    asyncBlurFields: ['project'],
+    alwaysAsyncValidate: true,
+    asyncValidate: (values) => {
+        const { project } = values;
+
+        return new Promise(
+            (resolve) => {
+                session.call([{
+                    action: '_authorize_operation',
+                    data: {
+                        action: 'create',
+                        data: {
+                            entity_type: 'ReviewSession',
+                        },
+                        context: {
+                            entity_key: project,
+                            entity_type: 'Project',
+                        },
+                    },
+                }]).then(
+                    (data) => {
+                        const result = {};
+                        if (data.result === false) {
+                            result.project = (
+                                'You\'re not allowed to create review sessions ' +
+                                'on this project.'
+                            );
+                        }
+                        resolve(result);
+                    }
+                ).catch(() => resolve({}));
+            }
+        );
+    },
 })(QuickReviewView);
 
 export default QuickReviewView;
