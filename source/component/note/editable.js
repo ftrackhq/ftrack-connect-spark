@@ -42,10 +42,12 @@ class EditableNote extends React.Component {
             onSubmitForm, onAttachmentClick,
         } = this.props;
 
+        /* eslint-disable react/jsx-no-bind */
         const actions = [
             { label: 'Cancel', onClick: this.handleDialog.bind(this, false) },
             { label: 'Remove', onClick: this.handleDialog.bind(this, true) },
         ];
+        /* eslint-enable react/jsx-no-bind */
 
         if (!collapsed) {
             return (

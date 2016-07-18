@@ -1,7 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
-import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 import { debounce } from 'lodash/function';
 import { without } from 'lodash/array';
@@ -86,7 +85,7 @@ ResultList.propTypes = {
 };
 
 /** Quick review view */
-class QuickReviewView extends React.Component {
+class _QuickReviewView extends React.Component {
     constructor() {
         super();
         this.state = {
@@ -545,11 +544,11 @@ class QuickReviewView extends React.Component {
     }
 }
 
-QuickReviewView.contextTypes = {
+_QuickReviewView.contextTypes = {
     router: React.PropTypes.object.isRequired,
 };
 
-QuickReviewView.propTypes = {
+_QuickReviewView.propTypes = {
     params: React.PropTypes.object.isRequired,
     values: React.PropTypes.object.isRequired,
     fields: React.PropTypes.object.isRequired,
@@ -571,12 +570,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-QuickReviewView = connect(
-    null,
-    mapDispatchToProps
-)(QuickReviewView);
-
-QuickReviewView = reduxForm({
+const QuickReviewView = reduxForm({
     form: 'quickReview',
     fields: [
         'name', 'project', 'collaborator', 'collaborators', 'description',
@@ -623,6 +617,6 @@ QuickReviewView = reduxForm({
             }
         );
     },
-})(QuickReviewView);
+}, null, mapDispatchToProps)(_QuickReviewView);
 
 export default QuickReviewView;

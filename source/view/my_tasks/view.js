@@ -14,7 +14,7 @@ import style from './style';
 
 /** My Tasks. */
 /* eslint-disable react/prefer-stateless-function */
-class MyTasks extends React.Component {
+class _MyTasks extends React.Component {
 
     /** Constructor. */
     constructor() {
@@ -123,7 +123,7 @@ class MyTasks extends React.Component {
 }
 
 
-MyTasks.propTypes = {
+_MyTasks.propTypes = {
     user: React.PropTypes.object,
 };
 
@@ -134,8 +134,8 @@ function mapStateToProps(state) {
     };
 }
 
-MyTasks = connect(
+const MyTasks = connect(
     mapStateToProps
-)(MyTasks);
+)(_MyTasks);
 
 export default MyTasks;

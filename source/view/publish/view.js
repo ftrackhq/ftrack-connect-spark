@@ -33,7 +33,7 @@ const validateForm = (values) => {
 
 
 /** Quick review view */
-class PublishView extends React.Component {
+class _PublishView extends React.Component {
     constructor() {
         super();
         this.state = { link: '', context: null };
@@ -202,11 +202,11 @@ class PublishView extends React.Component {
     }
 }
 
-PublishView.contextTypes = {
+_PublishView.contextTypes = {
     router: React.PropTypes.object.isRequired,
 };
 
-PublishView.propTypes = {
+_PublishView.propTypes = {
     values: React.PropTypes.object.isRequired,
     fields: React.PropTypes.object.isRequired,
     submitForm: React.PropTypes.func.isRequired,
@@ -221,7 +221,7 @@ PublishView.propTypes = {
     options: React.PropTypes.array,
 };
 
-PublishView.defaultProps = {
+_PublishView.defaultProps = {
     options: [],
     params: {
         context: null,
@@ -266,8 +266,8 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-PublishView = reduxForm(
+const PublishView = reduxForm(
     formOptions, mapStateToProps, mapDispatchToProps
-)(PublishView);
+)(_PublishView);
 
 export default PublishView;

@@ -16,7 +16,7 @@ import { session } from '../../ftrack_api';
 import style from './style';
 
 /** Versions. */
-class VersionsView extends React.Component {
+class _VersionsView extends React.Component {
 
     /** Constructor. */
     constructor() {
@@ -188,7 +188,7 @@ class VersionsView extends React.Component {
     }
 }
 
-VersionsView.propTypes = {
+_VersionsView.propTypes = {
     params: React.PropTypes.object.isRequired,
     onImportComponent: React.PropTypes.func.isRequired,
     onGetImportComponents: React.PropTypes.func.isRequired,
@@ -216,9 +216,9 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-VersionsView = connect(
+const VersionsView = connect(
     mapStateToProps,
     mapDispatchToProps
-)(VersionsView);
+)(_VersionsView);
 
 export default VersionsView;
