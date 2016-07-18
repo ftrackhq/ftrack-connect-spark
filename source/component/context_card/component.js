@@ -116,10 +116,16 @@ class ContextCard extends React.Component {
             </Reveal>,
         ];
 
-        return React.createElement(this.props.flat ? 'div' : Card, {
-            className: _classNames,
-            raised: !this.props.flat,
-        }, contents);
+        const cardProps = { className: _classNames };
+        if (!this.props.flat) {
+            cardProps.raised = true;
+        }
+
+        return React.createElement(
+            this.props.flat ? 'div' : Card,
+            cardProps,
+            contents
+        );
     }
 }
 
