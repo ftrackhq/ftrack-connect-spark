@@ -27,8 +27,14 @@ class _VersionsView extends React.Component {
         this._loadItems = this._loadItems.bind(this);
         this._renderItem = this._renderItem.bind(this);
         this._renderImportMenu = this._renderImportMenu.bind(this);
+        this._onImportClicked = this._onImportClicked.bind(this);
         this._onPublishClicked = this._onPublishClicked.bind(this);
-        this.state = { empty: true, loading: true, components: [] };
+        this.state = {
+            empty: true,
+            loading: true,
+            components: [],
+            menu: null,
+        };
     }
 
     /** Load more items. */
@@ -74,9 +80,19 @@ class _VersionsView extends React.Component {
 
     /** Render import menu */
     _renderImportMenu(components = []) {
+        // If, and only if, menu is in its initial state, open the
+        // menu automatically in the next tick. The timeout is needed to
+        // ensure a change is detected and animation is triggered.
+        if (this.state.menu === null) {
+            setTimeout(() => {
+                this.setState({ menu: 'visible' });
+            }, 0);
+        }
+
         return (
             <Menu
-                ref={(ref) => { if (ref) { ref.show(); } }}
+                active={this.state.menu === 'visible'}
+                onHide={() => this.setState({ menu: 'hidden' })}
                 className={style.menu}
                 menuRipple
                 position="auto"
@@ -100,6 +116,12 @@ class _VersionsView extends React.Component {
         );
     }
 
+    /** On import button clicked, reset menu state and load components. */
+    _onImportClicked(itemId) {
+        this.setState({ menu: null });
+        this.props.onGetImportComponents(itemId);
+    }
+
     _getCardActions(item) {
         if (!this.props.enableImport) {
             return null;
@@ -114,10 +136,10 @@ class _VersionsView extends React.Component {
         }
 
         let button = null;
-        if (isItemActiveVersion && activeVersion.loading) {
+        if (isItemActiveVersion && this.state.menu !== 'hidden') {
             button = <Button label="Loading..." disabled />;
         } else {
-            const onImportClick = this.props.onGetImportComponents.bind(null, item.id);
+            const onImportClick = this._onImportClicked.bind(null, item.id);
             button = (
                 <Button
                     label="Import"

@@ -1,10 +1,13 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
-import Header from 'component/header';
-import { Button, Menu, MenuItem } from 'react-toolbox';
+import { Button, MenuItem } from 'react-toolbox';
 import { hashHistory } from 'react-router';
 import { connect } from 'react-redux';
+
+import Header from 'component/header';
+import ButtonMenu from 'component/button_menu';
+
 import style from './style.scss';
 
 /** Push new route on item selected. */
@@ -15,73 +18,52 @@ const navigateToMenu = (value) => {
 /**
  * Home header component with actions.
  */
-class _HomeHeader extends React.Component {
-
-    /** Instantiate home header. */
-    constructor() {
-        super();
-        this._onShareClick = this._onShareClick.bind(this);
-    }
-
-    /** Show menu when share button is clicked */
-    _onShareClick() {
-        this.refs.menu.show();
-    }
-
-    /** Return share button */
-    _getShareButton() {
-        if (!this.props.publish && !this.props.quickReview) {
-            return null;
-        }
-
-        const menuItems = [];
-        if (this.props.quickReview) {
-            menuItems.push(
-                <MenuItem
-                    key="quickReview"
-                    value={`quick-review/${this.props.projectId || ''}`}
-                    icon="play_circle_outline"
-                    caption="Quick review"
-                />
-            );
-        }
-        if (this.props.publish) {
-            menuItems.push(
-                <MenuItem
-                    key="publish"
-                    value={`publish/${this.props.context}`}
-                    icon="file_upload"
-                    caption="Publish"
-                />
-            );
-        }
-
-        return (
-            <div className={style.share}>
-                <Button primary label="Share" onClick={this._onShareClick} />
-                <Menu
-                    ref="menu"
-                    className={style.menu}
-                    position="auto"
-                    onSelect={navigateToMenu}
-                    menuRipple
-                >
-                    {menuItems}
-                </Menu>
-            </div>
-        );
-    }
-
-    /** Render component. */
-    render() {
-        return (
-            <Header
-                {...this.props}
-                rightItems={this._getShareButton()}
-                color="dark-200"
+function _HomeHeader(props) {
+    const menuItems = [];
+    if (props.quickReview) {
+        menuItems.push(
+            <MenuItem
+                key="quickReview"
+                value={`quick-review/${props.projectId || ''}`}
+                icon="play_circle_outline"
+                caption="Quick review"
             />
         );
     }
+    if (props.publish) {
+        menuItems.push(
+            <MenuItem
+                key="publish"
+                value={`publish/${props.context}`}
+                icon="file_upload"
+                caption="Publish"
+            />
+        );
+    }
+
+    let shareButton = null;
+    if (menuItems.length) {
+        shareButton = (
+            <ButtonMenu
+                className={style.share}
+                position="topRight"
+                button={
+                    <Button primary label="Share" />
+                }
+                onSelect={navigateToMenu}
+            >
+                    {menuItems}
+            </ButtonMenu>
+        );
+    }
+
+    return (
+        <Header
+            {...props}
+            rightItems={shareButton}
+            color="dark-200"
+        />
+    );
 }
 
 _HomeHeader.propTypes = {
