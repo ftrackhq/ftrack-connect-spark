@@ -1,0 +1,93 @@
+diff -Naur node_modules/history.original/es6/DOMStateStorage.js node_modules/history/es6/DOMStateStorage.js
+--- node_modules/history.original/es6/DOMStateStorage.js	2016-07-21 15:38:31.000000000 +0200
++++ node_modules/history/es6/DOMStateStorage.js	2016-07-21 15:42:21.000000000 +0200
+@@ -15,6 +15,13 @@
+ }
+ 
+ function saveState(key, state) {
++  if (!window.sessionStorage) {
++    // Session storage is not available or hidden.
++    // sessionStorage is undefined in Internet Explorer when served via file protocol.
++    process.env.NODE_ENV !== 'production' ? _warning2['default'](false, '[history] Unable to save state; sessionStorage is not available') : undefined;
++    return;
++  }
++
+   try {
+     if (state == null) {
+       window.sessionStorage.removeItem(createKey(key));
+@@ -64,4 +71,4 @@
+   }
+ 
+   return null;
+-}
+\ No newline at end of file
++}
+diff -Naur node_modules/history.original/es6/DOMUtils.js node_modules/history/es6/DOMUtils.js
+--- node_modules/history.original/es6/DOMUtils.js	2016-07-21 15:38:31.000000000 +0200
++++ node_modules/history/es6/DOMUtils.js	2016-07-21 15:44:32.000000000 +0200
+@@ -33,7 +33,11 @@
+ }
+ 
+ function replaceHashPath(path) {
+-  window.location.replace(window.location.pathname + window.location.search + '#' + path);
++  var i = window.location.href.indexOf('#');
++
++  window.location.replace(
++    window.location.href.slice(0, i >= 0 ? i : 0) + '#' + path
++  );
+ }
+ 
+ function getWindowPath() {
+@@ -71,4 +75,4 @@
+ function supportsGoWithoutReloadUsingHash() {
+   var ua = navigator.userAgent;
+   return ua.indexOf('Firefox') === -1;
+-}
+\ No newline at end of file
++}
+diff -Naur node_modules/history.original/lib/DOMStateStorage.js node_modules/history/lib/DOMStateStorage.js
+--- node_modules/history.original/lib/DOMStateStorage.js	2016-07-21 15:38:31.000000000 +0200
++++ node_modules/history/lib/DOMStateStorage.js	2016-07-21 15:41:21.000000000 +0200
+@@ -21,6 +21,12 @@
+ }
+ 
+ function saveState(key, state) {
++  if (!window.sessionStorage) {
++    // Session storage is not available or hidden.
++    // sessionStorage is undefined in Internet Explorer when served via file protocol.
++    process.env.NODE_ENV !== 'production' ? _warning2['default'](false, '[history] Unable to save state; sessionStorage is not available') : undefined;
++    return;
++  }
+   try {
+     if (state == null) {
+       window.sessionStorage.removeItem(createKey(key));
+@@ -70,4 +76,4 @@
+   }
+ 
+   return null;
+-}
+\ No newline at end of file
++}
+diff -Naur node_modules/history.original/lib/DOMUtils.js node_modules/history/lib/DOMUtils.js
+--- node_modules/history.original/lib/DOMUtils.js	2016-07-21 15:38:31.000000000 +0200
++++ node_modules/history/lib/DOMUtils.js	2016-07-21 15:44:05.000000000 +0200
+@@ -34,7 +34,11 @@
+ }
+ 
+ function replaceHashPath(path) {
+-  window.location.replace(window.location.pathname + window.location.search + '#' + path);
++  var i = window.location.href.indexOf('#');
++
++  window.location.replace(
++    window.location.href.slice(0, i >= 0 ? i : 0) + '#' + path
++  );
+ }
+ 
+ function getWindowPath() {
+@@ -72,4 +76,4 @@
+ function supportsGoWithoutReloadUsingHash() {
+   var ua = navigator.userAgent;
+   return ua.indexOf('Firefox') === -1;
+-}
+\ No newline at end of file
++}
