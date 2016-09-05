@@ -1,4 +1,5 @@
 // :copyright: Copyright (c) 2016 ftrack
+/* eslint-disable react/jsx-no-bind */
 
 import React from 'react';
 import { IconMenu, MenuItem } from 'react-toolbox/lib/menu';
