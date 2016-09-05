@@ -43,7 +43,9 @@ class EditableNote extends React.Component {
         } = this.props;
 
         const actions = [
+            // eslint-disable-next-line react/jsx-no-bind
             { label: 'Cancel', onClick: this.handleDialog.bind(this, false) },
+             // eslint-disable-next-line react/jsx-no-bind
             { label: 'Remove', onClick: this.handleDialog.bind(this, true) },
         ];
 

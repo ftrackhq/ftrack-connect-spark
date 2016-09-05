@@ -182,7 +182,15 @@
         }
     </style>
     <!--/ End styling for page loader -->
-
+    <style type="text/css">
+      #console {
+        position: fixed;
+        top: 0; bottom: 0; left: 0; right: 0;
+        z-index: 100000;
+        background: green;
+        opacity: 0.75;
+      }
+    </style>
 </head>
 
 <body>
@@ -193,7 +201,27 @@
             </svg>
         </div>
     </div>
+  <pre id="console">
+    JS Errors
+    =========
+  </pre>
 
+<script type="text/javascript">
+  var consoleEl = document.getElementById('console');
+  window.console = {};
+  ['log', 'debug', 'info', 'warn', 'error'].forEach(function (level) {
+    window.console[level] = function () {
+      var output = Array.prototype.slice.call(arguments).join(', ');
+      consoleEl.innerText += level + ': ' + output + '\n';
+    }
+  });
+
+  window.onerror = function (errorMsg, url, line, column, errorObject) {
+    consoleEl.innerText += 'Error: ' + errorMsg + '\n';
+    consoleEl.innerText += 'Error: ' + url + '@' + line + ',' + column + '\n';
+    consoleEl.innerText += 'Error: ' + errorObject.stack + '\n';
+  }
+</script>
     <script>__REACT_DEVTOOLS_GLOBAL_HOOK__ = parent.__REACT_DEVTOOLS_GLOBAL_HOOK__</script>
     <script type="text/javascript" src="../assets/cinema4d.bundle.js"></script>
 </body>

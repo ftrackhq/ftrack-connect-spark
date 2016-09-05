@@ -9,6 +9,8 @@ export { Session } from './session';
 /** Shared API session instance. */
 export let session = null;
 
+const logger = console;
+
 /**
  * Configure shared session instance.
  *
@@ -17,6 +19,8 @@ export let session = null;
 export function configureSharedApiSession(
     serverUrl, apiUser, apiKey
 ) {
+    logger.warn('Herro? configureSharedApiSession');
+    logger.info('configureSharedApiSession', serverUrl, apiUser, apiKey);
     session = new Session(
         serverUrl, apiUser, apiKey, { autoConnectEventHub: true }
     );

@@ -1,7 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-import loglevel from 'loglevel';
-const logger = loglevel.getLogger('cinema4d:mediator');
+const logger = console;
 
 import { session } from '../../ftrack_api';
 import Event from '../../ftrack_api/event';
