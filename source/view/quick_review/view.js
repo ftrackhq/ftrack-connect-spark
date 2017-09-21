@@ -152,10 +152,10 @@ class _QuickReviewView extends React.Component {
         this.props.resetForm();
     }
 
-    /** Trigger handleSubmit with values on submission. */
+    /** Trigger onQuickReviewSubmit with values on submission. */
     _onSubmit(e) {
         e.preventDefault();
-        this.props.handleSubmit(this.props.values);
+        this.props.onQuickReviewSubmit(this.props.values);
     }
 
     /** Return if submit should be disabled */
@@ -552,7 +552,7 @@ _QuickReviewView.propTypes = {
     params: React.PropTypes.object.isRequired,
     values: React.PropTypes.object.isRequired,
     fields: React.PropTypes.object.isRequired,
-    handleSubmit: React.PropTypes.func.isRequired,
+    onQuickReviewSubmit: React.PropTypes.func.isRequired,
     resetForm: React.PropTypes.func.isRequired,
     submitting: React.PropTypes.bool.isRequired,
     projects: React.PropTypes.object,
@@ -561,7 +561,7 @@ _QuickReviewView.propTypes = {
 
 function mapDispatchToProps(dispatch) {
     return {
-        handleSubmit(values) {
+        onQuickReviewSubmit(values) {
             dispatch(quickReviewSubmit(values));
         },
         createProject(callback) {
@@ -603,9 +603,9 @@ const QuickReviewView = reduxForm({
                         },
                     },
                 }]).then(
-                    (data) => {
+                    (responses) => {
                         const result = {};
-                        if (data.result === false) {
+                        if (responses[0].result === false) {
                             result.project = (
                                 'You\'re not allowed to create review sessions ' +
                                 'on this project.'
