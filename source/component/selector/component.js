@@ -35,6 +35,7 @@ class Selector extends React.Component {
         this.setState({ loading: true });
         query.then((data) => {
             this.setState({ source: data, loading: false });
+            this._onChange(this.state.value);
         });
     }
 
