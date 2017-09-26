@@ -150,7 +150,7 @@ The project directory structure looks like the following::
   ├── coverage               # Code coverage reports
   ├── dist                   # Built application for distribution.
   ├── karma.conf.js          # Karma test runner configuration.
-  ├── npm-shrinkwrap.json    # Locked package dependencies.
+  ├── yarn.lock              # Locked package dependencies.
   ├── package.json           # Package configuration and dependencies.
   ├── server.js              # Webpack dev server entry point
   ├── source                 # Application source code
@@ -244,26 +244,3 @@ Redux development tools
 provides `Redux DevTools <https://github.com/gaearon/redux-devtools>`_ as a
 Chrome extension. This allows you to inspect redux actions and states and
 go back in time and replay actions.
-
-Updating dependencies
-=====================
-
-Use `npm-check-updates <https://www.npmjs.com/package/npm-check-updates>`_ to
-suggest the latest versions::
-
-    $ npm-check-updates
-
-Update package.json with new versions if you agree::
-
-    $ npm-check-updates -u
-
-Do a clean install::
-
-    $ rm -rf node_modules
-    $ npm install
-
-Use `npm shrinkwrap <https://docs.npmjs.com/cli/shrinkwrap>`_ exact versions
-to npm config file `npm-shrinkwrap.json`::
-
-    $ rm npm-shrinkwrap.json
-    $ npm shrinkwrap
