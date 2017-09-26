@@ -2,9 +2,9 @@
 
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('cinema4d:mediator');
+import { Event } from 'ftrack-javascript-api';
 
 import { session } from '../../ftrack_api';
-import Event from '../../ftrack_api/event';
 import { showProgress } from '../lib/share';
 
 import AbstractMediator from '../abstract_mediator';

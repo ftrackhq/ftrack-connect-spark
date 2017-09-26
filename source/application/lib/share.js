@@ -1,10 +1,9 @@
 // :copyright: Copyright (c) 2016 ftrack
 import uuid from 'uuid';
 
-import { operation } from 'ftrack-javascript-api';
+import { operation, Event } from 'ftrack-javascript-api';
 
 import { session } from '../../ftrack_api';
-import Event from '../../ftrack_api/event';
 import { CreateComponentsHookError } from '../../error';
 
 import { store, mediator } from '../';

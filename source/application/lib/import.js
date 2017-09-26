@@ -1,7 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import { session } from '../../ftrack_api';
-import Event from '../../ftrack_api/event';
+import { Event } from 'ftrack-javascript-api';
 
 
 /** Resolve component paths via events. */
