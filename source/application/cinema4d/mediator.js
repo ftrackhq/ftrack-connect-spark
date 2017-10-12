@@ -45,17 +45,19 @@ export class Cinema4dMediator extends AbstractMediator {
      * Send RPC event executing *method* in `ftrack-connect-cinema-4d`.
      *
      * *data* should be an object of event data.
+     * *eventOptions* should be an object of additional options to event
+     * publish such as timeout.
      *
      * Returns promise which will be resolved with event reply.
      */
-    _rpcEvent(method, data = {}, { timeout = 30 }) {
+    _rpcEvent(method, data = {}, eventOptions = {}) {
         const event = new Event(
             `ftrack.connect-cinema-4d.${method}`,
             data,
             { target: this._getTarget() }
         );
 
-        let promise = session.eventHub.publishAndWaitForReply(event, { timeout });
+        let promise = session.eventHub.publishAndWaitForReply(event, eventOptions);
         promise = promise.then((reply) => {
             const response = reply.data;
             if (response.exception) {
