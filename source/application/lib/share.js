@@ -42,9 +42,9 @@ export function showFailure(options) {
 }
 
 export function ensureConnectIsRunning() {
-    return session.eventHub.publish(
+    return session.eventHub.publishAndWaitForReply(
         new Event('ftrack.connect.discover', {}),
-        { reply: true, timeout: 15 }
+        { timeout: 15 }
     ).then((isConnectRunning) => {
         logger.debug('Connect discover: ', isConnectRunning);
         return Promise.resolve(true);
@@ -336,15 +336,19 @@ export function createComponents(versionId, media) {
         filename, components
     ).then((result) => {
         logger.info('Creating components from config', result);
-        return session.eventHub.publish(
+        return session.eventHub.publishAndWaitForReply(
             new Event(
                 'ftrack.connect.publish-components',
                 { components_config: result }
             ),
-            { reply: true, timeout: 3600 }
+            { timeout: 3600 }
         );
     }).then((reply) => {
-        if (!reply.data.success) {
+        if (!reply || !reply.data) {
+            logger.info('Invalid response from publish-components', reply);
+            const error = new CreateComponentsHookError('Invalid response from publish-components');
+            return Promise.reject(error);
+        } else if (!reply.data.success) {
             const error = new CreateComponentsHookError(
                 `${reply.data.error_result.exception}: ${reply.data.error_result.content}`
             );

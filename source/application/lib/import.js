@@ -11,8 +11,8 @@ export function resolveComponentPaths(components) {
             'ftrack.location.request-resolve',
             { componentId: component.id, locationName: null, platform: 'Linux' }
         );
-        const reply = session.eventHub.publish(
-            event, { reply: true, timeout: 10 }
+        const reply = session.eventHub.publishAndWaitForReply(
+            event, { timeout: 10 }
         );
 
         const item = reply.then(

@@ -48,14 +48,14 @@ export class Cinema4dMediator extends AbstractMediator {
      *
      * Returns promise which will be resolved with event reply.
      */
-    _rpcEvent(method, data = {}) {
+    _rpcEvent(method, data = {}, { timeout = 30 }) {
         const event = new Event(
             `ftrack.connect-cinema-4d.${method}`,
             data,
             { target: this._getTarget() }
         );
 
-        let promise = session.eventHub.publish(event, { reply: true });
+        let promise = session.eventHub.publishAndWaitForReply(event, { timeout });
         promise = promise.then((reply) => {
             const response = reply.data;
             if (response.exception) {
@@ -124,7 +124,9 @@ export class Cinema4dMediator extends AbstractMediator {
         showProgress({ header: 'Publishing...', message });
 
         const promise = this._rpcEvent(
-            'publish_media', values
+            'publish_media',
+            values,
+            { timeout: 3600 } // 1 hour
         ).then((reply) => {
             logger.info('Finished publish', reply);
             return Promise.resolve(reply);
