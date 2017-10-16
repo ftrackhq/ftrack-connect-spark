@@ -4,6 +4,7 @@ import React from 'react';
 import { reduxForm } from 'redux-form';
 import { hashHistory } from 'react-router';
 import omit from 'lodash/omit';
+import isEqual from 'lodash/isEqual';
 
 import Input from 'react-toolbox/lib/input';
 
@@ -68,8 +69,8 @@ class _PublishView extends React.Component {
     componentWillReceiveProps(nextProps) {
         this._updateContext(nextProps.params.context);
         if (
-            nextProps.options !== this.props.options ||
-            nextProps.fields.options !== this.props.fields.options
+            !isEqual(nextProps.options, this.props.options) ||
+            !isEqual(nextProps.fields.options, this.props.fields.options)
         ) {
             this._updateOptions(nextProps.options);
         }
