@@ -1,0 +1,102 @@
+diff -Naru history/es6/DOMStateStorage.js node_modules/history/es6/DOMStateStorage.js
+--- history/es6/DOMStateStorage.js	2017-10-16 15:31:45.000000000 +0200
++++ node_modules/history/es6/DOMStateStorage.js	2016-05-26 17:57:10.000000000 +0200
+@@ -15,7 +15,6 @@
+ }
+ 
+ function saveState(key, state) {
+-  if (!window.sessionStorage) { return ; }
+   try {
+     if (state == null) {
+       window.sessionStorage.removeItem(createKey(key));
+@@ -65,4 +64,4 @@
+   }
+ 
+   return null;
+-}
++}
+\ No newline at end of file
+diff -Naru history/es6/DOMUtils.js node_modules/history/es6/DOMUtils.js
+--- history/es6/DOMUtils.js	2017-10-16 15:31:45.000000000 +0200
++++ node_modules/history/es6/DOMUtils.js	2016-05-26 17:57:10.000000000 +0200
+@@ -33,8 +33,7 @@
+ }
+ 
+ function replaceHashPath(path) {
+-  var hashIndex = window.location.href.indexOf('#');
+-  window.location.replace(window.location.href.slice(0, hashIndex >= 0 ? hashIndex : 0) + '#' + path);
++  window.location.replace(window.location.pathname + window.location.search + '#' + path);
+ }
+ 
+ function getWindowPath() {
+@@ -72,4 +71,4 @@
+ function supportsGoWithoutReloadUsingHash() {
+   var ua = navigator.userAgent;
+   return ua.indexOf('Firefox') === -1;
+-}
++}
+\ No newline at end of file
+diff -Naru history/lib/DOMStateStorage.js node_modules/history/lib/DOMStateStorage.js
+--- history/lib/DOMStateStorage.js	2017-10-16 15:31:45.000000000 +0200
++++ node_modules/history/lib/DOMStateStorage.js	2016-05-26 17:57:08.000000000 +0200
+@@ -21,7 +21,6 @@
+ }
+ 
+ function saveState(key, state) {
+-  if (!window.sessionStorage) { return ; }
+   try {
+     if (state == null) {
+       window.sessionStorage.removeItem(createKey(key));
+@@ -71,4 +70,4 @@
+   }
+ 
+   return null;
+-}
++}
+\ No newline at end of file
+diff -Naru history/lib/DOMUtils.js node_modules/history/lib/DOMUtils.js
+--- history/lib/DOMUtils.js	2017-10-16 15:31:45.000000000 +0200
++++ node_modules/history/lib/DOMUtils.js	2016-05-26 17:57:08.000000000 +0200
+@@ -34,8 +34,7 @@
+ }
+ 
+ function replaceHashPath(path) {
+-  var hashIndex = window.location.href.indexOf('#');
+-  window.location.replace(window.location.href.slice(0, hashIndex >= 0 ? hashIndex : 0) + '#' + path);
++  window.location.replace(window.location.pathname + window.location.search + '#' + path);
+ }
+ 
+ function getWindowPath() {
+@@ -73,4 +72,4 @@
+ function supportsGoWithoutReloadUsingHash() {
+   var ua = navigator.userAgent;
+   return ua.indexOf('Firefox') === -1;
+-}
++}
+\ No newline at end of file
+diff -Naru history/modules/DOMStateStorage.js node_modules/history/modules/DOMStateStorage.js
+--- history/modules/DOMStateStorage.js	2017-10-16 15:31:45.000000000 +0200
++++ node_modules/history/modules/DOMStateStorage.js	2016-05-26 17:54:39.000000000 +0200
+@@ -14,7 +14,6 @@
+ }
+ 
+ export function saveState(key, state) {
+-  if (!window.sessionStorage) { return ; }
+   try {
+     if (state == null) {
+       window.sessionStorage.removeItem(createKey(key))
+diff -Naru history/modules/DOMUtils.js node_modules/history/modules/DOMUtils.js
+--- history/modules/DOMUtils.js	2017-10-16 15:31:45.000000000 +0200
++++ node_modules/history/modules/DOMUtils.js	2016-05-26 17:54:40.000000000 +0200
+@@ -21,8 +21,9 @@
+ }
+ 
+ export function replaceHashPath(path) {
+-  var hashIndex = window.location.href.indexOf('#');
+-  window.location.replace(window.location.href.slice(0, hashIndex >= 0 ? hashIndex : 0) + '#' + path);
++  window.location.replace(
++    window.location.pathname + window.location.search + '#' + path
++  )
+ }
+ 
+ export function getWindowPath() {
