@@ -1,7 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import { session } from '../../ftrack_api';
-import Event from '../../ftrack_api/event';
+import { Event } from 'ftrack-javascript-api';
 
 
 /** Resolve component paths via events. */
@@ -11,8 +11,8 @@ export function resolveComponentPaths(components) {
             'ftrack.location.request-resolve',
             { componentId: component.id, locationName: null, platform: 'Linux' }
         );
-        const reply = session.eventHub.publish(
-            event, { reply: true, timeout: 10 }
+        const reply = session.eventHub.publishAndWaitForReply(
+            event, { timeout: 10 }
         );
 
         const item = reply.then(
@@ -60,7 +60,7 @@ export function loadComponents(versionId) {
         `version_id is ${versionId} order by name, file_type, id`
     );
 
-    const request = session._query(queryString);
+    const request = session.query(queryString);
     const components = request.then(
         (response) => Promise.resolve(
             response.data.map(component => component)

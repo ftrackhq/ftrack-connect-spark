@@ -8,14 +8,15 @@ import style from './style.scss';
 
 /** Button menu component used to display a button that trigger a menu. */
 export default class ButtonMenu extends React.Component {
-
-    /** Show the menu. */
-    showMenu() {
-        this.refs.menu.show();
+    constructor() {
+        super();
+        this.state = { active: false };
+        this.hideMenu = this.setState.bind(this, { active: false });
+        this.showMenu = this.setState.bind(this, { active: true });
     }
 
     render() {
-        const { children, onSelect, button, className } = this.props;
+        const { children, onSelect, button, className, position } = this.props;
         const _classNames = classNames(style.wrapper, className);
         const clonedButton = React.cloneElement(
             button,
@@ -28,8 +29,9 @@ export default class ButtonMenu extends React.Component {
             <div className={_classNames}>
                 {clonedButton}
                 <Menu
-                    position="auto"
-                    ref="menu"
+                    active={this.state.active}
+                    onHide={this.hideMenu}
+                    position={position}
                     onSelect={onSelect}
                     menuRipple
                     className={style.menu}
@@ -44,6 +46,7 @@ export default class ButtonMenu extends React.Component {
 ButtonMenu.propTypes = {
     className: React.PropTypes.string,
     button: React.PropTypes.node.isRequired,
+    position: React.PropTypes.string,
     children: React.PropTypes.array,
     onSelect: React.PropTypes.func.isRequired,
 };

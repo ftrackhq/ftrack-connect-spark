@@ -1,11 +1,9 @@
 // :copyright: Copyright (c) 2016 ftrack
 import uuid from 'uuid';
 
+import { operation, Event } from 'ftrack-javascript-api';
+
 import { session } from '../../ftrack_api';
-import {
-    createOperation, updateOperation,
-} from '../../ftrack_api/operation';
-import Event from '../../ftrack_api/event';
 import { CreateComponentsHookError } from '../../error';
 
 import { store, mediator } from '../';
@@ -44,9 +42,9 @@ export function showFailure(options) {
 }
 
 export function ensureConnectIsRunning() {
-    return session.eventHub.publish(
+    return session.eventHub.publishAndWaitForReply(
         new Event('ftrack.connect.discover', {}),
-        { reply: true, timeout: 15 }
+        { timeout: 15 }
     ).then((isConnectRunning) => {
         logger.debug('Connect discover: ', isConnectRunning);
         return Promise.resolve(true);
@@ -76,7 +74,7 @@ export function getAsset(contextId, name, typeId) {
         limit 1`
     );
 
-    const request = session._query(query);
+    const request = session.query(query);
     const createOperations = [];
     const promise = request.then((response) => {
         logger.info(response);
@@ -88,7 +86,7 @@ export function getAsset(contextId, name, typeId) {
             logger.info('No asset ');
 
             assetId = uuid.v4();
-            createOperations.push(createOperation('Asset', {
+            createOperations.push(operation.create('Asset', {
                 id: assetId,
                 name,
                 context_id: contextId,
@@ -115,7 +113,7 @@ export function getUploadMetadata(media) {
         const componentId = uuid.v4();
         result[componentId] = Object.assign({}, file);
         operations.push(
-            createOperation('FileComponent', {
+            operation.create('FileComponent', {
                 id: componentId,
                 name: file.name,
                 size: file.size,
@@ -128,7 +126,7 @@ export function getUploadMetadata(media) {
         });
     }
 
-    const promise = session._call(operations).then((responses) => {
+    const promise = session.call(operations).then((responses) => {
         logger.debug('Get upload metadata responses', responses);
         for (let i = 0; i < responses.length; i += 2) {
             const componentResult = responses[i].data;
@@ -175,7 +173,7 @@ export function finalizeUpload(uploadMeta) {
 
     for (const componentId of componentIds) {
         operations.push(
-            createOperation('ComponentLocation', {
+            operation.create('ComponentLocation', {
                 component_id: componentId,
                 location_id: serverLocationId,
                 resource_identifier: componentId,
@@ -185,11 +183,11 @@ export function finalizeUpload(uploadMeta) {
         const componentData = uploadMeta[componentId];
         if (componentData.use === 'video-review') {
             const metadata = componentData.metadata;
-            operations.push(updateOperation(
+            operations.push(operation.update(
                 'FileComponent', [componentId], { name: 'ftrackreview-mp4' }
             ));
             operations.push(
-                createOperation('Metadata', {
+                operation.create('Metadata', {
                     parent_id: componentId,
                     parent_type: 'FileComponent',
                     key: 'ftr_meta',
@@ -203,11 +201,11 @@ export function finalizeUpload(uploadMeta) {
                 })
             );
         } else if (componentData.use === 'image-review') {
-            operations.push(updateOperation(
+            operations.push(operation.update(
                 'FileComponent', [componentId], { name: 'ftrackreview-image' }
             ));
             operations.push(
-                createOperation('Metadata', {
+                operation.create('Metadata', {
                     parent_id: componentId,
                     parent_type: 'FileComponent',
                     key: 'ftr_meta',
@@ -217,7 +215,7 @@ export function finalizeUpload(uploadMeta) {
         }
     }
 
-    return session._call(operations);
+    return session.call(operations);
 }
 
 /**
@@ -264,14 +262,14 @@ export function updateComponentVersions(componentVersions) {
     const operations = [];
     for (const componentVersion of componentVersions) {
         // TODO: Update this once components are being encoded.
-        operations.push(updateOperation(
+        operations.push(operation.update(
             'FileComponent', [componentVersion.componentId], {
                 version_id: componentVersion.versionId,
             }
         ));
     }
     logger.debug('Update component operations', operations);
-    const promise = session._call(operations).then((responses) => {
+    const promise = session.call(operations).then((responses) => {
         logger.debug('Update component responses', responses);
         return true;
     });
@@ -296,7 +294,7 @@ export function createVersion(values, thumbnailId) {
     ).then(([assetId, createAssetsOperations]) => {
         const operations = [
             ...createAssetsOperations,
-            createOperation('AssetVersion', {
+            operation.create('AssetVersion', {
                 id: versionId,
                 thumbnail_id: thumbnailId,
                 asset_id: assetId,
@@ -307,7 +305,7 @@ export function createVersion(values, thumbnailId) {
         ];
 
         logger.info('Create version operations', operations);
-        return session._call(operations);
+        return session.call(operations);
     }).then((responses) => {
         logger.info('Create version responses', responses);
         return Promise.resolve(versionId);
@@ -338,15 +336,19 @@ export function createComponents(versionId, media) {
         filename, components
     ).then((result) => {
         logger.info('Creating components from config', result);
-        return session.eventHub.publish(
+        return session.eventHub.publishAndWaitForReply(
             new Event(
                 'ftrack.connect.publish-components',
                 { components_config: result }
             ),
-            { reply: true, timeout: 3600 }
+            { timeout: 3600 }
         );
     }).then((reply) => {
-        if (!reply.data.success) {
+        if (!reply || !reply.data) {
+            logger.info('Invalid response from publish-components', reply);
+            const error = new CreateComponentsHookError('Invalid response from publish-components');
+            return Promise.reject(error);
+        } else if (!reply.data.success) {
             const error = new CreateComponentsHookError(
                 `${reply.data.error_result.exception}: ${reply.data.error_result.content}`
             );

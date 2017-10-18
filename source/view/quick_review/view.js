@@ -1,7 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
-import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 import { debounce } from 'lodash/function';
 import { without } from 'lodash/array';
@@ -17,7 +16,7 @@ import EntityAvatar from 'component/entity_avatar';
 import Form from 'component/form';
 import Selector from 'component/selector';
 import { session } from '../../ftrack_api';
-import { queryOperation } from '../../ftrack_api/operation';
+import { operation } from 'ftrack-javascript-api';
 import {
     isEmptyString,
 } from '../../util/validation';
@@ -86,7 +85,7 @@ ResultList.propTypes = {
 };
 
 /** Quick review view */
-class QuickReviewView extends React.Component {
+class _QuickReviewView extends React.Component {
     constructor() {
         super();
         this.state = {
@@ -109,7 +108,7 @@ class QuickReviewView extends React.Component {
         this._renderCollaborators = this._renderCollaborators.bind(this);
         this._onCollaboratorsKeyDown = this._onCollaboratorsKeyDown.bind(this);
 
-        const _projects = session._query(
+        const _projects = session.query(
             'select id, full_name from Project where status is "active"'
         );
 
@@ -121,7 +120,7 @@ class QuickReviewView extends React.Component {
             return result;
         });
 
-        session._call([{
+        session.call([{
             action: '_authorize_operation',
             data: {
                 action: 'create',
@@ -153,10 +152,10 @@ class QuickReviewView extends React.Component {
         this.props.resetForm();
     }
 
-    /** Trigger handleSubmit with values on submission. */
+    /** Trigger onQuickReviewSubmit with values on submission. */
     _onSubmit(e) {
         e.preventDefault();
-        this.props.handleSubmit(this.props.values);
+        this.props.onQuickReviewSubmit(this.props.values);
     }
 
     /** Return if submit should be disabled */
@@ -258,9 +257,9 @@ class QuickReviewView extends React.Component {
             'and is_active is true'
         );
 
-        const promise = session._call([
-            queryOperation(inviteeQuery),
-            queryOperation(userQuery),
+        const promise = session.call([
+            operation.query(inviteeQuery),
+            operation.query(userQuery),
         ]);
 
         promise.then((responses) => {
@@ -545,15 +544,15 @@ class QuickReviewView extends React.Component {
     }
 }
 
-QuickReviewView.contextTypes = {
+_QuickReviewView.contextTypes = {
     router: React.PropTypes.object.isRequired,
 };
 
-QuickReviewView.propTypes = {
+_QuickReviewView.propTypes = {
     params: React.PropTypes.object.isRequired,
     values: React.PropTypes.object.isRequired,
     fields: React.PropTypes.object.isRequired,
-    handleSubmit: React.PropTypes.func.isRequired,
+    onQuickReviewSubmit: React.PropTypes.func.isRequired,
     resetForm: React.PropTypes.func.isRequired,
     submitting: React.PropTypes.bool.isRequired,
     projects: React.PropTypes.object,
@@ -562,7 +561,7 @@ QuickReviewView.propTypes = {
 
 function mapDispatchToProps(dispatch) {
     return {
-        handleSubmit(values) {
+        onQuickReviewSubmit(values) {
             dispatch(quickReviewSubmit(values));
         },
         createProject(callback) {
@@ -571,12 +570,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-QuickReviewView = connect(
-    null,
-    mapDispatchToProps
-)(QuickReviewView);
-
-QuickReviewView = reduxForm({
+const QuickReviewView = reduxForm({
     form: 'quickReview',
     fields: [
         'name', 'project', 'collaborator', 'collaborators', 'description',
@@ -596,7 +590,7 @@ QuickReviewView = reduxForm({
 
         return new Promise(
             (resolve) => {
-                session._call([{
+                session.call([{
                     action: '_authorize_operation',
                     data: {
                         action: 'create',
@@ -609,9 +603,9 @@ QuickReviewView = reduxForm({
                         },
                     },
                 }]).then(
-                    (data) => {
+                    (responses) => {
                         const result = {};
-                        if (data.result === false) {
+                        if (responses[0].result === false) {
                             result.project = (
                                 'You\'re not allowed to create review sessions ' +
                                 'on this project.'
@@ -623,6 +617,6 @@ QuickReviewView = reduxForm({
             }
         );
     },
-})(QuickReviewView);
+}, null, mapDispatchToProps)(_QuickReviewView);
 
 export default QuickReviewView;

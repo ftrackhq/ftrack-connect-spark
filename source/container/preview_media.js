@@ -26,9 +26,9 @@ function PreviewMediaComponents(props) {
                 component => (
                     <PreviewImage
                         key={component.id}
-                        url={session.getComponent(component.id)}
+                        url={session.getComponentUrl(component.id)}
                         name={`${component.name}${component.file_type}`}
-                        downloadUrl={session.getComponent(component.id)}
+                        downloadUrl={session.getComponentUrl(component.id)}
                     />
                 )
             )

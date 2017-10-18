@@ -1,8 +1,8 @@
 import { takeEvery } from 'redux-saga';
 import actions from 'action/application';
+import { Event } from 'ftrack-javascript-api';
 
 import { session } from '../../../ftrack_api';
-import Event from '../../../ftrack_api/event';
 
 function* showDebugMessage(action) {
     session.eventHub.publish(

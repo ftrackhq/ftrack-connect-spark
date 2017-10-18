@@ -12,7 +12,10 @@ import configureStore from '../store/configure_store';
 import makeRoutes from '../route';
 import RootContainer from 'container/root';
 
+// eslint-disable-next-line import/no-mutable-exports
 export let mediator = null;
+
+// eslint-disable-next-line import/no-mutable-exports
 export let store = null;
 
 export default function createApplication({

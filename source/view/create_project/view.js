@@ -1,7 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
-import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 import moment from 'moment';
 
@@ -43,13 +42,13 @@ const validateForm = ({ name, workflow, startDate, dueDate }) => {
 
 /** Quick review view */
 /* eslint-disable react/prefer-stateless-function */
-class CreateProjectView extends React.Component {
+class _CreateProjectView extends React.Component {
     constructor() {
         super();
         this._onCancelClick = this._onCancelClick.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
         this._isSubmitDisabled = this._isSubmitDisabled.bind(this);
-        const _workflows = session._query(
+        const _workflows = session.query(
             'select id, name from ProjectSchema'
         );
 
@@ -132,11 +131,11 @@ class CreateProjectView extends React.Component {
     }
 }
 
-CreateProjectView.contextTypes = {
+_CreateProjectView.contextTypes = {
     router: React.PropTypes.object.isRequired,
 };
 
-CreateProjectView.propTypes = {
+_CreateProjectView.propTypes = {
     values: React.PropTypes.object.isRequired,
     fields: React.PropTypes.object.isRequired,
     handleSubmit: React.PropTypes.func.isRequired,
@@ -153,12 +152,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-CreateProjectView = connect(
-    null,
-    mapDispatchToProps
-)(CreateProjectView);
-
-CreateProjectView = reduxForm({
+const CreateProjectView = reduxForm({
     form: 'createProject',
     fields: [
         'name', 'workflow', 'startDate', 'dueDate',
@@ -168,6 +162,6 @@ CreateProjectView = reduxForm({
         dueDate: moment().add(1, 'month').toDate(),
     },
     validateForm,
-})(CreateProjectView);
+}, null, mapDispatchToProps)(_CreateProjectView);
 
 export default CreateProjectView;

@@ -43,6 +43,7 @@ function EnumeratorField({ config, field = {} }) {
         <Autocomplete
             direction="down"
             multiple={false}
+            showSuggestionsWhenValueIsSet
             source={source}
             label={config.label}
             name={config.name}

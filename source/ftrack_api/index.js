@@ -1,12 +1,9 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-import Session from './session';
-
-
-export { Event, EventHub } from './event';
-export { Session } from './session';
+import { Session } from 'ftrack-javascript-api';
 
 /** Shared API session instance. */
+// eslint-disable-next-line import/no-mutable-exports
 export let session = null;
 
 /**
@@ -18,7 +15,13 @@ export function configureSharedApiSession(
     serverUrl, apiUser, apiKey
 ) {
     session = new Session(
-        serverUrl, apiUser, apiKey, { autoConnectEventHub: true }
+        serverUrl, apiUser, apiKey, {
+            autoConnectEventHub: true,
+            eventHubOptions: {
+                applicationId: 'ftrack.client.spark',
+            },
+        }
     );
-    return session.initialize();
+
+    return session.initializing;
 }

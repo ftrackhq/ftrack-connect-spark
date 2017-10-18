@@ -9,7 +9,7 @@ import ContextCard from 'component/context_card';
 import ContextBar from 'component/context_bar';
 import RouteTabs from 'container/route_tabs';
 import { session } from '../../ftrack_api';
-import { updateOperation } from '../../ftrack_api/operation';
+import { operation } from 'ftrack-javascript-api';
 import { notificationWarning } from 'action/notification';
 
 import style from './style.scss';
@@ -40,9 +40,9 @@ class _ContextView extends React.Component {
     _onEntityUpdate(newEntity) {
         const oldEntity = this.state.entity;
 
-        const response = session._call(
+        const response = session.call(
             [
-                updateOperation(
+                operation.update(
                     newEntity.__entity_type__, [newEntity.id],
                     Object.assign({}, { status: newEntity.status })
                 ),
@@ -99,7 +99,7 @@ class _ContextView extends React.Component {
             queryString = this._getTypedContextQuery();
         }
 
-        const promise = session._query(queryString).then((result) => {
+        const promise = session.query(queryString).then((result) => {
             const entity = result.data[0];
 
             if (!entity) {

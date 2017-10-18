@@ -1,6 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { Input, ProgressBar, Button } from 'react-toolbox';
 import clickOutSide from 'react-click-outside';
 
@@ -11,6 +12,7 @@ class _NoteForm extends React.Component {
 
     constructor(props) {
         super(props);
+        this.multiline = true;
         this.state = {
             content: props.content || undefined,
         };
@@ -18,7 +20,8 @@ class _NoteForm extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         if (this.refs.content && nextProps.autoFocus && !this.props.autoFocus) {
-            this.refs.content.focus();
+            const element = this.multiline ? 'textarea' : 'input';
+            ReactDOM.findDOMNode(this).querySelector(element).focus();
         }
         this.setState({ content: nextProps.content });
     }
@@ -56,14 +59,13 @@ class _NoteForm extends React.Component {
             <div className={_classNames.join(' ')}>
                 <Input
                     value={content}
-                    ref="content"
                     label={
                         edit ?
                         'Update your note...' : 'Write a comment...'
                     }
                     disabled={pending}
                     name="content"
-                    multiline
+                    multiline={this.multiline}
                     onChange={
                         (value) => this.setState({ content: value })
                     }

@@ -4,6 +4,7 @@ import React from 'react';
 import { reduxForm } from 'redux-form';
 import { hashHistory } from 'react-router';
 import omit from 'lodash/omit';
+import isEqual from 'lodash/isEqual';
 
 import Input from 'react-toolbox/lib/input';
 
@@ -33,7 +34,7 @@ const validateForm = (values) => {
 
 
 /** Quick review view */
-class PublishView extends React.Component {
+class _PublishView extends React.Component {
     constructor() {
         super();
         this.state = { link: '', context: null };
@@ -43,7 +44,7 @@ class PublishView extends React.Component {
         this._updateContext = this._updateContext.bind(this);
         this._link = '';
 
-        this._assetTypes = session._query(
+        this._assetTypes = session.query(
             'select id, name from AssetType'
         ).then((data) => data.data.reduce(
             (accumulator, item) => (
@@ -68,8 +69,8 @@ class PublishView extends React.Component {
     componentWillReceiveProps(nextProps) {
         this._updateContext(nextProps.params.context);
         if (
-            nextProps.options !== this.props.options ||
-            nextProps.fields.options !== this.props.fields.options
+            !isEqual(nextProps.options, this.props.options) ||
+            !isEqual(nextProps.fields.options, this.props.fields.options)
         ) {
             this._updateOptions(nextProps.options);
         }
@@ -202,11 +203,11 @@ class PublishView extends React.Component {
     }
 }
 
-PublishView.contextTypes = {
+_PublishView.contextTypes = {
     router: React.PropTypes.object.isRequired,
 };
 
-PublishView.propTypes = {
+_PublishView.propTypes = {
     values: React.PropTypes.object.isRequired,
     fields: React.PropTypes.object.isRequired,
     submitForm: React.PropTypes.func.isRequired,
@@ -221,7 +222,7 @@ PublishView.propTypes = {
     options: React.PropTypes.array,
 };
 
-PublishView.defaultProps = {
+_PublishView.defaultProps = {
     options: [],
     params: {
         context: null,
@@ -266,8 +267,8 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-PublishView = reduxForm(
+const PublishView = reduxForm(
     formOptions, mapStateToProps, mapDispatchToProps
-)(PublishView);
+)(_PublishView);
 
 export default PublishView;

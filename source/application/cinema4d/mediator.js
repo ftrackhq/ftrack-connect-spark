@@ -2,9 +2,9 @@
 
 import loglevel from 'loglevel';
 const logger = loglevel.getLogger('cinema4d:mediator');
+import { Event } from 'ftrack-javascript-api';
 
 import { session } from '../../ftrack_api';
-import Event from '../../ftrack_api/event';
 import { showProgress } from '../lib/share';
 
 import AbstractMediator from '../abstract_mediator';
@@ -45,17 +45,19 @@ export class Cinema4dMediator extends AbstractMediator {
      * Send RPC event executing *method* in `ftrack-connect-cinema-4d`.
      *
      * *data* should be an object of event data.
+     * *eventOptions* should be an object of additional options to event
+     * publish such as timeout.
      *
      * Returns promise which will be resolved with event reply.
      */
-    _rpcEvent(method, data = {}) {
+    _rpcEvent(method, data = {}, eventOptions = {}) {
         const event = new Event(
             `ftrack.connect-cinema-4d.${method}`,
             data,
             { target: this._getTarget() }
         );
 
-        let promise = session.eventHub.publish(event, { reply: true });
+        let promise = session.eventHub.publishAndWaitForReply(event, eventOptions);
         promise = promise.then((reply) => {
             const response = reply.data;
             if (response.exception) {
@@ -124,7 +126,9 @@ export class Cinema4dMediator extends AbstractMediator {
         showProgress({ header: 'Publishing...', message });
 
         const promise = this._rpcEvent(
-            'publish_media', values
+            'publish_media',
+            values,
+            { timeout: 3600 } // 1 hour
         ).then((reply) => {
             logger.info('Finished publish', reply);
             return Promise.resolve(reply);

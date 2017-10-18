@@ -10,7 +10,7 @@ import { session } from '../../ftrack_api';
 /** Display user information. */
 export function User({ data, thumbnail }) {
     const name = `${data.first_name} ${data.last_name}`;
-    const url = session.thumbnail(data.thumbnail_id, 100);
+    const url = session.thumbnailUrl(data.thumbnail_id, 100);
     const image = (
         <div
             className={style.image}

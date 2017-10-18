@@ -5,14 +5,11 @@ import Autocomplete from 'react-toolbox/lib/autocomplete';
 
 /**
  * Selector
- *
- * TODO: Improve UX of Autocomplete with multiple=false.
- * Show all alternatives when opening dropdown with an active selection.
  */
 class Selector extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { value: props.value, source: {} };
+        this.state = { value: props.value, source: {}, loading: true };
         this._onChange = this._onChange.bind(this);
         this._loadData = this._loadData.bind(this);
     }
@@ -35,8 +32,10 @@ class Selector extends React.Component {
 
     /** Update autocomplete source from *query*. */
     _loadData(query) {
+        this.setState({ loading: true });
         query.then((data) => {
-            this.setState({ source: data });
+            this.setState({ source: data, loading: false });
+            this._onChange(this.state.value);
         });
     }
 
@@ -58,9 +57,10 @@ class Selector extends React.Component {
             <Autocomplete
                 direction="down"
                 multiple={false}
+                showSuggestionsWhenValueIsSet
                 source={this.state.source}
-                {...this.props}
-                value={this.state.source[this.state.value] || ''}
+                label={this.props.label}
+                value={!this.state.loading && this.state.value || ''}
                 onChange={this._onChange}
                 error={this._errorMessage(this.props)}
             />
@@ -69,6 +69,7 @@ class Selector extends React.Component {
 }
 
 Selector.propTypes = {
+    label: React.PropTypes.string,
     value: React.PropTypes.string,
     onChange: React.PropTypes.func,
     onBlur: React.PropTypes.func,

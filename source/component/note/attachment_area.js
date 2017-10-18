@@ -47,6 +47,7 @@ class AttachmentArea extends React.Component {
         components.forEach(
             component => {
                 if (this.isMedia(component)) {
+                    const thumbnailUrl = session.thumbnailUrl(component.id, 400);
                     images.push(
                         <div
                             key={component.id}
@@ -54,9 +55,7 @@ class AttachmentArea extends React.Component {
                                 () => this.onAttachmentClick(component)
                             }
                             className={style.image}
-                            style={{
-                                backgroundImage: `url('${session.thumbnail(component.id, 400)}')`,
-                            }}
+                            style={{ backgroundImage: `url('${thumbnailUrl}')` }}
                         />);
                 } else {
                     other.push(

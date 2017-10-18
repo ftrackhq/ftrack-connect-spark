@@ -18,7 +18,7 @@ function* trackUsageEvent(action) {
         hostVersion: mediator.getHostVersion(),
     }, action.payload.metadata);
 
-    session._call([
+    session.call([
         {
             action: '_track_usage',
             data: {

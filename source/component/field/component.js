@@ -68,6 +68,7 @@ export function StatusField({ selected, statuses, onSelect }) {
         <ButtonMenu
             className={style['status-field-wrapper']}
             onSelect={onSelect}
+            position="topLeft"
             button={
                 <div className={style['status-field']}>
                     <span
