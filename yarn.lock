@@ -2235,9 +2235,9 @@ fstream@^1.0.0, fstream@^1.0.10, fstream@^1.0.2:
     mkdirp ">=0.5 0"
     rimraf "2"
 
-"ftrack-javascript-api@git+https://git@bitbucket.org/ftrack/ftrack-javascript-api.git#cd6c22f7fa6b007735f3cc1701225cb92ed81987":
-  version "0.4.3"
-  resolved "git+https://git@bitbucket.org/ftrack/ftrack-javascript-api.git#cd6c22f7fa6b007735f3cc1701225cb92ed81987"
+"ftrack-javascript-api@git+https://git@bitbucket.org/ftrack/ftrack-javascript-api.git#2d9f91d7cffc0ed9870e03c9d99204e9d1b15147":
+  version "0.4.4"
+  resolved "git+https://git@bitbucket.org/ftrack/ftrack-javascript-api.git#2d9f91d7cffc0ed9870e03c9d99204e9d1b15147"
   dependencies:
     es6-promise "^3.1.2"
     lodash "^4.12.0"

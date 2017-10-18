@@ -78,7 +78,7 @@
   },
   "dependencies": {
     "core-js": "^2.4.1",
-    "ftrack-javascript-api": "git+https://git@bitbucket.org/ftrack/ftrack-javascript-api.git#cd6c22f7fa6b007735f3cc1701225cb92ed81987",
+    "ftrack-javascript-api": "git+https://git@bitbucket.org/ftrack/ftrack-javascript-api.git#2d9f91d7cffc0ed9870e03c9d99204e9d1b15147",
     "ftrack-spark-components": "git+https://git@bitbucket.org/ftrack/ftrack-spark-components.git#260b27452ee450bf7e0f2e1657e9a5c828eb37ac",
     "lodash": "^4.16.4",
     "loglevel": "^1.4.1",
