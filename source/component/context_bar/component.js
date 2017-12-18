@@ -5,7 +5,7 @@
 import React from 'react';
 import { session } from '../../ftrack_api';
 
-import projectSchema from 'ftrack-javascript-api/lib/project_schema';
+// import projectSchema from 'ftrack-javascript-api/lib/project_schema';
 
 import { AssigneeField, StatusField, DateField } from 'component/field';
 import style from './style.scss';
@@ -67,20 +67,19 @@ class ContextBar extends React.Component {
         }
 
         if (entity.status) {
-            const statusesResponse = projectSchema.getStatuses(
-                session,
-                entity.project.project_schema_id,
-                entity.__entity_type__,
-                entity.type_id
-            );
-
-            statusesResponse.then(
-                (statuses) => {
-                    this.setState({
-                        statuses,
-                    });
-                }
-            );
+            // const statusesResponse = projectSchema.getStatuses(
+            //     session,
+            //     entity.project.project_schema_id,
+            //     entity.__entity_type__,
+            //     entity.type_id
+            // );
+            // statusesResponse.then(
+            //     (statuses) => {
+            //         this.setState({
+            //             statuses,
+            //         });
+            //     }
+            // );
         }
 
         if (entity.__entity_type__ === 'Task') {
