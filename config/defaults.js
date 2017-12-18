@@ -9,93 +9,92 @@
  */
 const path = require('path');
 const srcPath = path.join(__dirname, '/../source');
+const POSTCSS_CONFIG_FILE = path.join(__dirname, 'postcss.config.js');
+const SASS_THEME_FILE = path.resolve(srcPath, 'style/_theme.scss');
+
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const dfltPort = 8000;
 
 /** Return the default modules object for webpack. */
 function getDefaultModules() {
-    const loaders = [];
-    const preLoaders = [{
-        test: /\.(js|jsx)$/,
-        loader: 'eslint-loader',
-        exclude: /node_modules/,
+    const rules = [{
+        test: /.jsx?$/,
+        enforce: 'pre',
+        include: srcPath,
+        use: [{
+            loader: 'eslint-loader',
+            options: {
+                ignore: false,
+            },
+        }],
     }];
 
-    const BASE_CSS_LOADER = 'css?sourceMap&-minimize';
-    const PATHS_TO_TREAT_AS_CSS_MODULES = [
-        'react-toolbox',
-        srcPath,
-    ];
-    const cssModulesRegex = new RegExp(
-        `(${PATHS_TO_TREAT_AS_CSS_MODULES.join('|')})`
-    );
-
-    const cssModulesLoader = [
-        BASE_CSS_LOADER,
-        'modules',
-        'importLoaders=1',
-        'localIdentName=[name]__[local]___[hash:base64:5]',
-    ].join('&');
-
-    loaders.push({
-        test: /\.scss$/,
-        include: cssModulesRegex,
-        loaders: [
-            'style',
-            cssModulesLoader,
-            'postcss',
-            'sass?sourceMap',
-        ],
+    rules.push({
+        test: /.jsx?$/,
+        include: srcPath,
+        use: [{
+            loader: 'babel-loader',
+            options: {
+                cacheDirectory: true,
+                ignore: [
+                    'static/**',
+                ],
+                presets: [
+                    require.resolve('babel-preset-es2015'),
+                    require.resolve('babel-preset-react'),
+                ],
+                plugins: [
+                    require.resolve('babel-plugin-transform-object-rest-spread'),
+                ],
+            },
+        }],
     });
 
-    loaders.push({
-        test: /\.css$/,
-        include: cssModulesRegex,
-        loaders: [
-            'style',
-            cssModulesLoader,
-            'postcss',
-        ],
-    });
-
-    loaders.push({
-        test: /\.scss$/,
-        exclude: cssModulesRegex,
-        loaders: [
-            'style',
-            BASE_CSS_LOADER,
-            'postcss',
-            'sass?sourceMap',
-        ],
-    });
-
-    loaders.push({
-        test: /\.css$/,
-        exclude: cssModulesRegex,
-        loaders: [
-            'style',
-            BASE_CSS_LOADER,
-            'postcss',
-        ],
+    rules.push({
+        test: /(\.scss|\.css)$/,
+        use: ExtractTextPlugin.extract({
+            fallback: 'style-loader',
+            use: [
+                {
+                    loader: 'css-loader',
+                    options: {
+                        modules: true,
+                        sourceMap: true,
+                        importLoaders: 1,
+                        localIdentName: '[name]--[local]--[hash:base64:8]',
+                    },
+                },
+                {
+                    loader: 'postcss-loader',
+                    options: {
+                        config: { path: POSTCSS_CONFIG_FILE },
+                    },
+                },
+                {
+                    loader: 'sass-loader',
+                    options: {
+                        data: `@import "${SASS_THEME_FILE}";`,
+                    },
+                },
+            ],
+        }),
     });
 
     // URL Loader (https://github.com/webpack/url-loader)
     // Will return a data-url if lower than size limit, and otherwise pass to
     // a file loader.
-    loaders.push({
+    rules.push({
         test: /\.(png|jpg|gif|woff|woff2)$/,
-        loader: 'url-loader?limit=8192',
-    });
-
-    // JSON file loader (https://github.com/webpack/json-loader)
-    // Returns file as parsed json object.
-    loaders.push({
-        test: /\.json$/,
-        loader: 'json-loader',
+        use: [{
+            loader: 'url-loader',
+            options: {
+                limit: 8192,
+            },
+        }],
     });
 
     return {
-        preLoaders,
-        loaders,
+        rules,
     };
 }
 

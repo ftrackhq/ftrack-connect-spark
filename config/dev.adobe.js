@@ -9,7 +9,6 @@ config.entry = {
     main: [
         'babel-polyfill',
         `webpack-dev-server/client?http://127.0.0.1:${defaultSettings.port}`,
-        'webpack/hot/only-dev-server',
         './source/application/adobe/index',
     ],
 };
