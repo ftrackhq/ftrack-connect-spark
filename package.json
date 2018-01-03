@@ -29,10 +29,10 @@
     "babel-core": "^6.10.4",
     "babel-eslint": "^6.1.2",
     "babel-loader": "^6.2.4",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-polyfill": "^6.9.1",
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-react": "^6.11.1",
-    "babel-preset-react-hmre": "^1.1.1",
     "chai": "^3.5.0",
     "copy-webpack-plugin": "^3.0.1",
     "copyfiles": "^1.0.0",
@@ -44,6 +44,7 @@
     "eslint-plugin-jsx-a11y": "^2.0.1",
     "eslint-plugin-react": "^5.2.2",
     "exports-loader": "^0.6.3",
+    "extract-text-webpack-plugin": "2",
     "file-loader": "^0.9.0",
     "glob": "^7.0.5",
     "isparta-instrumenter-loader": "^1.0.1",
@@ -69,8 +70,8 @@
     "sass-loader": "^4.1.1",
     "style-loader": "^0.13.2",
     "url-loader": "^0.5.7",
-    "webpack": "^1.13.1",
-    "webpack-dev-server": "^1.14.1"
+    "webpack": "2",
+    "webpack-dev-server": "2"
   },
   "peerDependencies": {
     "moment": "^2.0.0",
@@ -78,8 +79,8 @@
   },
   "dependencies": {
     "core-js": "^2.4.1",
-    "ftrack-javascript-api": "git+https://git@bitbucket.org/ftrack/ftrack-javascript-api.git#2d9f91d7cffc0ed9870e03c9d99204e9d1b15147",
-    "ftrack-spark-components": "git+https://git@bitbucket.org/ftrack/ftrack-spark-components.git#260b27452ee450bf7e0f2e1657e9a5c828eb37ac",
+    "ftrack-javascript-api": "git+https://git@bitbucket.org/ftrack/ftrack-javascript-api.git#0.4.5",
+    "ftrack-spark-components": "git+https://git@bitbucket.org/ftrack/ftrack-spark-components.git#f0f232626087f348a968c6d8c4caf64d5e6c69ff",
     "lodash": "^4.16.4",
     "loglevel": "^1.4.1",
     "markdown-it": "^7.0.0",

@@ -1,14 +1,9 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 const path = require('path');
-const autoprefixer = require('autoprefixer');
 const defaultSettings = require('./defaults');
-const additionalPaths = [];
 
 module.exports = {
-    additionalPaths,
-    port: defaultSettings.port,
-    debug: true,
     devtool: 'eval',
     output: {
         path: path.join(__dirname, '/../dist/assets'),
@@ -18,34 +13,22 @@ module.exports = {
     devServer: {
         contentBase: './source/',
         historyApiFallback: true,
-        hot: true,
         port: defaultSettings.port,
         publicPath: defaultSettings.publicPath,
         noInfo: false,
     },
     resolve: {
-        extensions: ['', '.js', '.jsx', '.scss'],
+        extensions: ['.js', '.jsx', '.scss'],
+        enforceExtension: false,
         alias: {
-            action: `${defaultSettings.srcPath}/action/`,
-            component: `${defaultSettings.srcPath}/component/`,
-            container: `${defaultSettings.srcPath}/container/`,
-            view: `${defaultSettings.srcPath}/view/`,
-            layout: `${defaultSettings.srcPath}/layout/`,
-            style: `${defaultSettings.srcPath}/style/`,
-            reducer: `${defaultSettings.srcPath}/reducer/`,
+            action: path.resolve(defaultSettings.srcPath, 'action/'),
+            component: path.resolve(defaultSettings.srcPath, 'component/'),
+            container: path.resolve(defaultSettings.srcPath, 'container/'),
+            view: path.resolve(defaultSettings.srcPath, 'view/'),
+            layout: path.resolve(defaultSettings.srcPath, 'layout/'),
+            style: path.resolve(defaultSettings.srcPath, 'style/'),
+            reducer: path.resolve(defaultSettings.srcPath, 'reducer/'),
         },
     },
     module: {},
-    sassLoader: {
-        data: `@import "${defaultSettings.srcPath}/style/_theme.scss";`,
-    },
-    postcss: () => [autoprefixer({
-        browsers: [
-            '> 1%',
-            'last 2 versions',
-            'Firefox ESR',
-            'Chrome >= 40',
-            'Explorer >= 10',
-        ],
-    })],
 };
