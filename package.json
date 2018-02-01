@@ -80,7 +80,7 @@
   "dependencies": {
     "core-js": "^2.4.1",
     "ftrack-javascript-api": "git+https://git@bitbucket.org/ftrack/ftrack-javascript-api.git#0.4.5",
-    "ftrack-spark-components": "git+https://git@bitbucket.org/ftrack/ftrack-spark-components.git#f0f232626087f348a968c6d8c4caf64d5e6c69ff",
+    "ftrack-spark-components": "git+https://git@bitbucket.org/ftrack/ftrack-spark-components.git#eab4658cd1b6fac49a1cd6680d6b1485820a9117",
     "lodash": "^4.16.4",
     "loglevel": "^1.4.1",
     "markdown-it": "^7.0.0",
