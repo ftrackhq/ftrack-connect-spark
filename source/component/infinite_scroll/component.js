@@ -68,7 +68,7 @@ class InfiniteScroll extends React.Component {
             return (
                 <Waypoint
                     onEnter={this._loadMoreItems}
-                    threshold={0.1}
+                    bottomOffset={-100}
                 />
             );
         }
