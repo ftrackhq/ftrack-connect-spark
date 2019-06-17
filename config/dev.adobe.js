@@ -19,6 +19,6 @@ config.entry = {
 //
 // See issue: https://github.com/nwjs/nw.js/issues/2738
 //
-config.devtool = null;
+//config.devtool = null;
 
 module.exports = config;
