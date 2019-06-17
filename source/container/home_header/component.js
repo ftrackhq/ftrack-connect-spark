@@ -48,7 +48,7 @@ function _HomeHeader(props) {
                 className={style.share}
                 position="topRight"
                 button={
-                    <Button primary label="Share" />
+                    <Button accent label="Share" />
                 }
                 onSelect={navigateToMenu}
             >
