@@ -149,12 +149,42 @@ class _PublishView extends React.Component {
             fields: {
                 name, type, description, options,
             },
+            assets,
         } = this.props;
+
+        const isExistingAsset = assets.some(candidate => (
+            candidate.name === name.value &&
+            candidate.type_id === type.value
+        ));
+        let existingAssetLinks = null;
+        if (!isExistingAsset && assets.length) {
+            const fiveLinks = assets.slice(0, 5).map((asset, index) => (
+                <span>
+                    {index !== 0 ? <span>, </span> : null}
+                    <a
+                        href="#"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            name.onChange(asset.name);
+                            type.onChange(asset.type_id);
+                        }}
+                    >
+                        {asset.name}
+                    </a>
+                    {index === 4 ? <span>..</span> : null}
+                </span>
+            ));
+            existingAssetLinks = (
+                <span>
+                    You can also version up one of the existing assets: {fiveLinks}
+                </span>
+            );
+        }
 
         return (
             <Form
                 header="Publish your work"
-                headerColor="green"
+                headerColor="purple"
                 submitLabel="Publish"
                 onSubmit={this._onSubmit}
                 onCancel={this._onCancelClick}
@@ -181,6 +211,16 @@ class _PublishView extends React.Component {
                         query={this._assetTypes}
                         {...type}
                     />
+                    {isExistingAsset ? (
+                        <p className={style.assetHelpText}>
+                            Versioning up existing asset <strong>{name.value}</strong>.
+                        </p>
+                    ) : (
+                        <p className={style.assetHelpText}>
+                            <strong>{name.value || 'Untitled asset'}</strong> will
+                            be published as a new asset. {existingAssetLinks}.
+                        </p>
+                    )}
                 </div>
                 <Reveal label="Add description" className="flex-justify-start">
                     <Input
@@ -220,6 +260,7 @@ _PublishView.propTypes = {
     link: React.PropTypes.array,
     onContextChange: React.PropTypes.func,
     options: React.PropTypes.array,
+    assets: React.PropTypes.array,
 };
 
 _PublishView.defaultProps = {
@@ -239,16 +280,15 @@ const formOptions = {
 
 function mapStateToProps(state) {
     const publish = state.screen.publish || {};
-    // This is the `Upload` asset type, which is guaranteed to exist.
-    const assetTypeId = '8f4144e0-a8e6-11e2-9e96-0800200c9a66';
 
     return {
         initialValues: {
             name: publish.name || '',
-            type: publish.type || assetTypeId,
+            type: publish.type || null,
             parent: publish.parent || null,
             task: publish.task || null,
         },
+        assets: publish.assets || [],
         options: publish.items || [],
         parent: publish.parent || null,
         task: publish.task || null,

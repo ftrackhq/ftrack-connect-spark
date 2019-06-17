@@ -15,6 +15,11 @@
     width: calc(4/12 * 100% - 2rem);
 }
 
+.assetHelpText {
+    margin-top: -$spacing;
+    margin-bottom: $spacing-large;
+}
+
 @media (max-width: 400px) {
     .asset > div {
         width: calc(12/12 * 100%);
