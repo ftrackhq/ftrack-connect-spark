@@ -16,6 +16,8 @@
 }
 
 .assetHelpText {
+    position: relative;
+    z-index: 1;
     margin-top: -$spacing;
     margin-bottom: $spacing-large;
 }
