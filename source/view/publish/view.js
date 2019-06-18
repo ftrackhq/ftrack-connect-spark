@@ -158,7 +158,14 @@ class _PublishView extends React.Component {
         ));
         let existingAssetLinks = null;
         if (!isExistingAsset && assets.length) {
-            const fiveLinks = assets.slice(0, 5).map((asset, index) => (
+            const firstFiveAssets = assets.slice(0, 5);
+            const moreThanFiveAssets = assets.length > 5;
+            const sentenceEnd = moreThanFiveAssets ? (
+                <span>...</span>
+            ) : (
+                <span>.</span>
+            );
+            const fiveLinks = firstFiveAssets.map((asset, index) => (
                 <span>
                     {index !== 0 ? <span>, </span> : null}
                     <a
@@ -171,7 +178,7 @@ class _PublishView extends React.Component {
                     >
                         {asset.name}
                     </a>
-                    {index === 4 ? <span>..</span> : null}
+                    {index === firstFiveAssets.length - 1 ? sentenceEnd : null}
                 </span>
             ));
             existingAssetLinks = (
@@ -218,7 +225,7 @@ class _PublishView extends React.Component {
                     ) : (
                         <p className={style.assetHelpText}>
                             <strong>{name.value || 'Untitled asset'}</strong> will
-                            be published as a new asset. {existingAssetLinks}.
+                            be published as a new asset. {existingAssetLinks}
                         </p>
                     )}
                 </div>
