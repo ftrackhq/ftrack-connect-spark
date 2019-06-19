@@ -96,6 +96,7 @@ class _NoteForm extends React.Component {
                                     label={
                                         edit ? 'Update' : 'Comment'
                                     }
+                                    accent
                                 />
                             )}
                         </div>

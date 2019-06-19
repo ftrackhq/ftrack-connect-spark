@@ -3,6 +3,7 @@
 
 $color-green: #2bba90 !default;
 $color-purple: #8c5eb7 !default;
+$color-purple-light: #B38CBE !default;
 
 $color-dark-000: $color-black;
 $color-dark-100: #1F1F1F;
@@ -17,16 +18,17 @@ $color-background: $color-dark-300 !default;
 $color-divider: rgba($color-white, 0.30) !default;
 
 $color-text: $color-white !default;
+$color-text-primary: $color-purple-light !default;
 $color-text-secondary: rgba($color-white, 0.7) !default;
 $color-text-faded: rgba($color-white, 0.5) !default;
 $color-text-error: rgb(222, 50, 38) !default;
 
-$color-primary: $color-green !default;
-$color-primary-dark: darken($color-green, 0.1) !default;
+$color-primary: $color-purple !default;
+$color-primary-dark: darken($color-purple, 0.1) !default;
 $color-primary-contrast: $color-white !default;
 
-$color-accent: $color-purple !default;
-$color-accent-dark: darken($color-purple, 0.1) !default;
+$color-accent: $color-purple-light !default;
+$color-accent-dark: darken($color-purple-light, 0.1) !default;
 $color-accent-contrast: $color-accent !default;
 
 //-- Sizing

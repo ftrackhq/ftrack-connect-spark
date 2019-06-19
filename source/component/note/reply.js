@@ -28,7 +28,6 @@ function ReplyForm({ content, pending, collapsed, onSubmitForm, onHideForm, onSh
         <Button
             label="Reply"
             className={style['reply-button']}
-            primary
             mini
             onClick={onShowForm}
         />

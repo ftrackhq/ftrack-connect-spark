@@ -34,7 +34,7 @@ function Form(props) {
                     <Button
                         label={props.submitLabel}
                         onClick={props.onSubmit}
-                        primary
+                        accent
                         disabled={props.submitDisabled}
                         type="button"
                     />
