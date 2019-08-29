@@ -29,8 +29,8 @@ const APPLICATION_IDS = {
     AUDT: 'Audition',
     DRWV: 'Dreamweaver',
 };
-const PUBLISH_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO', 'AEFT'];
-const QUICK_REVIEW_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO'];
+const PUBLISH_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO', 'AEFT', 'ILST'];
+const QUICK_REVIEW_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO', 'ILST'];
 const IMPORT_FILE_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO', 'AEFT'];
 
 /**
@@ -359,6 +359,7 @@ export class AdobeMediator extends AbstractMediator {
         switch (this.getAppId()) {
             case 'PHSP':
             case 'PHXS':
+            case 'ILST':
                 return {
                     review: true,
                     delivery: true,
