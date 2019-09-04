@@ -349,6 +349,29 @@ export class AdobeMediator extends AbstractMediator {
                     }
                 );
             }
+        } else if (appId === 'ILST') {
+            if (options.exportOptions) {
+                const formats = options.exportOptions.formats;
+                items.push(
+                    {
+                        label: 'Format',
+                        type: 'dropdown',
+                        name: 'save_as_format',
+                        description: 'Format for the saved document',
+                        value: formats[0].value,
+                        data: formats,
+                    }
+                );
+            }
+            items.push(
+                {
+                    label: 'Review PDF',
+                    type: 'boolean',
+                    name: 'include_pdf',
+                    description: 'Export and upload PDF for review',
+                    value: true,
+                }
+            );
         }
 
         return items;
@@ -359,10 +382,16 @@ export class AdobeMediator extends AbstractMediator {
         switch (this.getAppId()) {
             case 'PHSP':
             case 'PHXS':
+                return {
+                    review: true,
+                    delivery: true,
+                };
             case 'ILST':
                 return {
                     review: true,
                     delivery: true,
+                    include_pdf: values.include_pdf,
+                    save_as_format: values.save_as_format,
                 };
             case 'PPRO':
                 return {
