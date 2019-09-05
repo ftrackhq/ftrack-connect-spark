@@ -57,6 +57,7 @@ export class AdobeMediator extends AbstractMediator {
             component_id: component.id,
             version_id: component.version_id,
             asset_id: component.version.asset_id,
+            asset_name: component.version.asset && component.version.asset.name,
         };
         logger.info('Importing component', component);
         const promise = new Promise((resolve, reject) => {

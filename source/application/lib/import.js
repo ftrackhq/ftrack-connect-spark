@@ -54,6 +54,7 @@ export function loadComponents(versionId) {
         'container_id',
         'version_id',
         'version.asset_id',
+        'version.asset.name',
     ];
     const queryString = (
         `select ${select.join(', ')} from Component where ` +
