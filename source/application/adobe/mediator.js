@@ -29,9 +29,9 @@ const APPLICATION_IDS = {
     AUDT: 'Audition',
     DRWV: 'Dreamweaver',
 };
-const PUBLISH_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO', 'AEFT'];
-const QUICK_REVIEW_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO'];
-const IMPORT_FILE_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO', 'AEFT'];
+const PUBLISH_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO', 'AEFT', 'ILST'];
+const QUICK_REVIEW_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO', 'ILST'];
+const IMPORT_FILE_SUPPORTED_APP_IDS = ['PHSP', 'PHXS', 'PPRO', 'AEFT', 'ILST'];
 
 /**
  * Adobe Mediator
@@ -57,6 +57,7 @@ export class AdobeMediator extends AbstractMediator {
             component_id: component.id,
             version_id: component.version_id,
             asset_id: component.version.asset_id,
+            asset_name: component.version.asset && component.version.asset.name,
         };
         logger.info('Importing component', component);
         const promise = new Promise((resolve, reject) => {
@@ -349,6 +350,29 @@ export class AdobeMediator extends AbstractMediator {
                     }
                 );
             }
+        } else if (appId === 'ILST') {
+            if (options.exportOptions) {
+                const formats = options.exportOptions.formats;
+                items.push(
+                    {
+                        label: 'Format',
+                        type: 'dropdown',
+                        name: 'save_as_format',
+                        description: 'Format for the saved document',
+                        value: formats[0].value,
+                        data: formats,
+                    }
+                );
+            }
+            items.push(
+                {
+                    label: 'Review PDF',
+                    type: 'boolean',
+                    name: 'include_pdf',
+                    description: 'Export and upload PDF for review',
+                    value: true,
+                }
+            );
         }
 
         return items;
@@ -362,6 +386,13 @@ export class AdobeMediator extends AbstractMediator {
                 return {
                     review: true,
                     delivery: true,
+                };
+            case 'ILST':
+                return {
+                    review: true,
+                    delivery: true,
+                    include_pdf: values.include_pdf,
+                    save_as_format: values.save_as_format,
                 };
             case 'PPRO':
                 return {

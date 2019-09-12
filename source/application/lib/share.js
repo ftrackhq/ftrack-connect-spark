@@ -212,6 +212,15 @@ export function finalizeUpload(uploadMeta) {
                     value: '{"format": "image"}',
                 })
             );
+        } else if (componentData.use === 'pdf-review') {
+            operations.push(
+                operation.create('Metadata', {
+                    parent_id: componentId,
+                    parent_type: 'FileComponent',
+                    key: 'ftr_meta',
+                    value: '{"format": "pdf"}',
+                })
+            );
         }
     }
 
