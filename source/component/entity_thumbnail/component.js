@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 import style from './style.scss';
 
@@ -24,9 +25,9 @@ function EntityThumbnail(props) {
 }
 
 EntityThumbnail.propTypes = {
-    className: React.PropTypes.string,
-    thumbnailId: React.PropTypes.string,
-    size: React.PropTypes.number,
+    className: PropTypes.string,
+    thumbnailId: PropTypes.string,
+    size: PropTypes.number,
 };
 
 EntityThumbnail.defaultProps = {

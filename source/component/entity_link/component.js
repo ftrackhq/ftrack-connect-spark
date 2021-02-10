@@ -2,6 +2,7 @@
 
 import React from 'react';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 import style from './style.scss';
 
@@ -68,16 +69,16 @@ function EntityLink(props) {
 }
 
 EntityLink.propTypes = {
-    link: React.PropTypes.arrayOf(
-        React.PropTypes.shape({
-            id: React.PropTypes.string.isRequired,
-            name: React.PropTypes.string.isRequired,
+    link: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
         })
     ).isRequired,
-    size: React.PropTypes.oneOf(['medium', 'large']),
-    parent: React.PropTypes.bool,
-    ancestors: React.PropTypes.bool,
-    className: React.PropTypes.string,
+    size: PropTypes.oneOf(['medium', 'large']),
+    parent: PropTypes.bool,
+    ancestors: PropTypes.bool,
+    className: PropTypes.string,
 };
 
 EntityLink.defaultProps = {

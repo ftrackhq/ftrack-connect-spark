@@ -4,6 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Input, ProgressBar, Button } from 'react-toolbox';
 import clickOutSide from 'react-click-outside';
+import PropTypes from 'prop-types';
 
 import style from './style.scss';
 
@@ -108,17 +109,17 @@ class _NoteForm extends React.Component {
 }
 
 _NoteForm.propTypes = {
-    content: React.PropTypes.string,
-    className: React.PropTypes.string,
-    onClickOutside: React.PropTypes.func,
-    onSubmit: React.PropTypes.func,
-    onExpand: React.PropTypes.func,
-    state: React.PropTypes.string,
-    edit: React.PropTypes.bool,
-    collapsed: React.PropTypes.bool,
-    pending: React.PropTypes.bool,
-    autoFocus: React.PropTypes.bool,
-    author: React.PropTypes.object,
+    content: PropTypes.string,
+    className: PropTypes.string,
+    onClickOutside: PropTypes.func,
+    onSubmit: PropTypes.func,
+    onExpand: PropTypes.func,
+    state: PropTypes.string,
+    edit: PropTypes.bool,
+    collapsed: PropTypes.bool,
+    pending: PropTypes.bool,
+    autoFocus: PropTypes.bool,
+    author: PropTypes.object,
 };
 
 const NoteForm = clickOutSide(_NoteForm);

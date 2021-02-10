@@ -4,6 +4,7 @@
 import React from 'react';
 import { IconMenu, MenuItem } from 'react-toolbox/lib/menu';
 import Dialog from 'react-toolbox/lib/dialog';
+import PropTypes from 'prop-types';
 
 import Note from './note.js';
 import NoteForm from './form.js';
@@ -116,16 +117,16 @@ class EditableNote extends React.Component {
 }
 
 EditableNote.propTypes = {
-    note: React.PropTypes.object,
-    collapsed: React.PropTypes.bool,
-    content: React.PropTypes.string,
-    pending: React.PropTypes.bool,
-    onShowForm: React.PropTypes.func,
-    onHideForm: React.PropTypes.func,
-    onSubmitForm: React.PropTypes.func,
-    onRemove: React.PropTypes.func,
-    onAttachmentClick: React.PropTypes.func,
-    author: React.PropTypes.object,
+    note: PropTypes.object,
+    collapsed: PropTypes.bool,
+    content: PropTypes.string,
+    pending: PropTypes.bool,
+    onShowForm: PropTypes.func,
+    onHideForm: PropTypes.func,
+    onSubmitForm: PropTypes.func,
+    onRemove: PropTypes.func,
+    onAttachmentClick: PropTypes.func,
+    author: PropTypes.object,
 };
 
 export default EditableNote;

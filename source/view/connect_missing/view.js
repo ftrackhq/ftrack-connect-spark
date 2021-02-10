@@ -3,6 +3,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Button from 'react-toolbox/lib/button';
+import PropTypes from 'prop-types';
 
 import { applicationAuthenticate, applicationOpenLink } from 'action/application';
 import EmptyState from 'component/empty_state';
@@ -75,8 +76,8 @@ function _ConnectMissingView({ onRetryClicked, onLinkClicked }) {
 }
 
 _ConnectMissingView.propTypes = {
-    onRetryClicked: React.PropTypes.func,
-    onLinkClicked: React.PropTypes.func,
+    onRetryClicked: PropTypes.func,
+    onLinkClicked: PropTypes.func,
 };
 
 function mapDispatchToProps(dispatch) {

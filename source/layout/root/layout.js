@@ -1,7 +1,8 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-import React, { PropTypes } from 'react';
+import React from 'react';
 import { Layout, Panel } from 'react-toolbox/lib/layout';
+import PropTypes from 'prop-types';
 
 import ApplicationOverlay from 'container/application_overlay';
 import PreviewMediaContainer from 'container/preview_media';

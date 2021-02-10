@@ -4,6 +4,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { Card, CardActions } from 'react-toolbox/lib/card';
 import { Button } from 'react-toolbox/lib/button';
+import PropTypes from 'prop-types';
 
 import EntityType from 'component/entity_type';
 import EntityThumbnail from 'component/entity_thumbnail';
@@ -131,12 +132,12 @@ class ContextCard extends React.Component {
 
 
 ContextCard.propTypes = {
-    className: React.PropTypes.string,
-    entity: React.PropTypes.object,
-    flat: React.PropTypes.bool,
-    small: React.PropTypes.bool,
-    onClick: React.PropTypes.func,
-    actions: React.PropTypes.node,
+    className: PropTypes.string,
+    entity: PropTypes.object,
+    flat: PropTypes.bool,
+    small: PropTypes.bool,
+    onClick: PropTypes.func,
+    actions: PropTypes.node,
 };
 
 ContextCard.defaultProps = {

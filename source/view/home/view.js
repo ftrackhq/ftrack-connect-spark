@@ -3,6 +3,7 @@
 import React from 'react';
 import HomeHeader from 'container/home_header';
 import RouteTabs from 'container/route_tabs';
+import PropTypes from 'prop-types';
 
 import style from './style.scss';
 
@@ -25,7 +26,7 @@ function HomeView({ children }) {
 }
 
 HomeView.propTypes = {
-    children: React.PropTypes.element.isRequired,
+    children: PropTypes.element.isRequired,
 };
 
 export default HomeView;

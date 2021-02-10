@@ -1,7 +1,8 @@
 // :copyright: Copyright (c) 2016 ftrack
 import React from 'react';
-import Waypoint from 'react-waypoint';
+import { Waypoint } from 'react-waypoint';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 import ProgressBar from 'react-toolbox/lib/progress_bar';
 
@@ -91,9 +92,9 @@ class InfiniteScroll extends React.Component {
 }
 
 InfiniteScroll.propTypes = {
-    className: React.PropTypes.string,
-    renderItem: React.PropTypes.func.isRequired,
-    loadItems: React.PropTypes.func.isRequired,
+    className: PropTypes.string,
+    renderItem: PropTypes.func.isRequired,
+    loadItems: PropTypes.func.isRequired,
 };
 
 InfiniteScroll.defaultProps = {

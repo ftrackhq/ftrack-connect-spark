@@ -1,5 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import Autocomplete from 'react-toolbox/lib/autocomplete';
 
@@ -69,11 +70,11 @@ class Selector extends React.Component {
 }
 
 Selector.propTypes = {
-    label: React.PropTypes.string,
-    value: React.PropTypes.string,
-    onChange: React.PropTypes.func,
-    onBlur: React.PropTypes.func,
-    query: React.PropTypes.object.isRequired,
+    label: PropTypes.string,
+    value: PropTypes.string,
+    onChange: PropTypes.func,
+    onBlur: PropTypes.func,
+    query: PropTypes.object.isRequired,
 };
 
 Selector.defaultProps = {

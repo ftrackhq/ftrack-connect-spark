@@ -2,6 +2,7 @@
 
 import React from 'react';
 import TimeAgo from 'react-timeago';
+import PropTypes from 'prop-types';
 
 import style from './style.scss';
 import AttachmentArea from './attachment_area.js';
@@ -22,7 +23,7 @@ function ReviewSessionInvitee({ data }) {
 }
 
 ReviewSessionInvitee.propTypes = {
-    data: React.PropTypes.object.isRequired,
+    data: PropTypes.object.isRequired,
 };
 
 /** Display author information. */
@@ -42,7 +43,7 @@ function Author({ data }) {
 }
 
 Author.propTypes = {
-    data: React.PropTypes.object,
+    data: PropTypes.object,
 };
 
 /** Note component to display note data. */
@@ -111,9 +112,9 @@ function Note({ data, category, onAttachmentClick }) {
 
 
 Note.propTypes = {
-    data: React.PropTypes.object.isRequired,
-    category: React.PropTypes.bool,
-    onAttachmentClick: React.PropTypes.func,
+    data: PropTypes.object.isRequired,
+    category: PropTypes.bool,
+    onAttachmentClick: PropTypes.func,
 };
 
 

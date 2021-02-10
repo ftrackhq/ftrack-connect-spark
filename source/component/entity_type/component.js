@@ -1,6 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 import React from 'react';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 import style from './style.scss';
 
@@ -40,8 +41,8 @@ function EntityType(props) {
 }
 
 EntityType.propTypes = {
-    className: React.PropTypes.string,
-    entity: React.PropTypes.object.isRequired,
+    className: PropTypes.string,
+    entity: PropTypes.object.isRequired,
 };
 
 EntityType.defaultProps = {
