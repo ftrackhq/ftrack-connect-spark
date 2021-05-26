@@ -2587,9 +2587,9 @@ fstream@^1.0.0, fstream@^1.0.10, fstream@^1.0.2:
     mkdirp ">=0.5 0"
     rimraf "2"
 
-"ftrack-javascript-api@git+https://git@bitbucket.org/ftrack/ftrack-javascript-api.git#0.7.2":
-  version "0.7.2"
-  resolved "git+https://git@bitbucket.org/ftrack/ftrack-javascript-api.git#d11047f1fa4f82121797366424cc2dbed488fe4d"
+"ftrack-javascript-api@git+https://git@bitbucket.org/ftrack/ftrack-javascript-api.git#0.7.3":
+  version "0.7.3"
+  resolved "git+https://git@bitbucket.org/ftrack/ftrack-javascript-api.git#04a308fc235b081087952e7a07c0cb1bd1cb4182"
   dependencies:
     es6-promise "^3.1.2"
     lodash "^4.12.0"
@@ -2598,9 +2598,9 @@ fstream@^1.0.0, fstream@^1.0.10, fstream@^1.0.2:
     uuid "^3.4.0"
     whatwg-fetch "^1.0.0"
 
-"ftrack-spark-components@git+https://bitbucket.org/ftrack/ftrack-spark-components.git#0.67.1":
-  version "0.67.1"
-  resolved "git+https://bitbucket.org/ftrack/ftrack-spark-components.git#21c7c4620b640c372f580fa045fcd44fe13d865c"
+"ftrack-spark-components@git+https://bitbucket.org/ftrack/ftrack-spark-components.git#0.67.3":
+  version "0.67.3"
+  resolved "git+https://bitbucket.org/ftrack/ftrack-spark-components.git#95e3e5ab72e032d0b8eb8ee5e5ecc4d6ea0b2dc6"
 
 function-bind@^1.0.2, function-bind@^1.1.1, function-bind@~1.1.0:
   version "1.1.1"
