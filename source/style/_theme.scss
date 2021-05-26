@@ -2,6 +2,8 @@
 @import "~ftrack-spark-components/lib/style/commons.scss";
 @import "~ftrack-spark-components/lib/selector/style/index.scss";
 
+@import '_color';
+
 $appbar-height: 6.4 * $unit !default;
 
 $input-icon-font-size: 2.4 * $unit;
