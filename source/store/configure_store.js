@@ -12,25 +12,25 @@ export default function configureStore(
     initialState = {},
     sagas = []
 ) {
-    var session_proxy = new Proxy(
+    const sessionProxy = new Proxy(
         {}, // This value is irrelevant, it just has to be valid.
         {
-            deleteProperty: function (_, property) {
+            deleteProperty(_, property) {
                 delete (session[property]);
                 // Return True to indicate that the delete was successful.
                 return (true);
             },
-            get: function (_, property, receiver) {
+            get(_, property) {
                 return (session[property]);
             },
-            has: function (_, property) {
+            has(_, property) {
                 return (property in session);
             },
-            set: function (_, property, value, receiver) {
+            set(_, property, value) {
                 session[property] = value;
                 // Return True to indicate that the set was successful.
                 return (true);
-            }
+            },
         }
     );
 
@@ -39,7 +39,7 @@ export default function configureStore(
             // only initial context values are propagated to redux subspaces
             // provide dynamic proxy instead so it sill be available after
             // configuration
-            ftrackSession: session_proxy,
+            ftrackSession: sessionProxy,
         },
     });
 
