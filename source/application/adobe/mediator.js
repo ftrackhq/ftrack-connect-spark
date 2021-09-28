@@ -397,6 +397,8 @@ export class AdobeMediator extends AbstractMediator {
                 return {
                     review: true,
                     delivery: true,
+                    save_as_format: values.save_as_format,
+                    component_name: values.component_name,
                 };
             case 'ILST':
                 return {
