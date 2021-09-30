@@ -518,6 +518,10 @@ export class AdobeMediator extends AbstractMediator {
 
         return promise;
     }
+
+    getEnv(name) {
+        return window.top.FT.main.env[name];
+    }
 }
 
 const adobeMediator = new AdobeMediator();

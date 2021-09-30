@@ -79,4 +79,8 @@ export default class AbstractMediator {
     getPluginVersion() {
         throw new Error('Not implemented');
     }
+
+    getEnv() {
+        throw new Error('Not implemented');
+    }
 }
