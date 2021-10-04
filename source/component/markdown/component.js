@@ -2,6 +2,7 @@
 
 import React from 'react';
 import MarkdownIt from 'markdown-it';
+import PropTypes from 'prop-types';
 
 const markdown = new MarkdownIt('commonmark');
 
@@ -15,5 +16,5 @@ export default function Markdown({ source }) {
 }
 
 Markdown.propTypes = {
-    source: React.PropTypes.string.isRequired,
+    source: PropTypes.string.isRequired,
 };

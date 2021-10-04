@@ -3,6 +3,7 @@
 import React from 'react';
 import Button from 'react-toolbox/lib/button';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 import ClosableHeader from 'container/closable_header';
 import style from './style';
@@ -46,14 +47,14 @@ function Form(props) {
 
 
 Form.propTypes = {
-    className: React.PropTypes.string,
-    header: React.PropTypes.node,
-    headerColor: React.PropTypes.string,
-    children: React.PropTypes.node,
-    onSubmit: React.PropTypes.func,
-    onCancel: React.PropTypes.func,
-    submitLabel: React.PropTypes.string,
-    submitDisabled: React.PropTypes.bool,
+    className: PropTypes.string,
+    header: PropTypes.node,
+    headerColor: PropTypes.string,
+    children: PropTypes.node,
+    onSubmit: PropTypes.func,
+    onCancel: PropTypes.func,
+    submitLabel: PropTypes.string,
+    submitDisabled: PropTypes.bool,
 };
 
 Form.defaultProps = {

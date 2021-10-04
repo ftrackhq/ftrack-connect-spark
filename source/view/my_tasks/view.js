@@ -3,6 +3,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { hashHistory, Link } from 'react-router';
+import PropTypes from 'prop-types';
 
 import InfiniteScroll from 'component/infinite_scroll';
 import ContextCard from 'component/context_card';
@@ -124,7 +125,7 @@ class _MyTasks extends React.Component {
 
 
 _MyTasks.propTypes = {
-    user: React.PropTypes.object,
+    user: PropTypes.object,
 };
 
 

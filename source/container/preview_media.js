@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import { hidePreviewMedia } from 'action/preview_media';
 import { PreviewMedia, PreviewImage } from 'component/preview_media';
@@ -38,17 +39,17 @@ function PreviewMediaComponents(props) {
 }
 
 PreviewMediaComponents.propTypes = {
-    components: React.PropTypes.arrayOf(
-        React.PropTypes.shape({
-            id: React.PropTypes.string.isRequired,
-            name: React.PropTypes.string.isRequired,
-            file_type: React.PropTypes.string.isRequired,
+    components: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
+            file_type: PropTypes.string.isRequired,
         })
     ),
-    index: React.PropTypes.number,
-    visible: React.PropTypes.bool,
-    onDismiss: React.PropTypes.func.isRequired,
-    onDownload: React.PropTypes.func.isRequired,
+    index: PropTypes.number,
+    visible: PropTypes.bool,
+    onDismiss: PropTypes.func.isRequired,
+    onDownload: PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state) {

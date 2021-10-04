@@ -3,6 +3,7 @@
 import React from 'react';
 import { Menu } from 'react-toolbox/lib/menu';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 import style from './style.scss';
 
@@ -44,14 +45,13 @@ export default class ButtonMenu extends React.Component {
 }
 
 ButtonMenu.propTypes = {
-    className: React.PropTypes.string,
-    button: React.PropTypes.node.isRequired,
-    position: React.PropTypes.string,
-    children: React.PropTypes.array,
-    onSelect: React.PropTypes.func.isRequired,
+    className: PropTypes.string,
+    button: PropTypes.node.isRequired,
+    position: PropTypes.string,
+    children: PropTypes.array,
+    onSelect: PropTypes.func.isRequired,
 };
 
 ButtonMenu.defaultProps = {
     className: '',
 };
-

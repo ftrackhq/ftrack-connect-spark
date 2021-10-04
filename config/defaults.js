@@ -73,7 +73,7 @@ function getDefaultModules() {
                 {
                     loader: 'sass-loader',
                     options: {
-                        data: `@import "${SASS_THEME_FILE}";`,
+                        data: `@import "${SASS_THEME_FILE.replace(/\\/g, '/')}";`,
                     },
                 },
             ],

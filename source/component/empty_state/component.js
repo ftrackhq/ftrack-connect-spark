@@ -3,6 +3,7 @@
 import React from 'react';
 import FontIcon from 'react-toolbox/lib/font_icon';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 import style from './style.scss';
 
@@ -23,10 +24,10 @@ function EmptyState({ icon, message, children, className }) {
 }
 
 EmptyState.propTypes = {
-    className: React.PropTypes.string,
-    icon: React.PropTypes.string,
-    message: React.PropTypes.node,
-    children: React.PropTypes.node,
+    className: PropTypes.string,
+    icon: PropTypes.string,
+    message: PropTypes.node,
+    children: PropTypes.node,
 };
 
 export default EmptyState;

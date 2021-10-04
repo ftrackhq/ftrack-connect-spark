@@ -3,6 +3,7 @@
 import React from 'react';
 import { reduxForm } from 'redux-form';
 import moment from 'moment';
+import PropTypes from 'prop-types';
 
 import Input from 'react-toolbox/lib/input';
 import DatePicker from 'react-toolbox/lib/date_picker';
@@ -132,16 +133,16 @@ class _CreateProjectView extends React.Component {
 }
 
 _CreateProjectView.contextTypes = {
-    router: React.PropTypes.object.isRequired,
+    router: PropTypes.object.isRequired,
 };
 
 _CreateProjectView.propTypes = {
-    values: React.PropTypes.object.isRequired,
-    fields: React.PropTypes.object.isRequired,
-    handleSubmit: React.PropTypes.func.isRequired,
-    resetForm: React.PropTypes.func.isRequired,
-    submitting: React.PropTypes.bool.isRequired,
-    workflow: React.PropTypes.object,
+    values: PropTypes.object.isRequired,
+    fields: PropTypes.object.isRequired,
+    handleSubmit: PropTypes.func.isRequired,
+    resetForm: PropTypes.func.isRequired,
+    submitting: PropTypes.bool.isRequired,
+    workflow: PropTypes.object,
 };
 
 function mapDispatchToProps(dispatch) {

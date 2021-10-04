@@ -5,6 +5,7 @@ import { reduxForm } from 'redux-form';
 import { hashHistory } from 'react-router';
 import omit from 'lodash/omit';
 import isEqual from 'lodash/isEqual';
+import PropTypes from 'prop-types';
 
 import Input from 'react-toolbox/lib/input';
 
@@ -251,23 +252,23 @@ class _PublishView extends React.Component {
 }
 
 _PublishView.contextTypes = {
-    router: React.PropTypes.object.isRequired,
+    router: PropTypes.object.isRequired,
 };
 
 _PublishView.propTypes = {
-    values: React.PropTypes.object.isRequired,
-    fields: React.PropTypes.object.isRequired,
-    submitForm: React.PropTypes.func.isRequired,
-    resetForm: React.PropTypes.func.isRequired,
-    submitting: React.PropTypes.bool.isRequired,
-    contexts: React.PropTypes.object,
-    params: React.PropTypes.object,
-    parent: React.PropTypes.string,
-    task: React.PropTypes.string,
-    link: React.PropTypes.array,
-    onContextChange: React.PropTypes.func,
-    options: React.PropTypes.array,
-    assets: React.PropTypes.array,
+    values: PropTypes.object.isRequired,
+    fields: PropTypes.object.isRequired,
+    submitForm: PropTypes.func.isRequired,
+    resetForm: PropTypes.func.isRequired,
+    submitting: PropTypes.bool.isRequired,
+    contexts: PropTypes.object,
+    params: PropTypes.object,
+    parent: PropTypes.string,
+    task: PropTypes.string,
+    link: PropTypes.array,
+    onContextChange: PropTypes.func,
+    options: PropTypes.array,
+    assets: PropTypes.array,
 };
 
 _PublishView.defaultProps = {
