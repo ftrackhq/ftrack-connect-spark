@@ -83,12 +83,15 @@ function* startup(action) {
             )
         );
 
-        const FTRACK_CONNECT_EVENT = mediator.getEnv('FTRACK_CONNECT_EVENT');
-        if (FTRACK_CONNECT_EVENT) {
-            const data = JSON.parse(decodeURIComponent(escape(window.atob(FTRACK_CONNECT_EVENT))));
-            if (data && data.selection && data.selection.length) {
-                const entity = data.selection[0];
-                nextPathName = `/context/${entity.entityType}/${entity.entityId}`;
+        if (!nextPathName || nextPathName === '/') {
+            const FTRACK_CONNECT_EVENT = mediator.getEnv('FTRACK_CONNECT_EVENT');
+            if (FTRACK_CONNECT_EVENT) {
+                const data = JSON.parse(decodeURIComponent(escape(
+                    window.atob(FTRACK_CONNECT_EVENT))));
+                if (data && data.selection && data.selection.length) {
+                    const entity = data.selection[0];
+                    nextPathName = `/context/${entity.entityType}/${entity.entityId}`;
+                }
             }
         }
 
