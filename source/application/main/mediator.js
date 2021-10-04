@@ -255,7 +255,7 @@ export class MainMediator extends AbstractMediator {
     }
 
     getEnv(name) {
-        return;
+        return name;
     }
 }
 
