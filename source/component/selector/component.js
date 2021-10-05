@@ -3,6 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Autocomplete from 'react-toolbox/lib/autocomplete';
+import style from './style.scss';
 
 /**
  * Selector
@@ -56,6 +57,7 @@ class Selector extends React.Component {
     render() {
         return (
             <Autocomplete
+                theme={{ suggestion: style['asset-type-item'] }}
                 direction="down"
                 multiple={false}
                 showSuggestionsWhenValueIsSet
@@ -75,6 +77,7 @@ Selector.propTypes = {
     onChange: PropTypes.func,
     onBlur: PropTypes.func,
     query: PropTypes.object.isRequired,
+    className: PropTypes.string,
 };
 
 Selector.defaultProps = {
