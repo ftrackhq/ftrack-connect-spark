@@ -1,6 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-import { call, put , takeLatest} from 'redux-saga/effects';
+import { call, put, takeLatest } from 'redux-saga/effects';
 import { hashHistory } from 'react-router';
 import compare from 'semver-compare';
 
