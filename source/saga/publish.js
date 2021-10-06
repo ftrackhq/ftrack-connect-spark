@@ -1,7 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-import { takeEvery } from 'redux-saga';
-import { call, put } from 'redux-saga/effects';
+import { call, put, takeEvery } from 'redux-saga/effects';
 
 import { mediator } from '../application';
 import actions, { publishOptions, publishResolveContext } from 'action/publish';
