@@ -12,7 +12,7 @@ import style from './style';
 /** Go back. */
 const navigateBack = () => {
     if (!hashHistory.goBack()) {
-        hashHistory.push("/");
+        hashHistory.push('/');
     }
 };
 
