@@ -11,7 +11,9 @@ import style from './style';
 
 /** Go back. */
 const navigateBack = () => {
-    hashHistory.goBack();
+    if (!hashHistory.goBack()) {
+        hashHistory.push("/");
+    }
 };
 
 /** Header component containing back button, title and right button */
