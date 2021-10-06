@@ -1,7 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-import { takeEvery } from 'redux-saga';
-import { put } from 'redux-saga/effects';
+import { put, takeEvery } from 'redux-saga/effects';
 
 import { mediator } from '../application';
 import actions, { importGetComponentsSuccess } from 'action/import';

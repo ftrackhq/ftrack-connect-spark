@@ -1,4 +1,4 @@
-import { takeEvery } from 'redux-saga';
+import { takeEvery } from 'redux-saga/effects';
 import actions from 'action/application';
 import { Event } from 'ftrack-javascript-api';
 
