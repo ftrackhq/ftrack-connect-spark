@@ -46,7 +46,7 @@ function queryUserExpression(apiUser) {
  *     FTRACK_API_AUTHENTICATION_FAILED
  */
 function* startup(action) {
-    let { payload: { nextPathName } } = action;
+    const { payload: { nextPathName } } = action;
     yield showProgress(null, { dismissable: false, message: null });
     let credentials = null;
 
@@ -82,6 +82,11 @@ function* startup(action) {
             )
         );
 
+        yield hideOverlay();
+        hashHistory.replace(nextPathName || '/home');
+
+        // follow to context from Connect only after home so going back to My Tasks will
+        // be possible
         if (!nextPathName || nextPathName === '/') {
             const FTRACK_CONNECT_EVENT = mediator.getEnv('FTRACK_CONNECT_EVENT');
             if (FTRACK_CONNECT_EVENT) {
@@ -89,13 +94,10 @@ function* startup(action) {
                     window.atob(FTRACK_CONNECT_EVENT))));
                 if (data && data.selection && data.selection.length) {
                     const entity = data.selection[0];
-                    nextPathName = `/context/${entity.entityType}/${entity.entityId}`;
+                    hashHistory.push(`/context/${entity.entityType}/${entity.entityId}`);
                 }
             }
         }
-
-        yield hideOverlay();
-        hashHistory.replace(nextPathName || '/home');
 
         if (session.serverVersion !== 'dev') {
             if (
