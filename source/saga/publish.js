@@ -90,7 +90,7 @@ function* submitPublish(action) {
         });
 
         // Reload published assets
-        yield put(publishResolveContext(contextId));
+        yield put(publishResolveContext({ contextId, lockAssetType: true }));
     } catch (error) {
         logger.error(error);
         let message;
@@ -123,7 +123,7 @@ function* submitPublish(action) {
  * Resolve context.
  */
 function* resolveContext(action) {
-    const contextId = action.payload;
+    const { contextId } = action.payload;
 
     const result = yield session.query(
         'select link, parent.id from Context where id is ' +
@@ -157,6 +157,7 @@ function* resolveContext(action) {
             parent: parentId,
             task: taskId,
             link: names,
+            lockAssetType: action.payload.lockAssetType,
         }));
     }
 }

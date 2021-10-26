@@ -249,6 +249,7 @@ class _PublishView extends React.Component {
                         className={style['asset-type']}
                         label="Type"
                         query={this._assetTypes}
+                        disabled={this.props.lockAssetType}
                         {...type}
                     />
                     {existingAssetMessage}
@@ -292,6 +293,7 @@ _PublishView.propTypes = {
     onContextChange: PropTypes.func,
     options: PropTypes.array,
     assets: PropTypes.array,
+    lockAssetType: PropTypes.bool,
 };
 
 _PublishView.defaultProps = {
@@ -299,6 +301,7 @@ _PublishView.defaultProps = {
     params: {
         context: null,
     },
+    lockAssetType: false,
 };
 
 const formOptions = {
@@ -324,13 +327,14 @@ function mapStateToProps(state) {
         parent: publish.parent || null,
         task: publish.task || null,
         link: publish.link || [],
+        lockAssetType: publish.lockAssetType,
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         onContextChange(contextId) {
-            dispatch(publishResolveContext(contextId));
+            dispatch(publishResolveContext({ contextId }));
         },
         submitForm(values) {
             dispatch(publishSubmit(values));

@@ -30,10 +30,13 @@ export function publishSubmit(values) {
 }
 
 /** Resolve publish context into task and parent. */
-export function publishResolveContext(id) {
+export function publishResolveContext({ contextId, lockAssetType }) {
     return {
         type: PUBLISH_RESOLVE_CONTEXT,
-        payload: id,
+        payload: {
+            contextId,
+            lockAssetType,
+        },
     };
 }
 
