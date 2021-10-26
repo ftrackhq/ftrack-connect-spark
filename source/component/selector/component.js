@@ -63,6 +63,7 @@ class Selector extends React.Component {
                 showSuggestionsWhenValueIsSet
                 source={this.state.source}
                 label={this.props.label}
+                disabled={this.props.disabled}
                 value={!this.state.loading && this.state.value || ''}
                 onChange={this._onChange}
                 error={this._errorMessage(this.props)}
@@ -73,6 +74,7 @@ class Selector extends React.Component {
 
 Selector.propTypes = {
     label: PropTypes.string,
+    disabled: PropTypes.bool,
     value: PropTypes.string,
     onChange: PropTypes.func,
     onBlur: PropTypes.func,
@@ -84,6 +86,7 @@ Selector.defaultProps = {
     value: null,
     onChange: () => {},
     onBlur: () => {},
+    disabled: false,
 };
 
 export default Selector;
