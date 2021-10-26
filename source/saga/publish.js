@@ -149,8 +149,8 @@ function* resolveContext(action) {
         }
 
         const existingAssetsResults = yield session.query(
-            // eslint-disable-next-line max-len
-            `select name, type_id from Asset where context_id is "${parentId}" order by name limit 100`
+            'select name, type_id, type.name from Asset where context_id is '
+            + `"${parentId}" order by name limit 100`
         );
         yield put(publishOptions({
             assets: existingAssetsResults.data,
