@@ -145,6 +145,20 @@ class _PublishView extends React.Component {
         hashHistory.push(path);
     }
 
+    _makeAssetLink(asset, name, type) {
+        return (<a
+            href="#"
+            onClick={(e) => {
+                e.preventDefault();
+                name.onChange(asset.name);
+                type.onChange(asset.type_id);
+            }}
+        >
+            {asset.name}
+        </a>);
+    }
+
+
     render() {
         const {
             fields: {
@@ -157,36 +171,54 @@ class _PublishView extends React.Component {
             candidate.name === name.value &&
             candidate.type_id === type.value
         ));
-        let existingAssetLinks = null;
+        let existingAssetMessage;
+        if (isExistingAsset) {
+            existingAssetMessage = (<p className={style.assetHelpText}>
+                Versioning up existing asset <strong>{name.value}</strong>.
+            </p>);
+        }
         if (!isExistingAsset && assets.length) {
-            const firstFiveAssets = assets.slice(0, 5);
+            const firstFiveAssets = assets.filter(
+                a => a.name === name.value).concat(assets.filter(
+                    a => a.name !== name.value)).slice(0, 5);
             const moreThanFiveAssets = assets.length > 5;
             const sentenceEnd = moreThanFiveAssets ? (
                 <span>...</span>
             ) : (
                 <span>.</span>
             );
-            const fiveLinks = firstFiveAssets.map((asset, index) => (
-                <span>
-                    {index !== 0 ? <span>, </span> : null}
-                    <a
-                        href="#"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            name.onChange(asset.name);
-                            type.onChange(asset.type_id);
-                        }}
-                    >
-                        {asset.name}
-                    </a>
-                    {index === firstFiveAssets.length - 1 ? sentenceEnd : null}
-                </span>
-            ));
-            existingAssetLinks = (
+            const fiveLinks = firstFiveAssets.slice(
+                // first asset will be in message body
+                firstFiveAssets[0].name === name.value).map((asset, index, array) => (
+                    <span>
+                        {index !== 0 ? <span>, </span> : null}
+                        {this._makeAssetLink(asset, name, type)}
+                        {asset.name === name.value ?
+                            <span> (<b>{asset.type.name}</b>)</span> : null}
+                        {index === array.length - 1 ? sentenceEnd : null}
+                    </span>
+                ));
+            const existingAssetLinks = (
                 <span>
                     You can also version up one of the existing assets: {fiveLinks}
                 </span>
             );
+            const baseMessage = (
+                <span><strong>{name.value || 'Untitled asset'}</strong> will
+                be published as a new asset</span>);
+            if (firstFiveAssets[0].name === name.value) {
+                existingAssetMessage = (<p className={style.assetHelpText}>
+                    <span className={style.warning}>Warning!</span> {baseMessage}, but
+                    there already is {
+                    this._makeAssetLink(firstFiveAssets[0], name, type)} of type
+                    <strong> {firstFiveAssets[0].type.name}</strong>, proceeding would
+                    cause conflict on the storage. {existingAssetLinks}
+                </p>);
+            } else {
+                existingAssetMessage = (<p className={style.assetHelpText}>
+                    {baseMessage}. {existingAssetLinks}
+                </p>);
+            }
         }
 
         return (
@@ -217,18 +249,10 @@ class _PublishView extends React.Component {
                         className={style['asset-type']}
                         label="Type"
                         query={this._assetTypes}
+                        disabled={this.props.lockAssetType}
                         {...type}
                     />
-                    {isExistingAsset ? (
-                        <p className={style.assetHelpText}>
-                            Versioning up existing asset <strong>{name.value}</strong>.
-                        </p>
-                    ) : (
-                        <p className={style.assetHelpText}>
-                            <strong>{name.value || 'Untitled asset'}</strong> will
-                            be published as a new asset. {existingAssetLinks}
-                        </p>
-                    )}
+                    {existingAssetMessage}
                 </div>
                 <Reveal label="Add description" className="flex-justify-start">
                     <Input
@@ -269,6 +293,7 @@ _PublishView.propTypes = {
     onContextChange: PropTypes.func,
     options: PropTypes.array,
     assets: PropTypes.array,
+    lockAssetType: PropTypes.bool,
 };
 
 _PublishView.defaultProps = {
@@ -276,6 +301,7 @@ _PublishView.defaultProps = {
     params: {
         context: null,
     },
+    lockAssetType: false,
 };
 
 const formOptions = {
@@ -301,13 +327,14 @@ function mapStateToProps(state) {
         parent: publish.parent || null,
         task: publish.task || null,
         link: publish.link || [],
+        lockAssetType: publish.lockAssetType,
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         onContextChange(contextId) {
-            dispatch(publishResolveContext(contextId));
+            dispatch(publishResolveContext({ contextId }));
         },
         submitForm(values) {
             dispatch(publishSubmit(values));
