@@ -4,6 +4,7 @@ import React from 'react';
 import ProgressBar from 'react-toolbox/lib/progress_bar';
 import Button from 'react-toolbox/lib/button';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 import Reveal from 'component/reveal';
 
@@ -67,17 +68,17 @@ function Overlay(props) {
 }
 
 Overlay.propTypes = {
-    className: React.PropTypes.string,
-    active: React.PropTypes.bool,
-    fixed: React.PropTypes.bool,
-    loader: React.PropTypes.bool,
-    progress: React.PropTypes.number,
-    header: React.PropTypes.node,
-    message: React.PropTypes.node,
-    details: React.PropTypes.node,
-    dismissable: React.PropTypes.bool,
-    onDismss: React.PropTypes.func,
-    dismissLabel: React.PropTypes.node,
+    className: PropTypes.string,
+    active: PropTypes.bool,
+    fixed: PropTypes.bool,
+    loader: PropTypes.bool,
+    progress: PropTypes.number,
+    header: PropTypes.node,
+    message: PropTypes.node,
+    details: PropTypes.node,
+    dismissable: PropTypes.bool,
+    onDismss: PropTypes.func,
+    dismissLabel: PropTypes.node,
 };
 
 Overlay.defaultProps = {

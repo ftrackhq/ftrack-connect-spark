@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Button } from 'react-toolbox';
+import PropTypes from 'prop-types';
 
 import style from './style.scss';
 import NoteForm from './form.js';
@@ -35,14 +36,14 @@ function ReplyForm({ content, pending, collapsed, onSubmitForm, onHideForm, onSh
 }
 
 ReplyForm.propTypes = {
-    parentNote: React.PropTypes.object,
-    author: React.PropTypes.object,
-    collapsed: React.PropTypes.bool,
-    content: React.PropTypes.string,
-    pending: React.PropTypes.bool,
-    onShowForm: React.PropTypes.func,
-    onHideForm: React.PropTypes.func,
-    onSubmitForm: React.PropTypes.func,
+    parentNote: PropTypes.object,
+    author: PropTypes.object,
+    collapsed: PropTypes.bool,
+    content: PropTypes.string,
+    pending: PropTypes.bool,
+    onShowForm: PropTypes.func,
+    onHideForm: PropTypes.func,
+    onSubmitForm: PropTypes.func,
 };
 
 

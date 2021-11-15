@@ -1,6 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { connect } from 'react-redux';
 
@@ -148,9 +149,9 @@ class _ContextView extends React.Component {
 }
 
 _ContextView.propTypes = {
-    params: React.PropTypes.object.isRequired,
-    children: React.PropTypes.node.isRequired,
-    onError: React.PropTypes.func,
+    params: PropTypes.object.isRequired,
+    children: PropTypes.node.isRequired,
+    onError: PropTypes.func,
 };
 
 _ContextView.defaultProps = {};

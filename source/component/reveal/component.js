@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'react-toolbox/lib/link';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 import style from './style';
 
@@ -54,11 +55,11 @@ class Reveal extends React.Component {
 }
 
 Reveal.propTypes = {
-    children: React.PropTypes.node.isRequired,
-    active: React.PropTypes.bool,
-    className: React.PropTypes.string,
-    label: React.PropTypes.string,
-    icon: React.PropTypes.string,
+    children: PropTypes.node.isRequired,
+    active: PropTypes.bool,
+    className: PropTypes.string,
+    label: PropTypes.string,
+    icon: PropTypes.string,
 };
 
 Reveal.defaultProps = {

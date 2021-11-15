@@ -1,7 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-import { takeEvery, takeLatest } from 'redux-saga';
-import { call, take, put } from 'redux-saga/effects';
+import { call, take, put, takeLatest, takeEvery } from 'redux-saga/effects';
 import { hashHistory } from 'react-router';
 
 import { operation, error as apiError } from 'ftrack-javascript-api';

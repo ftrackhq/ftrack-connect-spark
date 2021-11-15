@@ -253,6 +253,10 @@ export class MainMediator extends AbstractMediator {
 
         return promise;
     }
+
+    getEnv(name) {
+        return name;
+    }
 }
 
 /** Export *MainMediator* instance. */

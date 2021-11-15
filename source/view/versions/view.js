@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import Button from 'react-toolbox/lib/button';
 import { Menu, MenuItem } from 'react-toolbox/lib/menu';
 import { hashHistory } from 'react-router';
+import PropTypes from 'prop-types';
 
 import { importGetComponents, importComponent } from 'action/import';
 import InfiniteScroll from 'component/infinite_scroll';
@@ -211,11 +212,11 @@ class _VersionsView extends React.Component {
 }
 
 _VersionsView.propTypes = {
-    params: React.PropTypes.object.isRequired,
-    onImportComponent: React.PropTypes.func.isRequired,
-    onGetImportComponents: React.PropTypes.func.isRequired,
-    components: React.PropTypes.object,
-    enableImport: React.PropTypes.bool,
+    params: PropTypes.object.isRequired,
+    onImportComponent: PropTypes.func.isRequired,
+    onGetImportComponents: PropTypes.func.isRequired,
+    components: PropTypes.object,
+    enableImport: PropTypes.bool,
 };
 
 /** Map version state to components */

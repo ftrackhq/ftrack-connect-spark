@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import Avatar from 'react-toolbox/lib/avatar';
+import PropTypes from 'prop-types';
 
 import style from './style.scss';
 
@@ -42,8 +43,8 @@ function EntityAvatar({ entity, className }) {
 }
 
 EntityAvatar.propTypes = {
-    className: React.PropTypes.string,
-    entity: React.PropTypes.object,
+    className: PropTypes.string,
+    entity: PropTypes.object,
 };
 
 EntityAvatar.defaultProps = {

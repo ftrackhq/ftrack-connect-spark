@@ -1,7 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-import { takeLatest } from 'redux-saga';
-import { call, put } from 'redux-saga/effects';
+import { call, put, takeLatest } from 'redux-saga/effects';
 import { hashHistory } from 'react-router';
 import compare from 'semver-compare';
 
@@ -85,6 +84,20 @@ function* startup(action) {
 
         yield hideOverlay();
         hashHistory.replace(nextPathName || '/home');
+
+        // follow to context from Connect only after home so going back to My Tasks will
+        // be possible
+        if (!nextPathName || nextPathName === '/') {
+            const FTRACK_CONNECT_EVENT = mediator.getEnv('FTRACK_CONNECT_EVENT');
+            if (FTRACK_CONNECT_EVENT) {
+                const data = JSON.parse(decodeURIComponent(escape(
+                    window.atob(FTRACK_CONNECT_EVENT))));
+                if (data && data.selection && data.selection.length) {
+                    const entity = data.selection[0];
+                    hashHistory.push(`/context/${entity.entityType}/${entity.entityId}`);
+                }
+            }
+        }
 
         if (session.serverVersion !== 'dev') {
             if (

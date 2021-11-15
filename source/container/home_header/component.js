@@ -4,6 +4,7 @@ import React from 'react';
 import { Button, MenuItem } from 'react-toolbox';
 import { hashHistory } from 'react-router';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import Header from 'component/header';
 import ButtonMenu from 'component/button_menu';
@@ -67,10 +68,10 @@ function _HomeHeader(props) {
 }
 
 _HomeHeader.propTypes = {
-    publish: React.PropTypes.bool,
-    quickReview: React.PropTypes.bool,
-    context: React.PropTypes.string,
-    projectId: React.PropTypes.string,
+    publish: PropTypes.bool,
+    quickReview: PropTypes.bool,
+    context: PropTypes.string,
+    projectId: PropTypes.string,
 };
 
 _HomeHeader.defaultProps = {

@@ -1,6 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import InfiniteScroll from 'component/infinite_scroll';
 import Button from 'react-toolbox/lib/button';
@@ -195,9 +196,9 @@ class ContextBrowser extends React.Component {
 }
 
 ContextBrowser.propTypes = {
-    onSelectContext: React.PropTypes.func,
-    disableRootBack: React.PropTypes.bool,
-    onRootBack: React.PropTypes.func,
+    onSelectContext: PropTypes.func,
+    disableRootBack: PropTypes.bool,
+    onRootBack: PropTypes.func,
 };
 
 ContextBrowser.defaultProps = {
