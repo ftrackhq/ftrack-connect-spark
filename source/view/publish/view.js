@@ -187,36 +187,28 @@ class _PublishView extends React.Component {
             ) : (
                 <span>.</span>
             );
-            const fiveLinks = firstFiveAssets.slice(
-                // first asset will be in message body
-                firstFiveAssets[0].name === name.value).map((asset, index, array) => (
-                    <span>
-                        {index !== 0 ? <span>, </span> : null}
-                        {this._makeAssetLink(asset, name, type)}
-                        {asset.name === name.value ?
-                            <span> (<b>{asset.type.name}</b>)</span> : null}
-                        {index === array.length - 1 ? sentenceEnd : null}
-                    </span>
-                ));
-            const existingAssetLinks = (
+            const fiveLinks = firstFiveAssets.map((asset, index, array) => (
                 <span>
-                    You can also version up one of the existing assets: {fiveLinks}
+                    {index !== 0 ? <span>, </span> : null}
+                    {this._makeAssetLink(asset, name, type)}
+                    {index === array.length - 1 ? sentenceEnd : null}
                 </span>
-            );
-            const baseMessage = (
-                <span><strong>{name.value || 'Untitled asset'}</strong> will
-                be published as a new asset</span>);
+            ));
+            const assetName = <strong>{name.value || 'Untitled asset'}</strong>;
             if (firstFiveAssets[0].name === name.value) {
                 existingAssetMessage = (<p className={style.assetHelpText}>
-                    <span className={style.warning}>Warning!</span> {baseMessage}, but
-                    there already is {
-                    this._makeAssetLink(firstFiveAssets[0], name, type)} of type
-                    <strong> {firstFiveAssets[0].type.name}</strong>, proceeding would
-                    cause conflict on the storage. {existingAssetLinks}
+                    <span className={style.warning}>WARNING: </span>
+                    Asset {assetName} of type <b>{firstFiveAssets[0].type.name}</b> already exists.
+                    Please enter in a new asset name.
+                    Proceeding with the current name and type will cause a storage conflict.
+                    Alternatively, select an existing asset to version up: {fiveLinks}
                 </p>);
             } else {
                 existingAssetMessage = (<p className={style.assetHelpText}>
-                    {baseMessage}. {existingAssetLinks}
+                    <span>{assetName} will be published as a new asset. If you would
+                        like to version up an existing asset, select one of the
+                        following: {fiveLinks}
+                    </span>
                 </p>);
             }
         }
