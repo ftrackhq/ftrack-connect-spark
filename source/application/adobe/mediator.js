@@ -372,7 +372,7 @@ export class AdobeMediator extends AbstractMediator {
                 }
             );
         }
-        if (options && options.exportOptions && options.exportOptions.formats) {
+        if (options && options.exportOptions && options.exportOptions.formats.length) {
             const formats = options.exportOptions.formats;
             items.push(
                 {
