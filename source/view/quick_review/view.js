@@ -235,7 +235,6 @@ class _QuickReviewView extends React.Component {
                 <CollaboratorSelector
                     value={collaborators.value}
                     session={session}
-                    label="Add collaborators"
                     onChange={this._onCollaboratorChange}
                 />
                 <Reveal label="Add description" className="flex-justify-start">
