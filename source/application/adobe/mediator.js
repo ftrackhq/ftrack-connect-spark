@@ -402,6 +402,7 @@ export class AdobeMediator extends AbstractMediator {
                 };
             case 'ILST':
                 return {
+                    component_name: values.component_name,
                     review: true,
                     delivery: true,
                     include_pdf: values.include_pdf,
@@ -409,6 +410,7 @@ export class AdobeMediator extends AbstractMediator {
                 };
             case 'PPRO':
                 return {
+                    component_name: values.component_name,
                     thumbnail: true,
                     project_file: values.include_project_file,
                     rendered_sequence: !!values.source_range,
@@ -416,6 +418,7 @@ export class AdobeMediator extends AbstractMediator {
                 };
             case 'AEFT':
                 return {
+                    component_name: values.component_name,
                     thumbnail: true,
                     project_file: values.include_project_file,
                     render_composition: values.render_composition,
