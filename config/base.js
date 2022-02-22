@@ -32,3 +32,6 @@ module.exports = {
     },
     module: {},
 };
+
+// Use ftrack's fork of react-toolbox.
+module.exports.resolve.alias['react-toolbox'] = '@ftrack/react-toolbox';

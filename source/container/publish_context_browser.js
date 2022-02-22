@@ -3,7 +3,7 @@
 import { connect } from 'react-redux';
 import { hashHistory } from 'react-router';
 import ContextBrowser from 'container/context_browser';
-import { publishResolveContext } from 'action/publish';
+
 
 function mapStateToProps() {
     return {
@@ -11,16 +11,15 @@ function mapStateToProps() {
     };
 }
 
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps() {
     return {
         onRootBack() {
             hashHistory.goBack();
         },
         onSelectContext(id) {
             hashHistory.goBack();
-            dispatch(
-                publishResolveContext(id)
-            );
+            // HACK look like goBack is async and replace is sync, so delay it
+            setTimeout(() => hashHistory.replace(`/publish/${id}`), 0);
         },
     };
 }

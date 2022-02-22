@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { ProgressBar } from 'react-toolbox';
+import PropTypes from 'prop-types';
 
 import style from './style';
 
@@ -64,7 +65,7 @@ export class PreviewImage extends React.Component {
 }
 
 PreviewImage.propTypes = {
-    url: React.PropTypes.string.isRequired,
-    name: React.PropTypes.string.isRequired,
-    downloadUrl: React.PropTypes.string,
+    url: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    downloadUrl: PropTypes.string,
 };

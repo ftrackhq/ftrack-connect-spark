@@ -1,7 +1,9 @@
 // :copyright: Copyright (c) 2016 ftrack
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import Autocomplete from 'react-toolbox/lib/autocomplete';
+import style from './style.scss';
 
 /**
  * Selector
@@ -55,11 +57,13 @@ class Selector extends React.Component {
     render() {
         return (
             <Autocomplete
+                theme={{ suggestion: style['asset-type-item'] }}
                 direction="down"
                 multiple={false}
                 showSuggestionsWhenValueIsSet
                 source={this.state.source}
                 label={this.props.label}
+                disabled={this.props.disabled}
                 value={!this.state.loading && this.state.value || ''}
                 onChange={this._onChange}
                 error={this._errorMessage(this.props)}
@@ -69,17 +73,20 @@ class Selector extends React.Component {
 }
 
 Selector.propTypes = {
-    label: React.PropTypes.string,
-    value: React.PropTypes.string,
-    onChange: React.PropTypes.func,
-    onBlur: React.PropTypes.func,
-    query: React.PropTypes.object.isRequired,
+    label: PropTypes.string,
+    disabled: PropTypes.bool,
+    value: PropTypes.string,
+    onChange: PropTypes.func,
+    onBlur: PropTypes.func,
+    query: PropTypes.object.isRequired,
+    className: PropTypes.string,
 };
 
 Selector.defaultProps = {
     value: null,
     onChange: () => {},
     onBlur: () => {},
+    disabled: false,
 };
 
 export default Selector;

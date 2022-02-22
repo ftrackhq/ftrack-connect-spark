@@ -3,6 +3,7 @@
 import React from 'react';
 import Button from 'react-toolbox/lib/button';
 import Input from 'react-toolbox/lib/input';
+import PropTypes from 'prop-types';
 
 import style from './style.scss';
 
@@ -58,9 +59,9 @@ class Example extends React.Component {
 }
 
 Example.propTypes = {
-    onButtonClicked: React.PropTypes.func,
-    buttonLabel: React.PropTypes.string,
-    user: React.PropTypes.object,
+    onButtonClicked: PropTypes.func,
+    buttonLabel: PropTypes.string,
+    user: PropTypes.object,
 };
 
 Example.defaultProps = {

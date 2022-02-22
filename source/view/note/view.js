@@ -5,7 +5,8 @@ import { connect } from 'react-redux';
 import loglevel from 'loglevel';
 import Button from 'react-toolbox/lib/button';
 import ProgressBar from 'react-toolbox/lib/progress_bar';
-import Waypoint from 'react-waypoint';
+import { Waypoint } from 'react-waypoint';
+import PropTypes from 'prop-types';
 
 import {
     openNoteForm, hideNoteForm, submitNoteForm, removeNote, notesLoadNextPage,
@@ -186,8 +187,8 @@ function _NotesListEmptyState({ onActionButtonClick }) {
 }
 
 _NotesListEmptyState.propTypes = {
-    onActionButtonClick: React.PropTypes.func,
-    entity: React.PropTypes.object,
+    onActionButtonClick: PropTypes.func,
+    entity: PropTypes.object,
 };
 
 function mapEmptyStateDispatchToProps(dispatch, props) {
@@ -300,12 +301,12 @@ function NotesList({ items, entity, user, loading, nextOffset, onFetchMore }) {
 }
 
 NotesList.propTypes = {
-    items: React.PropTypes.array.isRequired,
-    entity: React.PropTypes.object,
-    user: React.PropTypes.object,
-    loading: React.PropTypes.bool,
-    nextOffset: React.PropTypes.number,
-    onFetchMore: React.PropTypes.func,
+    items: PropTypes.array.isRequired,
+    entity: PropTypes.object,
+    user: PropTypes.object,
+    loading: PropTypes.bool,
+    nextOffset: PropTypes.number,
+    onFetchMore: PropTypes.func,
 };
 
 const mapStateToProps = (state) => {

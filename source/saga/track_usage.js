@@ -1,6 +1,6 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-import { takeEvery } from 'redux-saga';
+import { takeEvery } from 'redux-saga/effects';
 
 import actions from 'action/track_usage';
 import { session } from '../ftrack_api';

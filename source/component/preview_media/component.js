@@ -3,6 +3,7 @@
 import React from 'react';
 import { IconButton } from 'react-toolbox';
 import Mousetrap from 'mousetrap';
+import PropTypes from 'prop-types';
 
 import Header from 'component/header';
 
@@ -116,10 +117,10 @@ export class PreviewMedia extends React.Component {
 }
 
 PreviewMedia.propTypes = {
-    children: React.PropTypes.arrayOf(React.PropTypes.node),
-    defaultIndex: React.PropTypes.number,
-    onDismiss: React.PropTypes.func.isRequired,
-    onDownload: React.PropTypes.func.isRequired,
+    children: PropTypes.arrayOf(PropTypes.node),
+    defaultIndex: PropTypes.number,
+    onDismiss: PropTypes.func.isRequired,
+    onDownload: PropTypes.func.isRequired,
 };
 
 PreviewMedia.defaultProps = {

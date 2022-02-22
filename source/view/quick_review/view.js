@@ -3,6 +3,7 @@
 import React from 'react';
 import { reduxForm } from 'redux-form';
 import moment from 'moment';
+import PropTypes from 'prop-types';
 
 import Input from 'react-toolbox/lib/input';
 import DatePicker from 'react-toolbox/lib/date_picker';
@@ -72,9 +73,9 @@ function ResultList({ items, onClick, className }) {
 }
 
 ResultList.propTypes = {
-    className: React.PropTypes.string,
-    items: React.PropTypes.array,
-    onClick: React.PropTypes.func,
+    className: PropTypes.string,
+    items: PropTypes.array,
+    onClick: PropTypes.func,
 };
 
 /** Quick review view */
@@ -234,7 +235,6 @@ class _QuickReviewView extends React.Component {
                 <CollaboratorSelector
                     value={collaborators.value}
                     session={session}
-                    label="Add collaborators"
                     onChange={this._onCollaboratorChange}
                 />
                 <Reveal label="Add description" className="flex-justify-start">
@@ -260,18 +260,18 @@ class _QuickReviewView extends React.Component {
 }
 
 _QuickReviewView.contextTypes = {
-    router: React.PropTypes.object.isRequired,
+    router: PropTypes.object.isRequired,
 };
 
 _QuickReviewView.propTypes = {
-    params: React.PropTypes.object.isRequired,
-    values: React.PropTypes.object.isRequired,
-    fields: React.PropTypes.object.isRequired,
-    onQuickReviewSubmit: React.PropTypes.func.isRequired,
-    resetForm: React.PropTypes.func.isRequired,
-    submitting: React.PropTypes.bool.isRequired,
-    projects: React.PropTypes.object,
-    createProject: React.PropTypes.func,
+    params: PropTypes.object.isRequired,
+    values: PropTypes.object.isRequired,
+    fields: PropTypes.object.isRequired,
+    onQuickReviewSubmit: PropTypes.func.isRequired,
+    resetForm: PropTypes.func.isRequired,
+    submitting: PropTypes.bool.isRequired,
+    projects: PropTypes.object,
+    createProject: PropTypes.func,
 };
 
 function mapDispatchToProps(dispatch) {

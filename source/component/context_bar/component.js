@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { session } from '../../ftrack_api';
+import PropTypes from 'prop-types';
 
 import projectSchema from 'ftrack-javascript-api/lib/project_schema';
 
@@ -149,8 +150,8 @@ class ContextBar extends React.Component {
 }
 
 ContextBar.propTypes = {
-    entity: React.PropTypes.object,
-    onEntityUpdate: React.PropTypes.func,
+    entity: PropTypes.object,
+    onEntityUpdate: PropTypes.func,
 };
 
 export default ContextBar;

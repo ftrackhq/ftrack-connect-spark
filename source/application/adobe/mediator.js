@@ -351,19 +351,6 @@ export class AdobeMediator extends AbstractMediator {
                 );
             }
         } else if (appId === 'ILST') {
-            if (options.exportOptions) {
-                const formats = options.exportOptions.formats;
-                items.push(
-                    {
-                        label: 'Format',
-                        type: 'dropdown',
-                        name: 'save_as_format',
-                        description: 'Format for the saved document',
-                        value: formats[0].value,
-                        data: formats,
-                    }
-                );
-            }
             items.push(
                 {
                     label: 'Review PDF',
@@ -371,6 +358,30 @@ export class AdobeMediator extends AbstractMediator {
                     name: 'include_pdf',
                     description: 'Export and upload PDF for review',
                     value: true,
+                }
+            );
+        }
+        if (options && options.exportOptions && options.exportOptions.component_name) {
+            items.push(
+                {
+                    label: 'Component name',
+                    type: 'text',
+                    name: 'component_name',
+                    description: 'Name for deliverable component',
+                    value: options.exportOptions.component_name,
+                }
+            );
+        }
+        if (options && options.exportOptions && options.exportOptions.formats.length) {
+            const formats = options.exportOptions.formats;
+            items.push(
+                {
+                    label: 'Format',
+                    type: 'dropdown',
+                    name: 'save_as_format',
+                    description: 'Format for the saved document',
+                    value: formats[0].value,
+                    data: formats,
                 }
             );
         }
@@ -386,9 +397,12 @@ export class AdobeMediator extends AbstractMediator {
                 return {
                     review: true,
                     delivery: true,
+                    save_as_format: values.save_as_format,
+                    component_name: values.component_name,
                 };
             case 'ILST':
                 return {
+                    component_name: values.component_name,
                     review: true,
                     delivery: true,
                     include_pdf: values.include_pdf,
@@ -396,6 +410,7 @@ export class AdobeMediator extends AbstractMediator {
                 };
             case 'PPRO':
                 return {
+                    component_name: values.component_name,
                     thumbnail: true,
                     project_file: values.include_project_file,
                     rendered_sequence: !!values.source_range,
@@ -403,6 +418,7 @@ export class AdobeMediator extends AbstractMediator {
                 };
             case 'AEFT':
                 return {
+                    component_name: values.component_name,
                     thumbnail: true,
                     project_file: values.include_project_file,
                     render_composition: values.render_composition,
@@ -504,6 +520,10 @@ export class AdobeMediator extends AbstractMediator {
         });
 
         return promise;
+    }
+
+    getEnv(name) {
+        return window.top.FT.main.env[name];
     }
 }
 

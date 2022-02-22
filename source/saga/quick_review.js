@@ -2,8 +2,7 @@
 
 import uuid from 'uuid';
 
-import { takeEvery } from 'redux-saga';
-import { call, put } from 'redux-saga/effects';
+import { call, put, takeEvery } from 'redux-saga/effects';
 import { hashHistory } from 'react-router';
 import { reset } from 'redux-form';
 

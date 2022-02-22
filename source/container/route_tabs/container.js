@@ -3,6 +3,7 @@
 import React from 'react';
 import { Tab, Tabs } from 'react-toolbox';
 import { hashHistory } from 'react-router';
+import PropTypes from 'prop-types';
 
 import style from './style.scss';
 
@@ -56,17 +57,17 @@ class RouteTabs extends React.Component {
 }
 
 RouteTabs.contextTypes = {
-    router: React.PropTypes.object.isRequired,
+    router: PropTypes.object.isRequired,
 };
 
 RouteTabs.propTypes = {
-    items: React.PropTypes.arrayOf(
-        React.PropTypes.shape({
-            route: React.PropTypes.string.isRequired,
-            label: React.PropTypes.string.isRequired,
+    items: PropTypes.arrayOf(
+        PropTypes.shape({
+            route: PropTypes.string.isRequired,
+            label: PropTypes.string.isRequired,
         })
     ),
-    baseRoute: React.PropTypes.string,
+    baseRoute: PropTypes.string,
 };
 
 RouteTabs.defaultProps = {
@@ -74,4 +75,3 @@ RouteTabs.defaultProps = {
 };
 
 export default RouteTabs;
-

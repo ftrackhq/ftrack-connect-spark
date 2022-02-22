@@ -3,6 +3,7 @@
 import React from 'react';
 import Avatar from 'react-toolbox/lib/avatar';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 import style from './style.scss';
 import { session } from '../../ftrack_api';
@@ -37,8 +38,8 @@ export function User({ data, thumbnail }) {
 }
 
 User.propTypes = {
-    data: React.PropTypes.object.isRequired,
-    thumbnail: React.PropTypes.bool,
+    data: PropTypes.object.isRequired,
+    thumbnail: PropTypes.bool,
 };
 
 /** Display user placeholder. */
@@ -55,5 +56,5 @@ export function PlaceholderUser({ title }) {
 }
 
 PlaceholderUser.propTypes = {
-    title: React.PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
 };

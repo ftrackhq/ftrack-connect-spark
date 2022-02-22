@@ -5,6 +5,7 @@ import AppBar from 'react-toolbox/lib/app_bar';
 import classNames from 'classnames';
 import { Button } from 'react-toolbox/lib/button';
 import { hashHistory } from 'react-router';
+import PropTypes from 'prop-types';
 
 import style from './style';
 
@@ -42,16 +43,16 @@ function Header(props) {
 }
 
 Header.contextTypes = {
-    router: React.PropTypes.object,
+    router: PropTypes.object,
 };
 
 Header.propTypes = {
-    className: React.PropTypes.string,
-    color: React.PropTypes.string,
-    title: React.PropTypes.node,
-    rightItems: React.PropTypes.node,
-    back: React.PropTypes.bool,
-    centerItems: React.PropTypes.node,
+    className: PropTypes.string,
+    color: PropTypes.string,
+    title: PropTypes.node,
+    rightItems: PropTypes.node,
+    back: PropTypes.bool,
+    centerItems: PropTypes.node,
 };
 
 Header.defaultProps = {

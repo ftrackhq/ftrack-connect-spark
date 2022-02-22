@@ -5,6 +5,7 @@ import { reduxForm } from 'redux-form';
 import { hashHistory } from 'react-router';
 import omit from 'lodash/omit';
 import isEqual from 'lodash/isEqual';
+import PropTypes from 'prop-types';
 
 import Input from 'react-toolbox/lib/input';
 
@@ -144,6 +145,20 @@ class _PublishView extends React.Component {
         hashHistory.push(path);
     }
 
+    _makeAssetLink(asset, name, type) {
+        return (<a
+            href="#"
+            onClick={(e) => {
+                e.preventDefault();
+                name.onChange(asset.name);
+                type.onChange(asset.type_id);
+            }}
+        >
+            {asset.name}
+        </a>);
+    }
+
+
     render() {
         const {
             fields: {
@@ -156,36 +171,46 @@ class _PublishView extends React.Component {
             candidate.name === name.value &&
             candidate.type_id === type.value
         ));
-        let existingAssetLinks = null;
+        let existingAssetMessage;
+        if (isExistingAsset) {
+            existingAssetMessage = (<p className={style.assetHelpText}>
+                Versioning up existing asset <strong>{name.value}</strong>.
+            </p>);
+        }
         if (!isExistingAsset && assets.length) {
-            const firstFiveAssets = assets.slice(0, 5);
+            const firstFiveAssets = assets.filter(
+                a => a.name === name.value).concat(assets.filter(
+                    a => a.name !== name.value)).slice(0, 5);
             const moreThanFiveAssets = assets.length > 5;
             const sentenceEnd = moreThanFiveAssets ? (
                 <span>...</span>
             ) : (
                 <span>.</span>
             );
-            const fiveLinks = firstFiveAssets.map((asset, index) => (
+            const fiveLinks = firstFiveAssets.map((asset, index, array) => (
                 <span>
                     {index !== 0 ? <span>, </span> : null}
-                    <a
-                        href="#"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            name.onChange(asset.name);
-                            type.onChange(asset.type_id);
-                        }}
-                    >
-                        {asset.name}
-                    </a>
-                    {index === firstFiveAssets.length - 1 ? sentenceEnd : null}
+                    {this._makeAssetLink(asset, name, type)}
+                    {index === array.length - 1 ? sentenceEnd : null}
                 </span>
             ));
-            existingAssetLinks = (
-                <span>
-                    You can also version up one of the existing assets: {fiveLinks}
-                </span>
-            );
+            const assetName = <strong>{name.value || 'Untitled asset'}</strong>;
+            if (firstFiveAssets[0].name === name.value) {
+                existingAssetMessage = (<p className={style.assetHelpText}>
+                    <span className={style.warning}>WARNING: </span>
+                    Asset {assetName} of type <b>{firstFiveAssets[0].type.name}</b> already exists.
+                    Please enter in a new asset name.
+                    Proceeding with the current name and type will cause a storage conflict.
+                    Alternatively, select an existing asset to version up: {fiveLinks}
+                </p>);
+            } else {
+                existingAssetMessage = (<p className={style.assetHelpText}>
+                    <span>{assetName} will be published as a new asset. If you would
+                        like to version up an existing asset, select one of the
+                        following: {fiveLinks}
+                    </span>
+                </p>);
+            }
         }
 
         return (
@@ -216,18 +241,10 @@ class _PublishView extends React.Component {
                         className={style['asset-type']}
                         label="Type"
                         query={this._assetTypes}
+                        disabled={this.props.lockAssetType}
                         {...type}
                     />
-                    {isExistingAsset ? (
-                        <p className={style.assetHelpText}>
-                            Versioning up existing asset <strong>{name.value}</strong>.
-                        </p>
-                    ) : (
-                        <p className={style.assetHelpText}>
-                            <strong>{name.value || 'Untitled asset'}</strong> will
-                            be published as a new asset. {existingAssetLinks}
-                        </p>
-                    )}
+                    {existingAssetMessage}
                 </div>
                 <Reveal label="Add description" className="flex-justify-start">
                     <Input
@@ -251,23 +268,24 @@ class _PublishView extends React.Component {
 }
 
 _PublishView.contextTypes = {
-    router: React.PropTypes.object.isRequired,
+    router: PropTypes.object.isRequired,
 };
 
 _PublishView.propTypes = {
-    values: React.PropTypes.object.isRequired,
-    fields: React.PropTypes.object.isRequired,
-    submitForm: React.PropTypes.func.isRequired,
-    resetForm: React.PropTypes.func.isRequired,
-    submitting: React.PropTypes.bool.isRequired,
-    contexts: React.PropTypes.object,
-    params: React.PropTypes.object,
-    parent: React.PropTypes.string,
-    task: React.PropTypes.string,
-    link: React.PropTypes.array,
-    onContextChange: React.PropTypes.func,
-    options: React.PropTypes.array,
-    assets: React.PropTypes.array,
+    values: PropTypes.object.isRequired,
+    fields: PropTypes.object.isRequired,
+    submitForm: PropTypes.func.isRequired,
+    resetForm: PropTypes.func.isRequired,
+    submitting: PropTypes.bool.isRequired,
+    contexts: PropTypes.object,
+    params: PropTypes.object,
+    parent: PropTypes.string,
+    task: PropTypes.string,
+    link: PropTypes.array,
+    onContextChange: PropTypes.func,
+    options: PropTypes.array,
+    assets: PropTypes.array,
+    lockAssetType: PropTypes.bool,
 };
 
 _PublishView.defaultProps = {
@@ -275,6 +293,7 @@ _PublishView.defaultProps = {
     params: {
         context: null,
     },
+    lockAssetType: false,
 };
 
 const formOptions = {
@@ -300,13 +319,14 @@ function mapStateToProps(state) {
         parent: publish.parent || null,
         task: publish.task || null,
         link: publish.link || [],
+        lockAssetType: publish.lockAssetType,
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         onContextChange(contextId) {
-            dispatch(publishResolveContext(contextId));
+            dispatch(publishResolveContext({ contextId }));
         },
         submitForm(values) {
             dispatch(publishSubmit(values));

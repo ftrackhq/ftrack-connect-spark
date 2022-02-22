@@ -25,10 +25,10 @@
         brown $palette-brown-500,
         grey $palette-grey-500,
         blue-grey $palette-blue-grey-500,
-        dark-100 $color-dark-100,
-        dark-200 $color-dark-200,
-        dark-300 $color-dark-300,
-        dark-400 $color-dark-400
+        dark-100 $color-dark-1,
+        dark-200 $color-dark-2,
+        dark-300 $color-dark-3,
+        dark-400 $color-dark-4
     );
     @each $color in $colors {
         .background-#{nth($color, 1)} {
@@ -36,4 +36,3 @@
         }
     }
 }
-

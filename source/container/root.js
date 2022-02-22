@@ -1,9 +1,9 @@
 // :copyright: Copyright (c) 2016 ftrack
 
-import React, { PropTypes } from 'react';
+import React from 'react';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router';
-
+import PropTypes from 'prop-types';
 
 /** A root container. */
 function RootContainer({ store, history, routes }) {

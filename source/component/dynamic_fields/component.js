@@ -5,6 +5,7 @@ import Input from 'react-toolbox/lib/input';
 import Autocomplete from 'react-toolbox/lib/autocomplete';
 import Dropdown from 'react-toolbox/lib/dropdown';
 import Switch from 'react-toolbox/lib/switch';
+import PropTypes from 'prop-types';
 
 import classNames from 'classnames';
 
@@ -23,12 +24,12 @@ function InputField({ config, field = {} }) {
     );
 }
 InputField.propTypes = {
-    config: React.PropTypes.shape({
-        label: React.PropTypes.string,
-        name: React.PropTypes.string.isRequired,
-        type: React.PropTypes.string.isRequired,
+    config: PropTypes.shape({
+        label: PropTypes.string,
+        name: PropTypes.string.isRequired,
+        type: PropTypes.string.isRequired,
     }),
-    field: React.PropTypes.object,
+    field: PropTypes.object,
 };
 
 /** Enumerator field component with options in config.data */
@@ -53,12 +54,12 @@ function EnumeratorField({ config, field = {} }) {
     );
 }
 EnumeratorField.propTypes = {
-    config: React.PropTypes.shape({
-        data: React.PropTypes.array.isRequired,
-        label: React.PropTypes.string,
-        name: React.PropTypes.string.isRequired,
+    config: PropTypes.shape({
+        data: PropTypes.array.isRequired,
+        label: PropTypes.string,
+        name: PropTypes.string.isRequired,
     }),
-    field: React.PropTypes.object,
+    field: PropTypes.object,
 };
 
 /** Dropdown field component with options in config.data */
@@ -75,12 +76,12 @@ function DropdownField({ config, field = {} }) {
     );
 }
 DropdownField.propTypes = {
-    config: React.PropTypes.shape({
-        data: React.PropTypes.array.isRequired,
-        label: React.PropTypes.string,
-        name: React.PropTypes.string.isRequired,
+    config: PropTypes.shape({
+        data: PropTypes.array.isRequired,
+        label: PropTypes.string,
+        name: PropTypes.string.isRequired,
     }),
-    field: React.PropTypes.object,
+    field: PropTypes.object,
 };
 
 /**
@@ -104,17 +105,17 @@ function BooleanField({ config, field = {} }) {
     );
 }
 BooleanField.propTypes = {
-    config: React.PropTypes.shape({
-        description: React.PropTypes.string,
-        label: React.PropTypes.string,
-        name: React.PropTypes.string.isRequired,
+    config: PropTypes.shape({
+        description: PropTypes.string,
+        label: PropTypes.string,
+        name: PropTypes.string.isRequired,
     }),
-    field: React.PropTypes.object,
+    field: PropTypes.object,
 };
 
 /** Debug field, renders the configuration in a pre-formatted element */
 const DebugField = ({ config }) => <pre>{JSON.stringify(config)}</pre>;
-DebugField.propTypes = { config: React.PropTypes.any };
+DebugField.propTypes = { config: PropTypes.any };
 
 
 /** Map field types to components */
@@ -152,9 +153,9 @@ function DynamicFields({ className, items, fields = [] }) {
 }
 
 DynamicFields.propTypes = {
-    className: React.PropTypes.string,
-    items: React.PropTypes.array,
-    fields: React.PropTypes.array,
+    className: PropTypes.string,
+    items: PropTypes.array,
+    fields: PropTypes.array,
 };
 
 export default DynamicFields;

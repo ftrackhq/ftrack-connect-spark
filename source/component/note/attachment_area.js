@@ -1,6 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import style from './style.scss';
 import { session } from '../../ftrack_api';
@@ -91,8 +92,8 @@ class AttachmentArea extends React.Component {
 }
 
 AttachmentArea.propTypes = {
-    components: React.PropTypes.array.isRequired,
-    onAttachmentClick: React.PropTypes.func.isRequired,
+    components: PropTypes.array.isRequired,
+    onAttachmentClick: PropTypes.func.isRequired,
 };
 
 export default AttachmentArea;

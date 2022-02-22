@@ -1,6 +1,7 @@
 // :copyright: Copyright (c) 2016 ftrack
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { User, PlaceholderUser } from 'component/user';
 import { MenuItem } from 'react-toolbox/lib/menu';
@@ -42,8 +43,8 @@ export function AssigneeField({ assignees, loading }) {
 }
 
 AssigneeField.propTypes = {
-    assignees: React.PropTypes.array.isRequired,
-    loading: React.PropTypes.bool,
+    assignees: PropTypes.array.isRequired,
+    loading: PropTypes.bool,
 };
 
 /** Date field to display a date or an empty string. */
@@ -59,7 +60,7 @@ export function DateField({ date }) {
 }
 
 DateField.propTypes = {
-    date: React.PropTypes.object,
+    date: PropTypes.object,
 };
 
 /** Status field to display a status and allow selection of statuses. */
@@ -90,7 +91,7 @@ export function StatusField({ selected, statuses, onSelect }) {
 }
 
 StatusField.propTypes = {
-    selected: React.PropTypes.object,
-    statuses: React.PropTypes.array,
-    onSelect: React.PropTypes.func,
+    selected: PropTypes.object,
+    statuses: PropTypes.array,
+    onSelect: PropTypes.func,
 };

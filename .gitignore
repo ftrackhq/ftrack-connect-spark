@@ -34,3 +34,6 @@ bower_components/
 
 # ftrack API Credentials for development
 source/ftrack_api_credentials.json
+
+
+dist/**/**
